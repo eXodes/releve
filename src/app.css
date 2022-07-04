@@ -1,0 +1,26 @@
+@font-face {
+    font-family: "Inter";
+    src: url("/fonts/Inter.var.woff2") format("woff2");
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+    @apply h-full scroll-smooth bg-white;
+}
+
+body {
+    @apply h-full;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}

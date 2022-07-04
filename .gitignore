@@ -1,0 +1,25 @@
+.DS_Store
+node_modules
+/public
+/.svelte-kit
+/package
+.env
+.env.*
+!.env.example
+.vercel
+.output
+
+# Logs
+*.log
+
+# IDE
+.idea
+
+# Secrets
+/credentials.json
+
+# Firebase
+/.firebase
+/extensions/
+/src/seeder/*.js
+/src/seeder/*.js.map

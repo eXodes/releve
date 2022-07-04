@@ -1,0 +1,17 @@
+{
+    "printWidth": 100,
+    "singleQuote": false,
+    "arrowParens": "always",
+    "bracketSameLine": false,
+    "embeddedLanguageFormatting": "auto",
+    "endOfLine": "lf",
+    "htmlWhitespaceSensitivity": "css",
+    "jsxSingleQuote": true,
+    "quoteProps": "consistent",
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "semi": true,
+    "useTabs": false,
+    "svelteSortOrder": "options-scripts-markup-styles",
+    "svelteAllowShorthand": false
+}
