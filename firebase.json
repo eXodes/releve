@@ -55,7 +55,7 @@
                 "headers": [
                     {
                         "key": "Content-Type",
-                        "value": "text/javascript"
+                        "value": "text/html"
                     }
                 ]
             }
