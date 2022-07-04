@@ -4,7 +4,7 @@ import { kebabCase } from "lodash-es";
 
 import { ValidationError } from "$routes/_errors/errors";
 
-export const validate = <T = unknown>(schema: Joi.ObjectSchema<any>, payload: T) => {
+export const validate = <T = unknown>(schema: Joi.ObjectSchema<T>, payload: T) => {
     const { error } = schema.validate(payload, {
         abortEarly: false,
     });
