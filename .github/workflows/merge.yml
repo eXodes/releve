@@ -1,0 +1,61 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout branch
+
+      - uses: actions/setup-node@v3
+        name: Setup Node
+        with:
+          node-version: 16
+          cache: 'npm'
+
+      - name: Install node dependencies
+        run: npm ci
+
+      - name: Run type-check
+        run: npm run check
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run test
+        run: npm run test
+
+      - name: Run build test
+        run: npm run build
+
+  deploy:
+    needs:
+      - test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout branch
+
+      - uses: actions/setup-node@v3
+        name: Setup Node
+        with:
+          node-version: 16
+          cache: 'npm'
+
+      - name: Install node dependencies
+        run: npm ci
+
+      - name: Run build
+        run: npm run build
+
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        name: Deploy to Firebase
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_RELEVE_APP }}"
+          channelId: live
+          projectId: releve-app
