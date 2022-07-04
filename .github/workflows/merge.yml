@@ -28,7 +28,7 @@ jobs:
         run: npm run lint
 
       - name: Run functions build test
-        run: cd functions && npm run build
+        run: cd functions && npm ci && npm run build
 
       - name: Run build test
         run: npm run build
@@ -55,7 +55,7 @@ jobs:
         run: npm ci
 
       - name: Run functions build
-        run: cd functions && npm run build
+        run: cd functions && npm ci && npm run build
 
       - name: Run build
         run: npm run build
