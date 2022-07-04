@@ -24,6 +24,9 @@ jobs:
       - name: Run linter
         run: npm run lint
 
+      - name: Run functions build test
+        run: cd functions && npm run build
+
       - name: Run build test
         run: npm run build
 
@@ -47,6 +50,9 @@ jobs:
 
       - name: Install node dependencies
         run: npm ci
+
+      - name: Run functions build
+        run: cd functions && npm run build
 
       - name: Run build
         run: npm run build
