@@ -48,6 +48,17 @@
                 "source": "**",
                 "function": "sveltekit"
             }
+        ],
+        "headers": [
+            {
+                "source": "**/*.js",
+                "headers": [
+                    {
+                        "key": "Content-Type",
+                        "value": "text/javascript"
+                    }
+                ]
+            }
         ]
     },
     "extensions": {
