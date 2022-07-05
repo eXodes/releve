@@ -63,7 +63,7 @@ jobs:
       - name: Run build
         run: npm run build
 
-      - uses: joinflux/firebase-tools@v10.7.0
+      - uses: joinflux/firebase-tools@v9.16.0
         name: Deploy to Firebase
         with:
           args: deploy --only functions, hosting
