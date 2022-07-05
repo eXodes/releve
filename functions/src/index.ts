@@ -17,5 +17,14 @@ export const sveltekit = functions
         }
 
         functions.logger.info("Requested resource: " + request.originalUrl);
-        return sveltekitServer(request, response);
+
+        let result;
+
+        try {
+            result = sveltekitServer(request, response);
+        } catch (error) {
+            functions.logger.error(error);
+        }
+
+        return result;
     });
