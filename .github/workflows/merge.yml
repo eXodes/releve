@@ -66,6 +66,6 @@ jobs:
       - uses: joinflux/firebase-tools@v9.16.0
         name: Deploy to Firebase
         with:
-          args: deploy --only functions, hosting
+          args: deploy --only functions,hosting
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_RELEVE_APP }}"
