@@ -1,10 +1,11 @@
 import type { auth } from "firebase-admin";
-import { type CookieSerializeOptions, serialize } from "cookie";
 import type { EmailService } from "$routes/_actions/email";
 import type { CanSendEmail, HasAdmin } from "$routes/_contracts/authenticated";
 
 import { getAuth } from "firebase-admin/auth";
+import { serialize } from "cookie";
 
+import { options, SESSION_COOKIE } from "$config/cookie";
 import { UserAction } from "$routes/_actions/authenticated";
 import { getDayInSecond } from "$utils/cookie";
 
@@ -22,15 +23,13 @@ export abstract class AuthenticatedUser extends UserAction implements HasAdmin, 
     createCookie = async (idToken?: string, keep?: boolean) => {
         const expiresIn = idToken ? getDayInSecond(keep ? 7 : 1) : 0;
 
-        const options: CookieSerializeOptions = { maxAge: expiresIn, httpOnly: true, secure: true };
-
         const sessionCookie = idToken
             ? await this.auth.createSessionCookie(idToken, {
                   expiresIn: expiresIn * 1000,
               })
             : "";
 
-        return serialize("session", sessionCookie, options);
+        return serialize(SESSION_COOKIE, sessionCookie, { ...options, maxAge: expiresIn });
     };
 
     updatePassword = async (password: string) => {

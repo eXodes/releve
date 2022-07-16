@@ -5,11 +5,14 @@ import "dotenv/config";
 import "./admin";
 import { dev } from "$app/env";
 import { User } from "$_model/user";
+import { SESSION_COOKIE } from "$config/cookie";
 import { getCookie } from "$utils/endpoint";
 
 export const handle: Handle = async ({ event, resolve }) => {
     try {
-        event.locals.user = await User.verifySession(getCookie(event.request.headers, "session"));
+        event.locals.user = await User.verifySession(
+            getCookie(event.request.headers, SESSION_COOKIE)
+        );
 
         return resolve(event);
     } catch (error) {
