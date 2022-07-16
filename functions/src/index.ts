@@ -21,7 +21,7 @@ export const sveltekit = functions
         let result;
 
         try {
-            result = sveltekitServer(request, response);
+            result = await sveltekitServer(request, response);
         } catch (error) {
             functions.logger.error(error);
         }
