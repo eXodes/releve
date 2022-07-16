@@ -68,4 +68,4 @@ jobs:
         with:
           args: deploy --only functions,hosting
         env:
-          GCP_SA_KEY: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_RELEVE_APP }}"
+          FIREBASE_TOKEN: "${{ secrets.FIREBASE_TOKEN }}"
