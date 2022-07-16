@@ -1,3 +1,5 @@
+export const firebaseEmulator = import.meta.env.SVELTE_FIREBASE_EMULATOR;
+
 export const firebaseConfig = {
     apiKey: "AIzaSyA3NgA6IkjdZvWucvPW4Kf9HWmQLx0yye8",
     authDomain: "releve-app.firebaseapp.com",
