@@ -16,11 +16,12 @@
         "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
         "lint": "prettier --check --plugin-search-dir=. . && eslint .",
         "format": "prettier --write --plugin-search-dir=. .",
-        "firebase:emu:start": "firebase emulators:start --only auth,firestore,pubsub,storage",
-        "firebase:emu:deploy": "firebase emulators:start --only functions,hosting",
-        "firebase:seed": "tsx ./src/seeder/index.ts",
-        "firebase:seed:faker": "tsx ./src/seeder/dev.ts",
-        "firebase:seed:production": "NODE_ENV=production tsx ./src/seeder/index.ts",
+        "firebase:emu:start": "firebase emulators:start",
+        "firebase:emu:tools": "firebase emulators:start --only auth,firestore,pubsub,storage,extensions",
+        "firebase:emu:server": "firebase emulators:start --only functions,hosting",
+        "firebase:seed": "tsx ./src/seeder",
+        "firebase:seed:faker": "tsx ./src/seeder/faker",
+        "firebase:seed:production": "NODE_ENV=production tsx ./src/seeder",
         "firebase:deploy": "firebase deploy --only hosting,functions"
     },
     "devDependencies": {
@@ -71,5 +72,6 @@
         "svelte-hero-icons": "^4.1.3",
         "validator": "^13.7.0",
         "vest": "^4.4.2"
-    }
+    },
+    "node": "16"
 }
