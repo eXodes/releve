@@ -1,0 +1,59 @@
+{{#> layout }}
+<td class="email-body" style="width: 100%">
+    <table align="center" class="email-body_inner sm-w-full" style="margin-left: auto; margin-right: auto; width: 570px; background-color: #fff" cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+            <td style="padding: 45px">
+                <div style="font-size: 16px">
+                    <h1 style="margin-top: 0; text-align: left; font-size: 24px; font-weight: 700; color: #333333">
+                        Hi
+                        {{name}},
+                    </h1>
+                    <p style="margin-top: 6px; margin-bottom: 5px; font-size: 16px; line-height: 24px; color: #51545E">
+                        Thank you for registering with us. Please click the button below to verify
+                        your email address.
+                    </p>
+                    <table align="center" style="margin: 30px auto; width: 100%; text-align: center" cellpadding="0" cellspacing="0" role="presentation">
+                        <tr>
+                            <td align="center">
+                                <table style="width: 100%" cellpadding="0" cellspacing="0" role="presentation">
+                                    <tr>
+                                        <td align="center" style="font-size: 16px">
+                                            <a href="{{action_url}}" target="_blank" style="display: inline-block; border-radius: 6px; border-width: 1px; border-color: transparent; background-color: #e11d48; padding: 8px 16px; font-size: 14px; font-weight: 500; color: #fff; text-decoration-line: none; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05)">
+                                                Verify email
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <p style="margin-top: 8px; margin-bottom: 15px; font-size: 14px; line-height: 24px; color: #51545E">
+                        <strong>
+                            This verification is only valid for the next 24 hours.
+                        </strong>
+                    </p>
+                    <p style="margin-top: 6px; margin-bottom: 5px; font-size: 16px; line-height: 24px; color: #51545E">
+                        Thank you,
+                        <br />
+                        {{product.name}}
+                        Team
+                    </p>
+                    <table style="margin-top: 25px; padding-top: 25px; border-top: 1px solid #eaeaec" cellpadding="0" cellspacing="0" role="presentation">
+                        <tr>
+                            <td>
+                                <p style="margin-top: 6px; margin-bottom: 5px; font-size: 12px; line-height: 24px; color: #51545E">
+                                    If you're having trouble with the button above, copy and paste
+                                    the URL below into your web browser.
+                                </p>
+                                <a href="{{action_url}}" style="margin-top: 6px; margin-bottom: 5px; font-size: 12px; line-height: 24px; color: #51545E">
+                                    {{action_url}}
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+</td>
+{{/layout}}
