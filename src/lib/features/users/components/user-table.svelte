@@ -186,7 +186,11 @@
                             </th>
                             <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                 <span class="sr-only">Edit</span>
-                                <SearchInput on:input={(e) => handleSearch(e)} />
+                                <SearchInput
+                                    label="Search user by email"
+                                    placeholder="Search user email"
+                                    on:input={(e) => handleSearch(e)}
+                                />
                             </th>
                         </tr>
                     </thead>
