@@ -4,8 +4,10 @@
 
     import TextInput from "$components/shared/text-input.svelte";
 
+    export let label = "Search";
     export let name = "search";
     export let value: string | undefined = undefined;
+    export let placeholder = "Search";
 
     const dispatch = createEventDispatcher<{
         input: {
@@ -28,14 +30,12 @@
     <TextInput
         type="search"
         id="display-name"
-        label="Search user by email"
+        label={label}
         name={name}
         bind:value
-        autocomplete="nickname"
-        placeholder="Search user email"
+        placeholder={placeholder}
         hideLabel={true}
         hideOptional={true}
-        required
         on:input
         class="ml-auto font-normal sm:w-48"
     >
