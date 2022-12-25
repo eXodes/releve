@@ -5,26 +5,20 @@ import * as functions from "firebase-functions";
 import sveltekitServer from "../lib/sveltekit";
 
 const runtimeOptions: RuntimeOptions = {
-    minInstances: 1,
+    minInstances: 0,
 };
 
 export const sveltekit = functions
     .runWith(runtimeOptions)
     .https.onRequest(async (request, response) => {
-        if (!sveltekitServer) {
-            functions.logger.info("Initialising SvelteKit SSR entry");
-            functions.logger.info("SvelteKit SSR entry initialised!");
-        }
-
         functions.logger.info("Requested resource: " + request.originalUrl);
 
-        let result;
-
         try {
-            result = await sveltekitServer(request, response);
+            return await sveltekitServer(request, response);
         } catch (error) {
             functions.logger.error(error);
+            response.status(500).send({
+                error: "Internal server error",
+            });
         }
-
-        return result;
     });
