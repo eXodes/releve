@@ -18,6 +18,6 @@ module.exports = {
         node: true,
     },
     rules: {
-        "no-console": ["error", { allow: ["warn", "error"] }],
+        "no-console": ["error", { allow: ["warn", "error", "info"] }],
     },
 };
