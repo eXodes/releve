@@ -51,8 +51,6 @@ export const patch: RequestHandler<PatchOutput | ErrorResponse> = async ({
 
         const collection = new ShopCollection();
 
-        const shopData = await collection.get(params.uid);
-
         await collection.set({
             uid: params.uid,
             name: payload.name,
@@ -67,17 +65,12 @@ export const patch: RequestHandler<PatchOutput | ErrorResponse> = async ({
                 country: payload.country,
             },
             status: payload.status,
-            createdAt: shopData.createdAt,
-            createdBy: {
-                uid: shopData.createdBy.uid,
-                name: shopData.createdBy.name,
-            },
         });
 
         return {
             status: 200,
             body: {
-                message: 'Shop "' + payload.name + '" has been saved.',
+                message: payload.name + " shop has been saved.",
             },
         };
     } catch (error) {
@@ -89,7 +82,19 @@ export type DeleteOutput = {
     message: string;
 };
 
-export const del: RequestHandler<DeleteOutput> = async ({ params }) => {
+export const del: RequestHandler<DeleteOutput | ErrorResponse> = async ({ locals, params }) => {
+    const user = locals.user;
+
+    if (!user) {
+        return handleError(new Error("Not authenticated."));
+    }
+
+    const userData = user.data();
+
+    if (!userData.customClaims.isAdmin) {
+        return handleError(new Error("Not authorized."));
+    }
+
     const collection = new ShopCollection();
     await collection.delete(params.uid);
 

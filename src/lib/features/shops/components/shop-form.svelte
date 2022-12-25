@@ -20,9 +20,12 @@
     import Button from "$components/shared/button.svelte";
     import SelectInput from "$components/shared/select-input.svelte";
     import TextInput from "$components/shared/text-input.svelte";
+    import UrlInput from "$components/shared/url-input.svelte";
+    import CheckboxInput from "$components/shared/checkbox-input.svelte";
     import ActionableCard from "$components/shared/actionable-card.svelte";
 
     export let shopData: Shop | undefined = undefined;
+    export let isPrivate = false;
     export let formAction: string;
 
     let shop: UpdateShopDto = {
@@ -35,7 +38,8 @@
         state: "",
         postalCode: "",
         country: "Malaysia",
-        status: undefined,
+        status: ShopStatus.PENDING,
+        private: isPrivate,
     };
 
     let result: SuiteRunResult;
@@ -48,11 +52,15 @@
 
     const handleChange = async ({
         detail,
-    }: CustomEvent<{ name: string; value: string | string[] }>) => {
+    }: CustomEvent<{ name: string; value: string | string[] | boolean }>) => {
         shop = {
             ...shop,
             [camelCase(detail.name)]: detail.value,
         };
+
+        if (detail.name === "private") {
+            detail.value ? (shop.status = undefined) : (shop.status = ShopStatus.PENDING);
+        }
 
         if (detail.name === "country") {
             shop.state = "";
@@ -78,6 +86,7 @@
                 postalCode: shopData.address.postalCode,
                 country: shopData.address.country,
                 status: shopData.status,
+                private: isPrivate,
             };
 
             result = suite(shop);
@@ -159,6 +168,7 @@
                         value={shop.status}
                         autocomplete="status"
                         required
+                        disabled={shop.private}
                         errors={errors["status"]}
                         on:input={handleChange}
                     >
@@ -178,7 +188,7 @@
             </div>
 
             <div class="col-span-6 sm:col-span-4">
-                <TextInput
+                <UrlInput
                     id="shop-link"
                     label="Link"
                     name="link"
@@ -299,6 +309,18 @@
                     autocomplete="postal-code"
                     required
                     errors={errors["postal-code"]}
+                    on:input={handleChange}
+                />
+            </div>
+
+            <div class="col-span-6">
+                <CheckboxInput
+                    label="Make this shop private"
+                    id="private"
+                    name="private"
+                    value="true"
+                    checked={shop.private}
+                    disabled={isPrivate}
                     on:input={handleChange}
                 />
             </div>

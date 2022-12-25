@@ -53,12 +53,18 @@ export const schema = Joi.object({
         "any.required": "Country is required.",
         "string.base": "Country must be a string.",
     }),
-    status: Joi.string()
-        .required()
-        .valid(ShopStatus.PENDING, ShopStatus.APPROVED, ShopStatus.REJECTED)
-        .messages({
-            "any.required": "Status is required.",
-            "any.only": "Status must be one of PENDING, APPROVED, or REJECTED.",
-            "string.base": "Status must be a string.",
-        }),
+    status: Joi.string().when("private", {
+        is: false,
+        then: Joi.required()
+            .valid(ShopStatus.PENDING, ShopStatus.APPROVED, ShopStatus.REJECTED)
+            .messages({
+                "any.required": "Status is required.",
+                "any.only": `Status must be one of "${ShopStatus.PENDING}", "${ShopStatus.APPROVED}", or "${ShopStatus.PENDING}".`,
+                "string.base": "Status must be a string.",
+            }),
+    }),
+    private: Joi.boolean().messages({
+        "any.required": "Private is required.",
+        "boolean.base": "Private must be a boolean.",
+    }),
 });

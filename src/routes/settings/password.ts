@@ -1,7 +1,9 @@
+import type { RequestHandler } from "./__types/password";
+import type { ErrorResponse } from "$types/response";
+
 import { handleError } from "$routes/_errors";
 import { validate } from "$routes/_validations";
 import { schema } from "$routes/_validations/settings/update-password.schema";
-import type { RequestHandler } from "./__types/account";
 
 import { getFormData } from "$utils/data";
 
@@ -10,7 +12,11 @@ export type Payload = {
     confirmPassword: string;
 };
 
-export const post: RequestHandler = async ({ request, locals }) => {
+export interface PostOutput {
+    success: boolean;
+}
+
+export const post: RequestHandler<PostOutput | ErrorResponse> = async ({ request, locals }) => {
     const user = locals.user;
 
     if (!user) {

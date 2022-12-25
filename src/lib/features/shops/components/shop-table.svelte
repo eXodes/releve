@@ -58,7 +58,7 @@
     const handleEditSubmit = async () => {
         showEditShop = false;
 
-        await invalidate($page.url.pathname);
+        await invalidate($page.url.toString());
     };
 
     const handleToggleAll = () => {
@@ -72,9 +72,7 @@
 
         showDeleteShop = false;
 
-        $page.url.searchParams.get("offset")
-            ? await invalidate(`shops?${$page.url.searchParams.toString()}`)
-            : await invalidate("shops");
+        await invalidate($page.url.toString());
     };
 
     const handleBulkConfirm = () => {
@@ -88,9 +86,7 @@
 
         showDeleteShops = false;
 
-        $page.url.searchParams.get("offset")
-            ? await invalidate(`shops?${$page.url.searchParams.toString()}`)
-            : await invalidate("shops");
+        await invalidate($page.url.toString());
     };
 
     const getButtonsProps = (shop: Shop) => {
@@ -207,7 +203,11 @@
                             </th>
                             <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                 <span class="sr-only">Edit</span>
-                                <SearchInput on:input={(e) => handleSearch(e)} />
+                                <SearchInput
+                                    label="Search shop by name"
+                                    placeholder="Search shop name"
+                                    on:input={(e) => handleSearch(e)}
+                                />
                             </th>
                         </tr>
                     </thead>

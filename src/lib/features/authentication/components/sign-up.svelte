@@ -10,6 +10,7 @@
 
     import Alert from "$components/shared/alert.svelte";
     import TextInput from "$components/shared/text-input.svelte";
+    import PasswordInput from "$components/shared/password-input.svelte";
     import Button from "$components/shared/button.svelte";
 
     let result: SuiteRunResult;
@@ -23,7 +24,6 @@
         password: "",
         confirmPassword: "",
     };
-
     const handleChange = ({ detail }: CustomEvent<{ name: string; value: string }>) => {
         user = {
             ...user,
@@ -97,9 +97,8 @@
     </div>
 
     <div>
-        <TextInput
+        <PasswordInput
             label="Password"
-            type="password"
             id="password"
             name="password"
             autocomplete="new-password"
@@ -111,9 +110,8 @@
     </div>
 
     <div>
-        <TextInput
+        <PasswordInput
             label="Confirm password"
-            type="password"
             id="confirm-password"
             name="confirm-password"
             autocomplete="confirm-new-password"

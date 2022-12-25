@@ -1,25 +1,10 @@
-import type { CounterData } from "$_model/counter";
-
-import "dotenv/config";
-import { cert } from "firebase-admin/app";
 import { Timestamp } from "firebase-admin/firestore";
 import { faker } from "@faker-js/faker";
 
-import { initializeSeeder, runSeeder } from "./_fireseed";
-import { counterConverter } from "$_collection/counter";
-import { getFileContent } from "$utils/file-system";
+import { runSeeder } from "../_fireseed";
 import { getGravatarURL } from "$utils/generator";
 
-const config = {
-    credential: cert(
-        JSON.parse(getFileContent(process.env.GOOGLE_APPLICATION_CREDENTIALS as string))
-    ),
-    storageBucket: process.env.STORAGE_BUCKET,
-};
-
-initializeSeeder(config);
-
-const fakeUsers = runSeeder(async ({ auth, firestore }) => {
+runSeeder(async ({ auth, firestore }) => {
     console.info("Seeding fake users...");
 
     const COUNT = 50;
@@ -63,28 +48,15 @@ const fakeUsers = runSeeder(async ({ auth, firestore }) => {
             });
     }
 
-    const snapshot = await firestore
-        .collection("counter")
-        .withConverter(counterConverter)
-        .doc("users")
-        .get();
+    const snapshot = await firestore.collection("users").get();
 
-    const { count } = snapshot.data() as CounterData;
-
-    await firestore
-        .collection("counter")
-        .doc("users")
-        .set({
-            count: count + COUNT,
-        });
-
-    console.info("Seeding fake users completed");
-});
-
-await Promise.allSettled([fakeUsers])
+    await firestore.collection("counter").doc("users").set({
+        count: snapshot.size,
+    });
+})
     .then(() => {
-        console.info("Seeding completed");
+        console.info("Seeding fake users completed");
     })
-    .catch((err) => {
-        console.error(err);
+    .catch((error) => {
+        console.error(error);
     });

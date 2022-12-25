@@ -1,6 +1,6 @@
 import { ValidationError } from "$routes/_errors/errors";
 
-export const handleError = (error: unknown) => {
+export const handleError = (error: unknown, status?: number) => {
     if (error instanceof ValidationError) {
         return {
             status: error.status,
@@ -12,7 +12,7 @@ export const handleError = (error: unknown) => {
 
     if (error instanceof Error) {
         return {
-            status: 400,
+            status: status ?? 400,
             body: { error: error.message },
         };
     }

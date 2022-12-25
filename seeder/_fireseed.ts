@@ -72,6 +72,7 @@ class FirebaseSeeder {
 const firebaseSeeder = new FirebaseSeeder();
 
 export const initializeSeeder = (config: AppOptions) => {
+    console.info("Initializing firebase seeder...");
     firebaseSeeder.init(config);
 };
 

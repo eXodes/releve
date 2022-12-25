@@ -18,8 +18,10 @@ export const ShopService = {
             fetch: options?.fetch,
         });
     },
-    delete: async (uid: string): Promise<void> => {
-        await endpoint(`/shops/${uid}`, { method: "DELETE" });
+    delete: async (uid: string, isPrivate = false): Promise<void> => {
+        const resource = isPrivate ? `/my/shops/${uid}` : `/shops/${uid}`;
+
+        await endpoint(resource, { method: "DELETE" });
     },
     deleteAll: async (uids: string[]): Promise<void> => {
         await endpoint<void, Payload>("/shops/bulk", {

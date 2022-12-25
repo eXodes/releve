@@ -57,15 +57,5 @@ jobs:
       - name: Install node dependencies
         run: npm ci && npm --prefix functions ci
 
-      - name: Run functions build
-        run: npm --prefix functions run build
-
       - name: Run build
         run: npm run build
-
-      - uses: joinflux/firebase-tools@v9.16.0
-        name: Deploy to Firebase
-        with:
-          args: deploy --only functions,hosting
-        env:
-          FIREBASE_TOKEN: "${{ secrets.FIREBASE_TOKEN }}"

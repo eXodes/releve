@@ -6,7 +6,6 @@ import type { MetaQuery, PaginationMeta } from "$types/meta";
 import { parse } from "qs";
 
 import { ShopCollection } from "$_collection/shops";
-import { ShopStatus } from "$features/shops/enum";
 
 export interface GetOutput {
     shops: (BaseEntity & ShopData)[];
@@ -19,11 +18,10 @@ export const get: RequestHandler<GetOutput> = async ({ url }) => {
     const collection = new ShopCollection();
 
     try {
-        const { shops, meta } = await collection.getPaginated({
+        const { shops, meta } = await collection.getApprovedShops({
             offset: query.offset ? +query.offset : 0,
             limit: query.limit ? +query.limit : 15,
             orderBy: query.orderBy ?? "name",
-            status: ShopStatus.APPROVED,
         });
 
         return {

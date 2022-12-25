@@ -4,6 +4,7 @@
 
     import { onMount } from "svelte";
     import { camelCase } from "lodash-es";
+    import { Icon, QuestionMarkCircle } from "svelte-hero-icons";
 
     import suite from "$features/authentication/validations/sign-in";
     import { AuthService } from "$features/authentication/services";
@@ -14,7 +15,10 @@
 
     import Alert from "$components/shared/alert.svelte";
     import TextInput from "$components/shared/text-input.svelte";
+    import PasswordInput from "$components/shared/password-input.svelte";
+    import CheckboxInput from "$components/shared/checkbox-input.svelte";
     import Button from "$components/shared/button.svelte";
+    import Tooltip from "$components/shared/tooltip.svelte";
 
     let result: SuiteRunResult;
     let errors: { [key: string]: string[] } = {};
@@ -87,7 +91,7 @@
     </div>
 
     <div class="space-y-1">
-        <TextInput
+        <PasswordInput
             label="Password"
             id="password"
             name="password"
@@ -100,17 +104,24 @@
         />
     </div>
 
-    <div class="flex items-center justify-between">
-        <div class="flex items-center">
-            <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                class="h-4 w-4 rounded border-gray-300 text-rose-600 accent-rose-500 hover:bg-gray-50 focus:outline-none focus:ring-rose-500"
-                bind:checked={user.rememberMe}
+    <div class="flex items-center gap-2">
+        <CheckboxInput
+            label="Remember me"
+            id="remember-me"
+            name="remember-me"
+            bind:checked={user.rememberMe}
+        />
+
+        <Tooltip
+            content="If checked, your session will be remembered for 7 days. Otherwise, it will be remembered for 1 day."
+        >
+            <Icon
+                src={QuestionMarkCircle}
+                solid
+                class="h-5 w-5 text-gray-500 hover:text-gray-600"
             />
-            <label for="remember-me" class="ml-2 block text-sm text-gray-900"> Remember me </label>
-        </div>
+            <span class="sr-only">Show validation error</span>
+        </Tooltip>
     </div>
 
     <Alert show={!!successMessage} color={Color.SUCCESS}>

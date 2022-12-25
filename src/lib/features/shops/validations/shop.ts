@@ -1,6 +1,5 @@
-import { ShopStatus } from "$features/shops/enum";
 import validator from "validator";
-import { create, enforce, omitWhen, only, test } from "vest";
+import { create, enforce, only, test } from "vest";
 
 export interface UpdateShopDto {
     name: string;
@@ -13,6 +12,7 @@ export interface UpdateShopDto {
     postalCode: string;
     country: string;
     status?: string;
+    private: boolean;
 }
 
 enforce.extend({
@@ -30,7 +30,6 @@ const suite = create(
             streetAddress,
             city,
             postalCode,
-            status,
         }: UpdateShopDto,
         field?: string
     ) => {
@@ -66,16 +65,6 @@ const suite = create(
 
         test("postal-code", "Postal code is not valid.", () => {
             enforce(postalCode).matches(/^([A-Z|\d]+[-\s])*[A-Z|\d]*$/);
-        });
-
-        omitWhen(!status, () => {
-            test("status", "Status is not valid.", () => {
-                enforce(status).inside([
-                    ShopStatus.PENDING,
-                    ShopStatus.APPROVED,
-                    ShopStatus.REJECTED,
-                ]);
-            });
         });
     }
 );

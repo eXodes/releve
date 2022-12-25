@@ -4,8 +4,8 @@ import type { ShopData } from "$_model/shop";
 import type { Observer, Subject } from "$routes/_contracts/observable";
 import type { HasCounter, HasPagination } from "$routes/_contracts/pagination";
 import type { MetaQuery, PaginationMeta } from "$types/meta";
+import type { PartialByKeys } from "$types/utils";
 
-import { isArray } from "lodash-es";
 import { stringify } from "qs";
 
 import { CounterCollection } from "$_collection/counter";
@@ -66,9 +66,9 @@ export class ShopCollection
 {
     private counterCollection: CounterCollection;
 
-    constructor() {
-        super("shops", shopConverter);
-        this.counterCollection = new CounterCollection("shops");
+    constructor(collection = "shops", private route = "/shops") {
+        super(collection, shopConverter);
+        this.counterCollection = new CounterCollection(collection);
     }
 
     private updateUser = async (user: User) => {
@@ -93,8 +93,11 @@ export class ShopCollection
         });
     };
 
-    add = async (shop: ShopData) => {
-        await super.add(shop);
+    add = async (shop: PartialByKeys<ShopData, "status">) => {
+        await super.add({
+            ...shop,
+            status: shop.status ?? ShopStatus.PENDING,
+        });
 
         if (shop.status === ShopStatus.APPROVED) {
             await this.increaseCounter();
@@ -102,9 +105,9 @@ export class ShopCollection
     };
 
     set = async (shop: Partial<BaseEntity & ShopData>) => {
-        const shopData = await super.get(shop.uid as string);
+        const shopData = await this.get(shop.uid as string);
 
-        super.set(shop);
+        await super.set(shop);
 
         if (shopData.status !== ShopStatus.APPROVED && shop.status === ShopStatus.APPROVED) {
             await this.increaseCounter();
@@ -123,8 +126,26 @@ export class ShopCollection
         }
     };
 
-    deleteAll = async (uids: string | string[]) => {
-        isArray(uids) ? uids.map(async (uid) => await this.delete(uid)) : await this.delete(uids);
+    deleteAll = async (uids: string[]) => {
+        const approvedUids = uids.map(async (uid) => {
+            const shop = await this.get(uid);
+
+            await super.delete(uid);
+
+            if (shop.status === ShopStatus.APPROVED) {
+                return uid;
+            } else {
+                return null;
+            }
+        });
+
+        const counter = await Promise.allSettled(approvedUids).then((results) => {
+            return results
+                .map((result) => (result.status === "fulfilled" ? result.value : null))
+                .filter((uid) => uid !== null).length;
+        });
+
+        await this.decreaseCounter(counter);
     };
 
     update = async (subject: Subject) => {
@@ -156,10 +177,10 @@ export class ShopCollection
             previous:
                 offset === 0
                     ? null
-                    : `/shops?${stringify({ offset: offset - limit, limit, orderBy })}`,
+                    : `${this.route}?${stringify({ offset: offset - limit, limit, orderBy })}`,
             next: nextSnapshot?.empty
                 ? null
-                : `/shops?${stringify({ offset: offset + limit, limit, orderBy })}`,
+                : `${this.route}?${stringify({ offset: offset + limit, limit, orderBy })}`,
         };
     };
 
@@ -168,8 +189,13 @@ export class ShopCollection
         orderBy,
         offset,
         status,
+        search,
     }: MetaQuery): Promise<{ shops: (BaseEntity & ShopData)[]; meta: PaginationMeta }> => {
         let collection = this.collection.orderBy(orderBy);
+
+        if (search) {
+            collection = collection.where("name", "==", search);
+        }
 
         if (status) {
             collection = collection.where("status", "==", status);
@@ -188,25 +214,58 @@ export class ShopCollection
         return { shops, meta };
     };
 
+    getShops = async ({
+        limit,
+        orderBy,
+        offset,
+        search,
+    }: MetaQuery): Promise<{
+        shops: (BaseEntity & ShopData)[];
+        meta: PaginationMeta;
+    }> => {
+        return this.getPaginated({
+            limit,
+            orderBy,
+            offset,
+            search,
+        });
+    };
+
+    getApprovedShops = async ({
+        limit,
+        orderBy,
+        offset,
+    }: MetaQuery): Promise<{
+        shops: (BaseEntity & ShopData)[];
+        meta: PaginationMeta;
+    }> => {
+        return this.getPaginated({
+            limit,
+            orderBy,
+            offset,
+            status: ShopStatus.APPROVED,
+        });
+    };
+
     getCount = async (): Promise<number> => {
         const { count } = await this.counterCollection.get();
 
         return count;
     };
 
-    increaseCounter = async () => {
+    increaseCounter = async (value = 1) => {
         const count = await this.getCount();
 
         await this.counterCollection.set({
-            count: count + 1,
+            count: count + value,
         });
     };
 
-    decreaseCounter = async () => {
+    decreaseCounter = async (value = 1) => {
         const count = await this.getCount();
 
         await this.counterCollection.set({
-            count: count - 1,
+            count: count - value,
         });
     };
 }

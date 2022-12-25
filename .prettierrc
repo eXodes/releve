@@ -13,5 +13,6 @@
     "semi": true,
     "useTabs": false,
     "svelteSortOrder": "options-scripts-markup-styles",
-    "svelteAllowShorthand": false
+    "svelteAllowShorthand": false,
+    "tailwindConfig": "./tailwind.config.cjs"
 }
