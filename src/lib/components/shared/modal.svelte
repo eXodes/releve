@@ -32,12 +32,12 @@
         initialFocus={closeButtonRef}
         on:close={() => !sticky && handleClose()}
     >
-        <div class="block min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:p-0">
+        <div class="flex min-h-screen items-end justify-center p-0 text-center md:block md:p-0">
             <TransitionChild
-                enter="ease-out duration-300"
+                enter="ease-out duration-400"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"
-                leave="ease-in duration-200"
+                leave="ease-in duration-300"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
             >
@@ -45,10 +45,13 @@
             </TransitionChild>
 
             <!-- {/* This element is to trick the browser into centering the modal contents. */} -->
-            <span class="inline-block align-middle lg:h-screen" aria-hidden="true"> &#8203; </span>
+            <span class="hidden align-middle md:inline-block md:h-screen" aria-hidden="true">
+                &#8203;
+            </span>
+
             <TransitionChild
                 class={classNames(
-                    "relative inline-block w-full transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all sm:my-8 sm:max-h-[80vh] sm:w-full sm:max-w-4xl",
+                    "mt-auto relative inline-block w-full transform overflow-hidden rounded-t-lg md:rounded-lg bg-white text-left align-middle shadow-xl transition-all sm:max-h-[80vh] sm:w-full sm:max-w-3xl xl:max-w-5xl",
                     padding && "px-4 pt-5 pb-4 sm:p-6"
                 )}
                 enter="ease-out duration-300"
