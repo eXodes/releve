@@ -4,10 +4,11 @@ import type { ShopData } from "$_model/shop";
 import type { MetaQuery, PaginationMeta } from "$types/meta";
 import type { ErrorResponse } from "$types/response";
 
-import { parse } from "qs";
 import { Timestamp } from "firebase-admin/firestore";
+import { parse } from "qs";
 
 import { ShopCollection } from "$_collection/shops";
+import { UserShopCollection } from "$_collection/user-shops";
 import { ShopStatus } from "$features/shops/enum";
 import { handleError } from "$routes/_errors";
 import { validate } from "$routes/_validations";
@@ -37,10 +38,11 @@ export const get: RequestHandler<GetOutput | ErrorResponse> = async ({ locals, u
 
         const collection = new ShopCollection();
 
-        const { shops, meta } = await collection.getPaginated({
+        const { shops, meta } = await collection.getShops({
             offset: query.offset ? +query.offset : 0,
             limit: query.limit ? +query.limit : 30,
             orderBy: query.orderBy ?? "createdAt",
+            search: query.search,
         });
 
         return {
@@ -66,6 +68,7 @@ export type Payload = {
     postalCode: string;
     country: string;
     status?: ShopStatus;
+    private: string;
 };
 
 export interface PostOutput {
@@ -86,23 +89,31 @@ export const post: RequestHandler<PostOutput | ErrorResponse> = async ({ request
 
         const payload = getFormData<Payload>(formData);
 
-        validate(schema, { ...payload, status: payload.status ?? ShopStatus.PENDING });
+        const isPrivate = payload.private === "true";
 
-        const collection = new ShopCollection();
+        const payloadData = {
+            ...payload,
+            status: isPrivate ? undefined : payload.status ?? ShopStatus.PENDING,
+            private: isPrivate,
+        };
+
+        validate(schema, payloadData);
+
+        const collection = isPrivate ? new UserShopCollection(userData.uid) : new ShopCollection();
 
         await collection.add({
-            name: payload.name,
-            link: payload.link,
-            categories: payload.categories,
-            deliveryServices: payload.deliveryServices,
+            name: payloadData.name,
+            link: payloadData.link,
+            categories: payloadData.categories,
+            deliveryServices: payloadData.deliveryServices,
             address: {
-                street: payload.streetAddress,
-                city: payload.city,
-                state: payload.state,
-                postalCode: payload.postalCode,
-                country: payload.country,
+                street: payloadData.streetAddress,
+                city: payloadData.city,
+                state: payloadData.state,
+                postalCode: payloadData.postalCode,
+                country: payloadData.country,
             },
-            status: payload.status ?? ShopStatus.PENDING,
+            status: payloadData.status,
             createdAt: Timestamp.now(),
             createdBy: {
                 uid: userData.uid,
@@ -111,7 +122,7 @@ export const post: RequestHandler<PostOutput | ErrorResponse> = async ({ request
         });
 
         const message =
-            payload.status === ShopStatus.APPROVED
+            payload.status === ShopStatus.APPROVED || isPrivate
                 ? "Shop added successfully."
                 : "Shop has been submitted for approval.";
 
