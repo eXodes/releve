@@ -11,13 +11,21 @@ export interface SignUpDto {
 
 enforce.extend({
     isEmail: validator.isEmail,
-    isStrongPassword: validator.isStrongPassword,
+    isStrongPassword: (value) => {
+        return validator.isStrongPassword(value, {
+            minLength: 8,
+            minLowercase: 1,
+            minUppercase: 1,
+            minNumbers: 1,
+            minSymbols: 0,
+        });
+    },
 });
 
 const suite = create(
     ({ displayName, email, password, confirmPassword }: SignUpDto, field?: string) => {
         only(field);
-        confirmPassword && include("confirm-password").when("password");
+        include("confirm-password").when((draft) => !draft.hasErrors("password"));
 
         test("email", "Email is required.", () => {
             enforce(email).isNotBlank();

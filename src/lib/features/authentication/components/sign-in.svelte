@@ -15,6 +15,7 @@
 
     import Alert from "$components/shared/alert.svelte";
     import TextInput from "$components/shared/text-input.svelte";
+    import PasswordInput from "$components/shared/password-input.svelte";
     import CheckboxInput from "$components/shared/checkbox-input.svelte";
     import Button from "$components/shared/button.svelte";
     import Tooltip from "$components/shared/tooltip.svelte";
@@ -90,7 +91,7 @@
     </div>
 
     <div class="space-y-1">
-        <TextInput
+        <PasswordInput
             label="Password"
             id="password"
             name="password"
