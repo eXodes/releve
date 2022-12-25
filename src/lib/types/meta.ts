@@ -1,7 +1,7 @@
 import type { Fetch } from "$utils/endpoint";
 
 export interface MetaQuery {
-    [key: string]: string | number | undefined;
+    [key: string]: string | number | boolean | undefined;
     orderBy: string;
     offset: number;
     limit: number;
