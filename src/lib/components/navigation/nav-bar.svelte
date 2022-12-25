@@ -7,7 +7,7 @@
 
     import { session } from "$app/stores";
 
-    import UserMenu from "$components/navigation/user-menu.svelte";
+    import UserMenu from "$features/users/components/user-menu.svelte";
 
     const appName = import.meta.env.SVELTE_APP_NAME;
 
@@ -32,6 +32,11 @@
     };
 
     $: navigation = [
+        {
+            name: "My Shops",
+            href: `/my/shops`,
+            show: $session.user?.uid,
+        },
         { name: "Shops", href: "/shops", show: $session.user?.claims?.isAdmin },
         { name: "Users", href: "/users", show: $session.user?.claims?.isAdmin },
     ];
@@ -42,20 +47,20 @@
         <nav class="relative flex items-center justify-between sm:h-10" aria-label="Global">
             <div class="flex flex-1 items-center md:absolute md:inset-y-0 md:left-0">
                 <div class="flex w-full items-center justify-between md:w-auto">
-                    <div class="flex items-center gap-2">
-                        <a href="/">
+                    <a href="/" class="flex items-center gap-2">
+                        <div>
                             <span class="sr-only">{appName}</span>
                             <img
                                 class="h-8 w-auto sm:h-10"
                                 src="/workflow-mark.svg"
                                 alt="{appName} logo"
                             />
-                        </a>
+                        </div>
 
                         <h1 class="text-xl font-medium text-rose-900">
                             {appName}
                         </h1>
-                    </div>
+                    </a>
                     <div class="-mr-2 flex items-center gap-4 md:hidden">
                         {#if $session.user}
                             <slot name="action-mobile" />
