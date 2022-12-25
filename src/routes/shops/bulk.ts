@@ -1,4 +1,4 @@
-import type { RequestHandler } from "./__types";
+import type { RequestHandler } from "./__types/bulk";
 import type { ErrorResponse } from "$types/response";
 
 import { ShopCollection } from "$_collection/shops";

@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-    import type { Load } from "./__types";
+    import type { Load } from "./__types/__layout";
 
     export const load: Load = ({ session, props }) => {
         if (!session.user?.claims?.isAdmin) {

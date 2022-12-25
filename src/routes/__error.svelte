@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-    import type { Load } from "@sveltejs/kit";
+    import type { Load } from "./__types/__error";
 
     export const load: Load = ({ error, status }) => {
         return {

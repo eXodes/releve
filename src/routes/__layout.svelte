@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-    import type { Load } from "./__types";
+    import type { Load } from "./__types/__layout";
 
     import { countries } from "$features/countries/store";
     import { categories } from "$features/categories/store";
@@ -22,6 +22,8 @@
     import "../app.css";
 
     import { Exclamation } from "svelte-hero-icons";
+
+    import { session } from "$app/stores";
 
     import Layout from "$components/layouts/base-layout.svelte";
     import Banner, { type Content } from "$components/shared/banner.svelte";
