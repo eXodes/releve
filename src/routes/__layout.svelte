@@ -38,7 +38,9 @@
 <Layout>
     <slot />
 
-    <Banner icon={Exclamation} content={content} />
+    {#if !$session.authenticated}
+        <Banner icon={Exclamation} content={content} />
+    {/if}
 </Layout>
 
 <Toast />
