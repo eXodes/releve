@@ -21,14 +21,17 @@ jobs:
       - name: Install node dependencies
         run: npm ci && npm --prefix functions ci
 
-      - name: Run build test
-        run: npm run bundle
+      - name: Run prepare
+        run: npm run prepare
 
       - name: Run type-check
         run: npm run check
 
       - name: Run linter
         run: npm run lint
+
+      - name: Run build test
+        run: npm run bundle
 
 #      - name: Install Playwright
 #        run: npx playwright install --with-deps
