@@ -1,18 +1,20 @@
-import { runSeeder } from "../_fireseed";
-import { getFiles } from "$utils/file-system";
+import { getFiles } from "$server/utils/file-system";
 import { resolve } from "path";
+import { runSeeder } from "../_fireseed";
+
+const assetPath = resolve("./seeder/assets");
 
 export default runSeeder(async ({ bucket }) => {
-    const path = resolve("./seeder/assets");
-
-    const assets = await getFiles(path);
+    const assets = await getFiles(assetPath);
 
     assets.map(async (file: string) => {
-        const filePath = `${path}/${file}`;
+        const filePath = `${assetPath}/${file}`;
 
         const bucketFile = bucket.file(filePath);
 
-        if (!(await bucketFile.exists())) {
+        const [exists] = await bucketFile.exists();
+
+        if (!exists) {
             console.info("Seeding assets: " + filePath);
 
             await bucket.upload(filePath, {

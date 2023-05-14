@@ -1,12 +1,10 @@
+import type { Bucket } from "@google-cloud/storage";
 import "dotenv/config";
 import admin from "firebase-admin";
 import { type App, type AppOptions, initializeApp } from "firebase-admin/app";
 import { type Auth, getAuth } from "firebase-admin/auth";
 import { type Firestore, getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
-import type { Bucket } from "@google-cloud/storage";
-
-const production = process.env.NODE_ENV === "production";
 
 interface RunServices {
     app: App;
@@ -22,12 +20,6 @@ class FirebaseSeeder {
     private bucket: Bucket | undefined;
 
     constructor(protected config?: AppOptions) {
-        if (!production) {
-            process.env["FIREBASE_AUTH_EMULATOR_HOST"] = "127.0.0.1:9099";
-            process.env["FIRESTORE_EMULATOR_HOST"] = "127.0.0.1:8080";
-            process.env["FIREBASE_STORAGE_EMULATOR_HOST"] = "127.0.0.1:9199";
-        }
-
         if (config) this.init(config);
     }
 
@@ -36,11 +28,13 @@ class FirebaseSeeder {
             this.app = initializeApp(config);
         }
 
-        this.auth = getAuth(this.app);
+        if (this.app) {
+            this.auth = getAuth(this.app);
 
-        this.firestore = getFirestore(this.app);
+            this.firestore = getFirestore(this.app);
 
-        this.bucket = getStorage(this.app).bucket(process.env.STORAGE_BUCKET);
+            this.bucket = getStorage(this.app).bucket(process.env.STORAGE_BUCKET);
+        }
     }
 
     async seed(run: (services: RunServices) => void | Promise<void>) {

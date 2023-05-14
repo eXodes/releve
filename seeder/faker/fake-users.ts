@@ -1,8 +1,9 @@
-import { Timestamp } from "firebase-admin/firestore";
+import { getGravatarURL } from "$client/utils/generator";
+import type { UserEntity } from "$module/user/user.entity";
 import { faker } from "@faker-js/faker";
+import { Timestamp } from "firebase-admin/firestore";
 
 import { runSeeder } from "../_fireseed";
-import { getGravatarURL } from "$utils/generator";
 
 runSeeder(async ({ auth, firestore }) => {
     console.info("Seeding fake users...");
@@ -14,34 +15,54 @@ runSeeder(async ({ auth, firestore }) => {
     for (let index = 0; index < users.length; index++) {
         const email = faker.internet.email();
 
-        const record = await auth.createUser({
-            displayName: faker.name.findName(),
+        const user: UserEntity = {
+            displayName: faker.name.fullName(),
             email: faker.internet.email(),
-            password: "Pa$$w0rd!",
             emailVerified: true,
-            photoURL: getGravatarURL(email),
+            avatar: {
+                small: {
+                    url: getGravatarURL(email, 200),
+                    width: 200,
+                    height: 200,
+                },
+                medium: {
+                    url: getGravatarURL(email, 500),
+                    width: 500,
+                    height: 500,
+                },
+                large: {
+                    url: getGravatarURL(email, 1200),
+                    width: 1200,
+                    height: 1200,
+                },
+            },
+            customClaims: {
+                isAdmin: faker.helpers.arrayElement([true, false]),
+            },
+            disabled: false,
+            createdAt: Timestamp.fromDate(new Date(faker.date.between("2019-01-02", "2019-12-31"))),
+        };
+
+        const record = await auth.createUser({
+            displayName: user.displayName,
+            email: user.email,
+            password: "fake-password",
+            emailVerified: user.emailVerified,
+            photoURL: user.avatar.small.url,
         });
+
+        await auth.setCustomUserClaims(record.uid, user.customClaims);
 
         await firestore
             .collection("users")
             .doc(record.uid)
             .set({
                 displayName: record.displayName,
-                about: null,
                 email: record.email,
                 emailVerified: record.emailVerified,
-                avatar: {
-                    small: {
-                        url: getGravatarURL(email, 200),
-                    },
-                    medium: {
-                        url: getGravatarURL(email, 500),
-                    },
-                    large: {
-                        url: getGravatarURL(email, 1200),
-                    },
-                },
-                disabled: false,
+                avatar: user.avatar,
+                customClaims: user.customClaims,
+                disabled: user.disabled,
                 createdAt: Timestamp.fromDate(
                     new Date(faker.date.between("2019-01-02", "2019-12-31"))
                 ),

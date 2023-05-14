@@ -9,14 +9,18 @@ import "./config";
     const countries = await import("./factory/countries").then(
         ({ default: countries }) => countries
     );
-    const deliveryServices = await import("./factory/delivery-services").then(
+    const deliveryProviders = await import("./factory/delivery-providers").then(
         ({ default: deliveryServices }) => deliveryServices
     );
     const templates = await import("./factory/templates").then(
         ({ default: templates }) => templates
     );
 
-    Promise.all([admin, assets, categories, countries, deliveryServices, templates]).then(() => {
-        console.info("Seeding completed");
-    });
+    Promise.all([admin, assets, categories, countries, deliveryProviders, templates])
+        .then(() => {
+            console.info("Seeding completed");
+        })
+        .catch((err) => {
+            console.error(err);
+        });
 })();

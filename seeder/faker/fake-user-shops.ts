@@ -1,5 +1,6 @@
-import { Timestamp } from "firebase-admin/firestore";
+import type { ShopEntity } from "$module/shop/shop.entity";
 import { faker } from "@faker-js/faker";
+import { Timestamp } from "firebase-admin/firestore";
 
 import { runSeeder } from "../_fireseed";
 
@@ -11,33 +12,29 @@ runSeeder(async ({ auth, firestore }) => {
         .get()
         .then((snapshot) => snapshot.docs.map((doc) => doc.data().name));
 
-    const deliveryServices: string[] = await firestore
-        .collection("delivery-services")
+    const deliveryProviders: string[] = await firestore
+        .collection("delivery-providers")
         .get()
         .then((snapshot) => snapshot.docs.map((doc) => doc.data().name));
 
-    const getRandomCategory = (): string => {
-        const randomIndex = Math.floor(Math.random() * categories.length);
-        return categories[randomIndex];
-    };
-
-    const getRandomDeliveryService = (): string => {
-        const randomIndex = Math.floor(Math.random() * deliveryServices.length);
-        return deliveryServices[randomIndex];
-    };
-
-    const COUNT = 100;
+    const COUNT = 50;
 
     const shops = Array(COUNT).fill({});
 
     const user = await auth.getUserByEmail(process.env.MAIL_FROM_ADDRESS as string);
 
     for (let index = 0; index < shops.length; index++) {
-        await firestore.collection(`users/${user.uid}/shops`).add({
-            name: faker.company.companyName(),
+        const shop: Omit<ShopEntity, "status"> = {
+            name: faker.company.name(),
             link: faker.internet.domainWord() + ".com",
-            categories: [getRandomCategory()],
-            deliveryServices: [getRandomDeliveryService()],
+            categories: faker.helpers.arrayElements(
+                categories,
+                faker.datatype.number({ min: 1, max: 3 })
+            ),
+            deliveryProviders: faker.helpers.arrayElements(
+                deliveryProviders,
+                faker.datatype.number({ min: 1, max: 3 })
+            ),
             address: {
                 street: faker.address.streetAddress(),
                 city: faker.address.city(),
@@ -49,14 +46,16 @@ runSeeder(async ({ auth, firestore }) => {
             createdAt: Timestamp.fromDate(new Date(faker.date.between("2019-01-02", "2019-12-31"))),
             createdBy: {
                 uid: user.uid,
-                name: user.displayName,
+                name: user.displayName as string,
             },
-        });
+        };
+
+        await firestore.collection(`${"users"}/${user.uid}/shops`).add(shop);
     }
 
-    const snapshot = await firestore.collection(`users/${user.uid}/shops`).get();
+    const snapshot = await firestore.collection(`${"users"}/${user.uid}/shops`).get();
 
-    await firestore.collection("counter").doc(`users/${user.uid}/shops`).set({
+    await firestore.collection("counter").doc(`${"users"}/${user.uid}/shops`).set({
         count: snapshot.size,
     });
 })

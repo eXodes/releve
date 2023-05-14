@@ -1,7 +1,7 @@
+import type { UserEntity } from "$module/user/user.entity";
+import { getGravatarURL } from "$client/utils/generator";
 import { Timestamp } from "firebase-admin/firestore";
-
 import { runSeeder } from "../_fireseed";
-import { getGravatarURL } from "$utils/generator";
 
 const production = process.env.NODE_ENV === "production";
 
@@ -25,31 +25,40 @@ export default runSeeder(async ({ auth, firestore }) => {
 
         await auth.setCustomUserClaims(userRecord.uid, customClaims);
 
-        await firestore
-            .collection("users")
-            .doc(userRecord.uid)
-            .set({
-                displayName: userRecord.displayName,
-                about: null,
-                email: userRecord.email,
-                emailVerified: userRecord.emailVerified,
-                avatar: {
-                    small: {
-                        url: getGravatarURL(process.env.MAIL_FROM_ADDRESS as string, 200),
-                    },
-                    medium: {
-                        url: getGravatarURL(process.env.MAIL_FROM_ADDRESS as string, 500),
-                    },
-                    large: {
-                        url: getGravatarURL(process.env.MAIL_FROM_ADDRESS as string, 1200),
-                    },
+        const adminUser: UserEntity = {
+            displayName: userRecord.displayName as string,
+            email: userRecord.email as string,
+            emailVerified: userRecord.emailVerified,
+            avatar: {
+                small: {
+                    url: getGravatarURL(process.env.MAIL_FROM_ADDRESS as string, 200),
+                    width: 200,
+                    height: 200,
+                    alt: `${userRecord.displayName} avatar`,
                 },
-                disabled: false,
-                customClaims,
-                createdAt: Timestamp.fromDate(
-                    production ? new Date(userRecord.metadata.creationTime) : new Date("2019-01-01")
-                ),
-            });
+                medium: {
+                    url: getGravatarURL(process.env.MAIL_FROM_ADDRESS as string, 500),
+                    width: 500,
+                    height: 500,
+                    alt: `${userRecord.displayName} avatar`,
+                },
+                large: {
+                    url: getGravatarURL(process.env.MAIL_FROM_ADDRESS as string, 1200),
+                    width: 1200,
+                    height: 1200,
+                    alt: `${userRecord.displayName} avatar`,
+                },
+            },
+            disabled: false,
+            customClaims: {
+                isAdmin: customClaims.isAdmin,
+            },
+            createdAt: Timestamp.fromDate(
+                production ? new Date(userRecord.metadata.creationTime) : new Date("2019-01-01")
+            ),
+        };
+
+        await firestore.collection("users").doc(userRecord.uid).set(adminUser);
 
         await firestore.collection("counter").doc("users").set({
             count: 1,

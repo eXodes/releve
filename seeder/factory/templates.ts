@@ -1,6 +1,6 @@
-import { runSeeder } from "../_fireseed";
-import { getFileContent } from "$utils/file-system";
+import { getFileContent } from "$server/utils/file-system";
 import { resolve } from "path";
+import { runSeeder } from "../_fireseed";
 
 interface Template {
     subject: string;
