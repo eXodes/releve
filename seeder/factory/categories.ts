@@ -1,6 +1,6 @@
-import { runSeeder } from "../_fireseed";
-import { getFile } from "$utils/file-system";
+import { getFile } from "$server/utils/file-system";
 import { resolve } from "path";
+import { runSeeder } from "../_fireseed";
 
 export default runSeeder(async ({ firestore }) => {
     const path = resolve("./seeder/json/categories.json");

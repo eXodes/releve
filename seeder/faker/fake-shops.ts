@@ -1,8 +1,9 @@
-import { Timestamp } from "firebase-admin/firestore";
+import { ShopStatus } from "$features/shops/enum";
+import type { ShopEntity } from "$module/shop/shop.entity";
 import { faker } from "@faker-js/faker";
+import { Timestamp } from "firebase-admin/firestore";
 
 import { runSeeder } from "../_fireseed";
-import { ShopStatus } from "$features/shops/enum";
 
 runSeeder(async ({ auth, firestore }) => {
     console.info("Seeding fake shops...");
@@ -12,27 +13,12 @@ runSeeder(async ({ auth, firestore }) => {
         .get()
         .then((snapshot) => snapshot.docs.map((doc) => doc.data().name));
 
-    const deliveryServices: string[] = await firestore
-        .collection("delivery-services")
+    const deliveryProviders: string[] = await firestore
+        .collection("delivery-providers")
         .get()
         .then((snapshot) => snapshot.docs.map((doc) => doc.data().name));
 
-    const statuses: string[] = Object.values(ShopStatus);
-
-    const getRandomCategory = (): string => {
-        const randomIndex = Math.floor(Math.random() * categories.length);
-        return categories[randomIndex];
-    };
-
-    const getRandomDeliveryService = (): string => {
-        const randomIndex = Math.floor(Math.random() * deliveryServices.length);
-        return deliveryServices[randomIndex];
-    };
-
-    const getRandomStatus = (): string => {
-        const randomIndex = Math.floor(Math.random() * statuses.length);
-        return statuses[randomIndex];
-    };
+    const statuses: ShopStatus[] = Object.values(ShopStatus);
 
     const COUNT = 100;
 
@@ -40,12 +26,20 @@ runSeeder(async ({ auth, firestore }) => {
 
     const user = await auth.getUserByEmail(process.env.MAIL_FROM_ADDRESS as string);
 
+    if (!user) throw new Error("User not found");
+
     for (let index = 0; index < shops.length; index++) {
-        await firestore.collection("shops").add({
-            name: faker.company.companyName(),
+        const shop: ShopEntity = {
+            name: faker.company.name(),
             link: faker.internet.domainWord() + ".com",
-            categories: [getRandomCategory()],
-            deliveryServices: [getRandomDeliveryService()],
+            categories: faker.helpers.arrayElements(
+                categories,
+                faker.datatype.number({ min: 1, max: 3 })
+            ),
+            deliveryProviders: faker.helpers.arrayElements(
+                deliveryProviders,
+                faker.datatype.number({ min: 1, max: 3 })
+            ),
             address: {
                 street: faker.address.streetAddress(),
                 city: faker.address.city(),
@@ -53,14 +47,15 @@ runSeeder(async ({ auth, firestore }) => {
                 postalCode: faker.address.zipCode(),
                 country: faker.address.country(),
             },
-            status: getRandomStatus(),
-            private: false,
+            status: faker.helpers.arrayElement(statuses),
             createdAt: Timestamp.fromDate(new Date(faker.date.between("2019-01-02", "2019-12-31"))),
             createdBy: {
                 uid: user.uid,
-                name: user.displayName,
+                name: user.displayName as string,
             },
-        });
+        };
+
+        await firestore.collection("shops").add(shop);
     }
 
     const snapshot = await firestore

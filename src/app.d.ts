@@ -1,18 +1,16 @@
-/// <reference types="@sveltejs/kit" />
-
-// See https://kit.svelte.dev/docs/types#app
-// for information about these interfaces
 declare namespace App {
     interface Locals {
-        user?: import("$_model/user").User;
+        session?: import("$module/auth/auth.model").Auth;
     }
+
+    // interface PageData {}
 
     // interface Platform {}
 
-    interface Session {
-        authenticated: boolean;
-        user?: import("$features/authentication/types").UserSession;
+    interface Error {
+        status: number;
+        code: string;
+        message: string;
+        stack?: string;
     }
-
-    // interface Stuff {}
 }
