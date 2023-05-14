@@ -24,6 +24,9 @@ jobs:
       - name: Install node dependencies
         run: npm ci && npm --prefix functions ci
 
+      - name: Run functions build test
+        run: npm --prefix functions run build
+
       - name: Run build test
         run: npm run build
 
@@ -32,9 +35,6 @@ jobs:
 
       - name: Run linter
         run: npm run lint
-
-      - name: Run functions build test
-        run: npm --prefix functions run build
 
       - name: Install Playwright
         run: npx playwright install --with-deps
