@@ -13,6 +13,21 @@
     "storage": {
         "rules": "storage.rules"
     },
+    "hosting": {
+        "public": "public",
+        "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+        "predeploy": ["npm run build"],
+        "rewrites": [
+            {
+                "source": "**",
+                "function": "sveltekit",
+                "region": "us-central1"
+            }
+        ]
+    },
+    "remoteconfig": {
+        "template": "remoteconfig.template.json"
+    },
     "emulators": {
         "auth": {
             "port": 9099
@@ -35,20 +50,6 @@
         "ui": {
             "enabled": true
         }
-    },
-    "remoteconfig": {
-        "template": "remoteconfig.template.json"
-    },
-    "hosting": {
-        "public": "public",
-        "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-        "predeploy": ["npm run build"],
-        "rewrites": [
-            {
-                "source": "**",
-                "function": "sveltekit"
-            }
-        ]
     },
     "extensions": {
         "firestore-send-email": "firebase/firestore-send-email@0.1.17",

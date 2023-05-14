@@ -10,24 +10,34 @@
         "skipLibCheck": true,
         "sourceMap": true,
         "strict": true,
+        "strictPropertyInitialization": false,
         "paths": {
-            "$lib": ["src/lib"],
-            "$lib/*": ["src/lib/*"],
-            "$actions/*": ["src/lib/actions/*"],
-            "$components/*": ["src/lib/components/*"],
-            "$config/*": ["src/lib/config/*"],
-            "$enums/*": ["src/lib/enums/*"],
-            "$features/*": ["src/lib/features/*"],
-            "$stores/*": ["src/lib/stores/*"],
-            "$layouts/*": ["src/lib/layouts/*"],
-            "$types/*": ["src/lib/types/*"],
-            "$utils/*": ["src/lib/utils/*"],
-            "$validations/*": ["src/lib/validations/*"],
-            "$routes/*": ["src/routes/*"],
-            "$_model/*": ["src/routes/_model/*"],
-            "$_collection/*": ["src/routes/_collection/*"]
-        }
+            "$lib": ["./src/lib"],
+            "$lib/*": ["./src/lib/*"],
+            "$client": ["./src/lib/client"],
+            "$client/*": ["./src/lib/client/*"],
+            "$features": ["./src/lib/client/features"],
+            "$features/*": ["./src/lib/client/features/*"],
+            "$server": ["./src/lib/server"],
+            "$server/*": ["./src/lib/server/*"],
+            "$module": ["./src/lib/server/module"],
+            "$module/*": ["./src/lib/server/module/*"],
+            "$routes": ["./src/routes"],
+            "$routes/*": ["./src/routes/*"]
+        },
+        "types": ["svelte-match-media"]
     },
-    "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "env.d.ts"],
-    "exclude": ["node_modules", ".svelte-kit/*"]
+    "include": [
+        "./.svelte-kit/ambient.d.ts",
+        "./.svelte-kit/types/**/$client/types.d.ts",
+        "./vite.config.ts",
+        "./src/**/*.js",
+        "./src/**/*.ts",
+        "./src/**/*.svelte",
+        "./tests/**/*.js",
+        "./tests/**/*.ts",
+        "./tests/**/*.svelte",
+        "./seeder/**/*.ts"
+    ],
+    "exclude": ["node_modules", "functions"]
 }
