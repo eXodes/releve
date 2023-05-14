@@ -52,8 +52,9 @@ jobs:
     env:
       SVELTE_APP_NAME: ${{ vars.SVELTE_APP_NAME }}
       ORIGIN: ${{ vars.ORIGIN }}
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ vars.GOOGLE_CREDENTIALS_PATH }}
       MAIL_FROM_NAME: ${{ secrets.MAIL_FROM_NAME }}
-      MAIL_FROM_ADDRESS: ${{ vars.MAIL_FROM_ADDRESS }}
+      MAIL_FROM_ADDRESS: ${{ secrets.MAIL_FROM_ADDRESS }}
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
       GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
       STORAGE_API: ${{ secrets.STORAGE_API }}
@@ -77,6 +78,9 @@ jobs:
 
       - name: Run build
         run: npm run bundle
+
+      - name: Set Google credentials
+        run: ${{ secrets.GOOGLE_CREDENTIALS }} > ${{ github.workspace }}/${{ vars.GOOGLE_CREDENTIALS_PATH }}
 
       - name: Deploy to Firebase
         uses: joinflux/firebase-tools@master
