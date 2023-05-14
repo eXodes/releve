@@ -47,7 +47,18 @@ jobs:
     needs:
       - test
     runs-on: ubuntu-latest
+
     environment: prod
+    env:
+      SVELTE_APP_NAME: ${{ vars.SVELTE_APP_NAME }}
+      ORIGIN: ${{ vars.ORIGIN }}
+      STORAGE_API: ${{ vars.STORAGE_API }}
+      STORAGE_BUCKET: ${{ vars.STORAGE_BUCKET }}
+      MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
+      MAIL_FROM_ADDRESS: ${{ vars.MAIL_FROM_ADDRESS }}
+      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+      GOOGLE_CLOUD_PROJECT: ${{ vars.GOOGLE_CLOUD_PROJECT }}
+
     steps:
       - uses: actions/checkout@v3
         name: Checkout branch
@@ -63,6 +74,9 @@ jobs:
 
       - name: Run build
         run: npm run build
+
+      - name: Run seeder
+        run: npm run firebase:seed
 
       - name: Deploy to Firebase
         uses: joinflux/firebase-tools@master
