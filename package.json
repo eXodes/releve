@@ -6,6 +6,7 @@
         ".": "./packages"
     },
     "scripts": {
+        "prepare": "svelte-kit sync",
         "preinstall": "cd functions && npm install",
         "dev": "vite dev",
         "build": "vite build",
