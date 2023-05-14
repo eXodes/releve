@@ -24,11 +24,8 @@ jobs:
       - name: Install node dependencies
         run: npm ci && npm --prefix functions ci
 
-      - name: Run functions build test
-        run: npm --prefix functions run build
-
       - name: Run build test
-        run: npm run build
+        run: npm run bundle
 
       - name: Run type-check
         run: npm run check
@@ -73,7 +70,7 @@ jobs:
         run: npm ci
 
       - name: Run build
-        run: npm run build
+        run: npm run bundle
 
       - name: Run seeder
         run: npm run firebase:seed
