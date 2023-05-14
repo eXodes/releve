@@ -8,6 +8,7 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    environment: test
     steps:
       - uses: actions/checkout@v3
         name: Checkout branch
@@ -44,6 +45,7 @@ jobs:
     needs:
       - test
     runs-on: ubuntu-latest
+    environment: prod
     steps:
       - uses: actions/checkout@v3
         name: Checkout branch
