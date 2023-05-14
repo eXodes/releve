@@ -49,12 +49,12 @@ jobs:
     env:
       SVELTE_APP_NAME: ${{ vars.SVELTE_APP_NAME }}
       ORIGIN: ${{ vars.ORIGIN }}
-      STORAGE_API: ${{ vars.STORAGE_API }}
-      STORAGE_BUCKET: ${{ vars.STORAGE_BUCKET }}
-      MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
+      MAIL_FROM_NAME: ${{ secrets.MAIL_FROM_NAME }}
       MAIL_FROM_ADDRESS: ${{ vars.MAIL_FROM_ADDRESS }}
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-      GOOGLE_CLOUD_PROJECT: ${{ vars.GOOGLE_CLOUD_PROJECT }}
+      GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
+      STORAGE_API: ${{ secrets.STORAGE_API }}
+      STORAGE_BUCKET: ${{ secrets.STORAGE_BUCKET }}
 
     steps:
       - uses: actions/checkout@v3
