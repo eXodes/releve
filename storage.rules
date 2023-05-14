@@ -4,6 +4,9 @@ service firebase.storage {
   	match /assets {
     	allow read;
     }
+  	match /avatar {
+    	allow read;
+    }
     match /{allPaths=**} {
       allow read, write: if false;
     }
