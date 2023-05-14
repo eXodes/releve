@@ -2,7 +2,7 @@
     "name": "functions",
     "scripts": {
         "check": "tsc --noEmit",
-        "lint": "eslint --ext .js,.ts .",
+        "lint": "eslint .",
         "build": "tsc",
         "build:watch": "tsc --watch",
         "serve": "npm run build && firebase emulators:start --only functions",
