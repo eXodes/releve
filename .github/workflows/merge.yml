@@ -78,8 +78,11 @@ jobs:
       - name: Run build
         run: npm run bundle
 
-      - name: Set Google credentials
-        run: cp ${{ secrets.GOOGLE_CREDENTIALS }} > ${{ github.workspace }}/${{ vars.GOOGLE_CREDENTIALS_PATH }}
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          service_account: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: Deploy to Firebase
         uses: joinflux/firebase-tools@master
@@ -87,4 +90,3 @@ jobs:
           args: deploy --only functions,hosting
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ vars.GOOGLE_CREDENTIALS_PATH }}
