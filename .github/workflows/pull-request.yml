@@ -5,7 +5,6 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    environment: test
     steps:
       - uses: actions/checkout@v3
         name: Checkout branch
@@ -16,17 +15,20 @@ jobs:
           node-version: 18
           cache: 'npm'
 
+      - name: Copy env for test
+        run: cp .env.test .env
+
       - name: Install node dependencies
         run: npm ci && npm --prefix functions ci
-
-      - name: Run build test
-        run: npm run build
 
       - name: Run type-check
         run: npm run check
 
       - name: Run linter
         run: npm run lint
+
+      - name: Run build test
+        run: npm run build
 
       - name: Run functions build test
         run: npm --prefix functions run build
