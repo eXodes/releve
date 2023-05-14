@@ -79,7 +79,7 @@ jobs:
         run: npm run bundle
 
       - name: Set Google credentials
-        run: ${{ secrets.GOOGLE_CREDENTIALS }} > ${{ github.workspace }}/${{ vars.GOOGLE_CREDENTIALS_PATH }}
+        run: cp ${{ secrets.GOOGLE_CREDENTIALS }} > ${{ github.workspace }}/${{ vars.GOOGLE_CREDENTIALS_PATH }}
 
       - name: Deploy to Firebase
         uses: joinflux/firebase-tools@master
