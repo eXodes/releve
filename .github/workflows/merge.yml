@@ -72,9 +72,6 @@ jobs:
       - name: Run build
         run: npm run bundle
 
-      - name: Run seeder
-        run: npm run firebase:seed
-
       - name: Deploy to Firebase
         uses: joinflux/firebase-tools@master
         with:
