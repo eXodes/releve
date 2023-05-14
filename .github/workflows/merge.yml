@@ -84,9 +84,11 @@ jobs:
           service_account: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
 
-      - name: Deploy to Firebase
-        uses: joinflux/firebase-tools@master
+      - name: Authenticate to Firebase
+        uses: w9jds/setup-firebase@main
         with:
-          args: deploy --only functions,hosting
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          tools-version: 12.0.0
+          firebase_token: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Deploy to Firebase
+        run: npm run firebase:deploy
