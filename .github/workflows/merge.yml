@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-node@v3
         name: Setup Node
         with:
-          node-version: 16
+          node-version: 18
           cache: 'npm'
 
       - name: Install node dependencies
@@ -51,11 +51,18 @@ jobs:
       - uses: actions/setup-node@v3
         name: Setup Node
         with:
-          node-version: 16
+          node-version: 18
           cache: 'npm'
 
       - name: Install node dependencies
-        run: npm ci && npm --prefix functions ci
+        run: npm ci
 
       - name: Run build
         run: npm run build
+
+      - name: Deploy to Firebase
+        uses: joinflux/firebase-tools@master
+        with:
+          args: deploy --only functions,hosting
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
