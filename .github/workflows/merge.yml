@@ -87,8 +87,11 @@ jobs:
       - name: Authenticate to Firebase
         uses: w9jds/setup-firebase@main
         with:
-          tools-version: 12.0.0
+          tools-version: 12.3.0
           firebase_token: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Enable Firebase Webframeworks
+        run: npm run firebase:webframeworks
 
       - name: Deploy to Firebase
         run: npm run firebase:deploy
