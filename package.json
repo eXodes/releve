@@ -19,7 +19,7 @@
         "firebase:seed": "tsx ./seeder",
         "firebase:seed:faker": "tsx ./seeder/faker",
         "firebase:webframeworks": "firebase experiments:enable webframeworks",
-        "firebase:deploy": "firebase deploy --only hosting,"
+        "firebase:deploy": "firebase deploy --only hosting"
     },
     "devDependencies": {
         "@faker-js/faker": "^8.0.0",
