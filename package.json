@@ -19,8 +19,6 @@
         "lint": "prettier --check --plugin-search-dir=. . && eslint .",
         "format": "prettier --write --plugin-search-dir=. .",
         "firebase:emu:start": "firebase emulators:start",
-        "firebase:emu:tools": "firebase emulators:start --only auth,firestore,pubsub,storage,extensions",
-        "firebase:emu:server": "firebase emulators:start --only functions,hosting",
         "firebase:seed": "tsx ./seeder",
         "firebase:seed:faker": "tsx ./seeder/faker",
         "firebase:deploy": "firebase deploy --only hosting,"
