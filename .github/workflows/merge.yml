@@ -9,11 +9,11 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        name: Checkout branch
+      - name: Checkout branch
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3
-        name: Setup Node
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'npm'
@@ -22,7 +22,7 @@ jobs:
         run: cp .env.test .env
 
       - name: Install node dependencies
-        run: npm ci && npm --prefix functions ci
+        run: npm ci
 
       - name: Run prepare
         run: npm run prepare
@@ -34,7 +34,7 @@ jobs:
         run: npm run lint
 
       - name: Run build test
-        run: npm run bundle
+        run: npm run build
 
 #      - name: Install Playwright
 #        run: npx playwright install --with-deps
@@ -60,11 +60,11 @@ jobs:
       STORAGE_BUCKET: ${{ secrets.STORAGE_BUCKET }}
 
     steps:
-      - uses: actions/checkout@v3
-        name: Checkout branch
+      - name: Checkout branch
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3
-        name: Setup Node
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'npm'
