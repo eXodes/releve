@@ -23,7 +23,7 @@
         "firebase:emu:server": "firebase emulators:start --only functions,hosting",
         "firebase:seed": "tsx ./seeder",
         "firebase:seed:faker": "tsx ./seeder/faker",
-        "firebase:deploy": "firebase deploy --only functions,hosting,"
+        "firebase:deploy": "firebase deploy --only hosting,"
     },
     "devDependencies": {
         "@faker-js/faker": "^8.0.0",
