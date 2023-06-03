@@ -75,9 +75,6 @@ jobs:
       - name: Run prepare
         run: npm run prepare
 
-      - name: Enable Firebase Webframeworks
-        run: npm run firebase:webframeworks
-
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
