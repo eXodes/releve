@@ -7,13 +7,10 @@
     },
     "scripts": {
         "prepare": "svelte-kit sync",
-        "preinstall": "cd functions && npm install",
         "dev": "vite dev",
         "build": "vite build",
-        "bundle": "npm run --prefix functions build && npm run build",
         "preview": "vite preview",
         "test": "playwright test",
-        "precheck": "npm run --prefix functions check",
         "check": "svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
         "lint": "prettier --check --plugin-search-dir=. . && eslint .",
