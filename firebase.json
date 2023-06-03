@@ -1,7 +1,4 @@
 {
-    "functions": {
-        "source": "functions"
-    },
     "firestore": {
         "rules": "firestore.rules",
         "indexes": "firestore.indexes.json"
@@ -10,16 +7,12 @@
         "rules": "storage.rules"
     },
     "hosting": {
-        "public": "public",
+        "source": ".",
         "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
         "predeploy": ["npm run firebase:seed"],
-        "rewrites": [
-            {
-                "source": "**",
-                "function": "sveltekit",
-                "region": "us-central1"
-            }
-        ]
+        "frameworksBackend": {
+            "region": "asia-east1"
+        }
     },
     "remoteconfig": {
         "template": "remoteconfig.template.json"
@@ -27,9 +20,6 @@
     "emulators": {
         "auth": {
             "port": 9099
-        },
-        "functions": {
-            "port": 5001
         },
         "firestore": {
             "port": 8080

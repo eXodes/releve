@@ -1,5 +1,4 @@
 <script lang="ts">
-    import AuthLayout from "$client/components/layouts/auth-layout.svelte";
     import Link from "$client/components/shared/link.svelte";
     import ResetPasswordForm from "$features/authentication/components/reset-password-form.svelte";
 </script>
@@ -8,14 +7,14 @@
     <title>Reset Password</title>
 </svelte:head>
 
-<AuthLayout>
-    <svelte:fragment slot="title">Reset your password</svelte:fragment>
+<h2 class="mt-6 text-3xl font-extrabold text-gray-900">Reset your password</h2>
 
-    <svelte:fragment slot="subtext">Enter your new password below.</svelte:fragment>
+<p class="mt-2 text-sm text-gray-600">Enter your new password below.</p>
 
+<div class="mt-8">
     <ResetPasswordForm />
 
     <div class="mt-4 text-center text-sm">
         <Link href="/sign-in">Already have an account?</Link>
     </div>
-</AuthLayout>
+</div>

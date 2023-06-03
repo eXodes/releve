@@ -17,18 +17,8 @@
             {#if showLogo}
                 <img class="h-12 w-auto" src="/workflow-mark.svg" alt="Workflow" />
             {/if}
-            <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
-                <slot name="title" />
-            </h2>
-            <p class="mt-2 text-sm text-gray-600">
-                <slot name="subtext" />
-            </p>
 
-            <div class="mt-8">
-                <div class="mt-6">
-                    <slot />
-                </div>
-            </div>
+            <slot />
         </div>
     </div>
 </div>

@@ -1,13 +1,13 @@
 import { resolve } from "path";
 
 import { vitePreprocess } from "@sveltejs/kit/vite";
-import firebase from "svelte-adapter-firebase";
+import adapter from "@sveltejs/adapter-auto";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
     preprocess: vitePreprocess(),
     kit: {
-        adapter: firebase(),
+        adapter: adapter(),
         alias: {
             $lib: resolve("src/lib"),
             $client: resolve("src/lib/client"),
