@@ -75,6 +75,18 @@ jobs:
       - name: Run prepare
         run: npm run prepare
 
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          service_account: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: Authenticate to Firebase
+        uses: w9jds/setup-firebase@main
+        with:
+          tools-version: 12.3.0
+          firebase_token: ${{ secrets.FIREBASE_TOKEN }}
+
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         env:
