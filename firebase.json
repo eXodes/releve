@@ -9,7 +9,6 @@
     "hosting": {
         "source": ".",
         "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-        "predeploy": ["npm run firebase:seed"],
         "frameworksBackend": {
             "region": "asia-east1"
         }
