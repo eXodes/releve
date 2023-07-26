@@ -16,6 +16,7 @@ yarn.lock
 *.log
 
 # Firebase
+.firebase
 functions/lib
 
 # Misc
