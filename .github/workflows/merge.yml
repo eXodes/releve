@@ -48,7 +48,7 @@ jobs:
       - test
     runs-on: ubuntu-latest
 
-    environment: prod
+    environment: Production
 
     steps:
       - name: Checkout branch
@@ -71,13 +71,12 @@ jobs:
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
           SVELTE_APP_NAME: ${{ vars.SVELTE_APP_NAME }}
-          ORIGIN: ${{ vars.ORIGIN }}
-          MAIL_FROM_NAME: ${{ secrets.MAIL_FROM_NAME }}
-          MAIL_FROM_ADDRESS: ${{ secrets.MAIL_FROM_ADDRESS }}
+          MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
+          MAIL_FROM_ADDRESS: ${{ vars.MAIL_FROM_ADDRESS }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-          GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
+          GOOGLE_CLOUD_PROJECT: ${{ vars.FIREBASE_PROJECT_ID }}
           STORAGE_API: ${{ secrets.STORAGE_API }}
-          STORAGE_BUCKET: ${{ secrets.STORAGE_BUCKET }}
+          STORAGE_BUCKET: ${{ vars.STORAGE_BUCKET }}
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
