@@ -74,6 +74,7 @@ jobs:
           GOOGLE_CLOUD_PROJECT: ${{ vars.FIREBASE_PROJECT_ID }}
           STORAGE_API: ${{ secrets.STORAGE_API }}
           STORAGE_BUCKET: ${{ vars.STORAGE_BUCKET }}
+          ORIGIN: https://releve-app--${{ vars.GITHUB_REF }}-preview-deployment-htvtg6gn.web.app
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
