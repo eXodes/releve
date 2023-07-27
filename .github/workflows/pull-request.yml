@@ -38,3 +38,45 @@ jobs:
 #
 #      - name: Run test
 #        run: npm run test
+
+  deploy:
+    name: Deploy
+    needs:
+      - test
+    runs-on: ubuntu-latest
+
+    environment: staging
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install node dependencies
+        run: npm ci
+
+      - name: Run prepare
+        run: npm run prepare
+
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
+          SVELTE_APP_NAME: ${{ vars.SVELTE_APP_NAME }}
+          ORIGIN: ${{ vars.ORIGIN }}
+          MAIL_FROM_NAME: ${{ secrets.MAIL_FROM_NAME }}
+          MAIL_FROM_ADDRESS: ${{ secrets.MAIL_FROM_ADDRESS }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
+          STORAGE_API: ${{ secrets.STORAGE_API }}
+          STORAGE_BUCKET: ${{ secrets.STORAGE_BUCKET }}
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          channelId: ${{ vars.GITHUB_REF }}
+          projectId: ${{ vars.FIREBASE_PROJECT_ID }}
