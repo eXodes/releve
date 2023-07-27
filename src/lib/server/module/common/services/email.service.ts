@@ -1,4 +1,4 @@
-import { ORIGIN } from "$env/static/private";
+import { base } from "$app/paths";
 import { SVELTE_APP_NAME } from "$env/static/public";
 import type { Auth } from "$module/auth/auth.model";
 import app from "$server/services/firebase-admin";
@@ -8,8 +8,8 @@ import { getFirestore } from "firebase-admin/firestore";
 
 abstract class SendEmail {
     protected name = SVELTE_APP_NAME;
-    protected url = ORIGIN;
-    protected logo = ORIGIN + "/workflow-mark.svg";
+    protected baseUrl = base;
+    protected logo = base + "/workflow-mark.svg";
 
     abstract sendEmail<T>(data: T): Promise<void>;
 }
@@ -30,7 +30,7 @@ export class EmailTriggerService extends SendEmail {
                 data: {
                     product: {
                         name: this.name,
-                        url: this.url,
+                        url: this.baseUrl,
                         logo: this.logo,
                     },
                     ...data,
