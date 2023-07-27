@@ -49,15 +49,6 @@ jobs:
     runs-on: ubuntu-latest
 
     environment: prod
-    env:
-      SVELTE_APP_NAME: ${{ vars.SVELTE_APP_NAME }}
-      ORIGIN: ${{ vars.ORIGIN }}
-      MAIL_FROM_NAME: ${{ secrets.MAIL_FROM_NAME }}
-      MAIL_FROM_ADDRESS: ${{ secrets.MAIL_FROM_ADDRESS }}
-      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-      GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
-      STORAGE_API: ${{ secrets.STORAGE_API }}
-      STORAGE_BUCKET: ${{ secrets.STORAGE_BUCKET }}
 
     steps:
       - name: Checkout branch
@@ -79,6 +70,14 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
+          SVELTE_APP_NAME: ${{ vars.SVELTE_APP_NAME }}
+          ORIGIN: ${{ vars.ORIGIN }}
+          MAIL_FROM_NAME: ${{ secrets.MAIL_FROM_NAME }}
+          MAIL_FROM_ADDRESS: ${{ secrets.MAIL_FROM_ADDRESS }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
+          STORAGE_API: ${{ secrets.STORAGE_API }}
+          STORAGE_BUCKET: ${{ secrets.STORAGE_BUCKET }}
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
