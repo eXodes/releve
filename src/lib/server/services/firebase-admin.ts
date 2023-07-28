@@ -1,4 +1,4 @@
-import { env } from "$env/dynamic/private";
+import { GOOGLE_APPLICATION_CREDENTIALS } from "$env/static/private";
 import admin from "firebase-admin";
 import { type App, cert, initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
@@ -7,7 +7,7 @@ let app: App | undefined;
 
 if (!admin.apps.length) {
     app = initializeApp({
-        credential: cert(env.GOOGLE_APPLICATION_CREDENTIALS),
+        credential: cert(GOOGLE_APPLICATION_CREDENTIALS as string),
     });
 }
 
