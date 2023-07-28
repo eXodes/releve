@@ -1,3 +1,4 @@
+import { env } from "$env/dynamic/private";
 import admin from "firebase-admin";
 import { type App, applicationDefault, initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
@@ -17,6 +18,10 @@ if (app) {
 }
 
 // eslint-disable-next-line no-console
-console.log("Firebase Admin Initialized", app);
+console.log("[Service Account]: ", env.GOOGLE_APPLICATION_CREDENTIALS);
+// eslint-disable-next-line no-console
+console.log("[Firebase Admin]: ", admin.apps);
+// eslint-disable-next-line no-console
+console.log("[Firebase Admin Initialized]: ", app);
 
 export default app;
