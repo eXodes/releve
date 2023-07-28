@@ -70,7 +70,7 @@ jobs:
       - name: Make envfile
         uses: SpicyPizza/create-envfile@v2.0
         with:
-          envkey_GOOGLE_APPLICATION_CREDENTIALS: ${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}
+          envkey_GOOGLE_APPLICATION_CREDENTIALS: ./${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
