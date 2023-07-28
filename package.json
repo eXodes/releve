@@ -5,6 +5,10 @@
     "exports": {
         ".": "./packages"
     },
+    "files": [
+        ".svelte-kit",
+        "credentials.json"
+    ],
     "scripts": {
         "prepare": "svelte-kit sync",
         "dev": "vite dev",
