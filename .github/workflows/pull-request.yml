@@ -67,11 +67,14 @@ jobs:
       - name: Run prepare
         run: npm run prepare
 
+      - name: Set Google credentials
+        run: echo ${{ secrets.FIREBASE_SERVICE_ACCOUNT }} > ${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}
+
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}
           SVELTE_APP_NAME: ${{ vars.SVELTE_APP_NAME }}
           MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
           MAIL_FROM_ADDRESS: ${{ vars.MAIL_FROM_ADDRESS }}
