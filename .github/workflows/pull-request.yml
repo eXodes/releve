@@ -72,6 +72,7 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           SVELTE_APP_NAME: ${{ vars.SVELTE_APP_NAME }}
           MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
           MAIL_FROM_ADDRESS: ${{ vars.MAIL_FROM_ADDRESS }}
