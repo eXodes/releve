@@ -67,7 +67,7 @@ jobs:
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         env:
-          FIREBASE_CLI_EXPERIMENTS: webframeworks
+          FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
           SVELTE_APP_NAME: ${{ vars.SVELTE_APP_NAME }}
           MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
           MAIL_FROM_ADDRESS: ${{ vars.MAIL_FROM_ADDRESS }}
