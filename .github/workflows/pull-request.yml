@@ -19,9 +19,6 @@ jobs:
       - name: Copy env for test
         run: cp .env.test .env
 
-      - name: Create dummy credentials
-        run: touch credentials.json
-
       - name: Install node dependencies
         run: npm ci
 
