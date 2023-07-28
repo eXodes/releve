@@ -1,4 +1,3 @@
-import { GOOGLE_APPLICATION_CREDENTIALS } from "$env/static/private";
 import admin from "firebase-admin";
 import { type App, applicationDefault, initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
@@ -17,8 +16,6 @@ if (app) {
     });
 }
 
-// eslint-disable-next-line no-console
-console.log("GCP", GOOGLE_APPLICATION_CREDENTIALS);
 // eslint-disable-next-line no-console
 console.log("Firebase Admin Initialized", app);
 
