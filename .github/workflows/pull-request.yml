@@ -63,6 +63,11 @@ jobs:
       - name: Run prepare
         run: npm run prepare
 
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         env:
@@ -71,12 +76,9 @@ jobs:
           MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
           MAIL_FROM_ADDRESS: ${{ vars.MAIL_FROM_ADDRESS }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-          GOOGLE_CLOUD_PROJECT: ${{ vars.FIREBASE_PROJECT_ID }}
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           STORAGE_API: ${{ secrets.STORAGE_API }}
           STORAGE_BUCKET: ${{ vars.STORAGE_BUCKET }}
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
           channelId: ${{ vars.GITHUB_REF }}
-          projectId: ${{ vars.FIREBASE_PROJECT_ID }}
