@@ -5,6 +5,7 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
@@ -62,11 +63,6 @@ jobs:
 
       - name: Run prepare
         run: npm run prepare
-
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
