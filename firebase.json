@@ -12,7 +12,7 @@
         "frameworksBackend": {
             "region": "asia-east1",
             "maxInstances": 1,
-            "serviceAccount": "$SERVICE_ACCOUNT"
+            "serviceAccount": "firebase-deployment@releve-app.iam.gserviceaccount.com"
         }
     },
     "remoteconfig": {
