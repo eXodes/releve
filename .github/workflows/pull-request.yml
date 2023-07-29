@@ -78,4 +78,3 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
           channelId: ${{ vars.GITHUB_REF }}
-          firebaseToolsVersion: "11.30.0"
