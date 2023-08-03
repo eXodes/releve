@@ -7,7 +7,7 @@
     },
     "scripts": {
         "prepare": "svelte-kit sync",
-        "preinstall": "cd functions && npm install",
+        "preinstall": "cd functions && npm ci",
         "dev": "vite dev --port 8000",
         "prebuild": "npm run --prefix functions build",
         "build": "vite build",
