@@ -24,8 +24,7 @@
             "$module/*": ["./src/lib/server/module/*"],
             "$routes": ["./src/routes"],
             "$routes/*": ["./src/routes/*"]
-        },
-        "types": ["svelte-match-media"]
+        }
     },
     "include": [
         "./.svelte-kit/ambient.d.ts",
