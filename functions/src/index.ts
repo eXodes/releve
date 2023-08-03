@@ -1,24 +1,31 @@
-import { RuntimeOptions } from "firebase-functions";
-import * as functions from "firebase-functions";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore - no type information available for module
-import sveltekitServer from "../lib/sveltekit";
+import { logger } from "firebase-functions/v2";
+import { onRequest, type Request } from "firebase-functions/v2/https";
+import type { Response } from "express";
 
-const runtimeOptions: RuntimeOptions = {
-    minInstances: 0,
-};
+let sveltekitServer: (request: Request, response: Response) => Promise<void>;
 
-export const sveltekit = functions
-    .runWith(runtimeOptions)
-    .https.onRequest(async (request, response) => {
-        functions.logger.info("Requested resource: " + request.originalUrl);
+export const sveltekitSSR = onRequest(
+    { region: "asia-southeast1", minInstances: 0 },
+    async (request, response) => {
+        if (!sveltekitServer) {
+            logger.info("Initialising SvelteKit SSR...");
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore - no type information available for module
+            sveltekitServer = await import("../lib/sveltekitSSR").then((module) => module.default);
+
+            logger.info("SvelteKit SSR entry initialised!");
+        }
 
         try {
-            return await sveltekitServer(request, response);
+            logger.info("Requested resource: " + request.originalUrl);
+
+            return sveltekitServer(request, response);
         } catch (error) {
-            functions.logger.error(error);
+            logger.error(error);
             response.status(500).send({
                 error: "Internal server error",
             });
         }
-    });
+    }
+);
