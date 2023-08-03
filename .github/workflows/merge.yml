@@ -9,11 +9,11 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        name: Checkout branch
+      - name: Checkout branch
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3
-        name: Setup Node
+      - name: Setup node
+        uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'npm'
@@ -34,7 +34,7 @@ jobs:
         run: npm run lint
 
       - name: Run build test
-        run: npm run bundle
+        run: npm run build
 
 #      - name: Install Playwright
 #        run: npx playwright install --with-deps
@@ -48,23 +48,22 @@ jobs:
       - test
     runs-on: ubuntu-latest
 
-    environment: prod
+    environment: Production
     env:
+      FIREBASE_CLI_EXPERIMENTS: pintags
       SVELTE_APP_NAME: ${{ vars.SVELTE_APP_NAME }}
-      ORIGIN: ${{ vars.ORIGIN }}
-      MAIL_FROM_NAME: ${{ secrets.MAIL_FROM_NAME }}
-      MAIL_FROM_ADDRESS: ${{ secrets.MAIL_FROM_ADDRESS }}
+      MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
+      MAIL_FROM_ADDRESS: ${{ vars.MAIL_FROM_ADDRESS }}
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-      GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
       STORAGE_API: ${{ secrets.STORAGE_API }}
-      STORAGE_BUCKET: ${{ secrets.STORAGE_BUCKET }}
+      STORAGE_BUCKET: ${{ vars.STORAGE_BUCKET }}
 
     steps:
-      - uses: actions/checkout@v3
-        name: Checkout branch
+      - name: Checkout branch
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3
-        name: Setup Node
+      - name: Setup node
+        uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'npm'
@@ -75,19 +74,15 @@ jobs:
       - name: Run prepare
         run: npm run prepare
 
-      - name: Run build
-        run: npm run bundle
-
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
-          service_account: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Authenticate to Firebase
         uses: w9jds/setup-firebase@main
         with:
-          tools-version: 12.0.0
           firebase_token: ${{ secrets.FIREBASE_TOKEN }}
 
       - name: Deploy to Firebase
