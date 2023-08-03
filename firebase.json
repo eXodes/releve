@@ -11,7 +11,7 @@
     },
     "hosting": {
         "public": "public",
-        "predeploy": ["npm run build", "npm run firebase:seed"],
+        "predeploy": ["npm run firebase:seed"],
         "rewrites": [
             {
                 "source": "**",

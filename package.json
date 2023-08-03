@@ -8,7 +8,7 @@
     "scripts": {
         "prepare": "svelte-kit sync",
         "preinstall": "cd functions && npm install",
-        "dev": "vite dev",
+        "dev": "vite dev --port 8000",
         "prebuild": "npm run --prefix functions build",
         "build": "vite build",
         "preview": "vite preview",
@@ -24,7 +24,8 @@
         "firebase:emu:start": "firebase emulators:start",
         "firebase:seed": "tsx ./seeder",
         "firebase:seed:faker": "tsx ./seeder/faker",
-        "firebase:deploy": "firebase deploy --only functions,hosting,"
+        "firebase:deploy": "firebase deploy --only functions,hosting,",
+        "firebase:deploy:functions": "firebase deploy --only functions"
     },
     "devDependencies": {
         "@faker-js/faker": "^8.0.2",
