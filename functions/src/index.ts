@@ -5,7 +5,7 @@ import type { Response } from "express";
 let sveltekitServer: (request: Request, response: Response) => Promise<void>;
 
 export const sveltekitSSR = onRequest(
-    { region: "asia-southeast1", minInstances: 0 },
+    { region: "asia-southeast1", minInstances: 0, maxInstances: 10 },
     async (request, response) => {
         if (!sveltekitServer) {
             logger.info("Initialising SvelteKit SSR...");
