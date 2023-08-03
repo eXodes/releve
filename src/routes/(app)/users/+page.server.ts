@@ -1,3 +1,4 @@
+import type { MessageResponse } from "$client/types/response";
 import { getFormData } from "$client/utils/data";
 import type { UserData } from "$features/users/types";
 import { UserCollection } from "$module/user/user.collection";
@@ -15,10 +16,6 @@ export interface UsersOutput {
 
 export interface DeleteUsersPayload extends Record<string, string> {
     uids: string;
-}
-
-export interface DeleteUsersOutput {
-    message: string;
 }
 
 export const load: PageServerLoad<UsersOutput> = async ({ locals, url, depends }) => {
@@ -80,7 +77,7 @@ export const actions: Actions = {
 
             return {
                 message: "Users deleted.",
-            } satisfies DeleteUsersOutput;
+            } satisfies MessageResponse;
         } catch (error) {
             throw handleApiError(error);
         }

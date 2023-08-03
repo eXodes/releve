@@ -1,4 +1,4 @@
-import type { SignUpCheckPayload } from "$features/authentication/validations/sign-up-check";
+import type { SignUpCheckPayload } from "$features/authentication/validations/misc";
 import type { MessageResponse } from "$client/types/response";
 import { endpoint, formEndpoint } from "$client/utils/endpoint";
 import { auth } from "$client/utils/firebase";

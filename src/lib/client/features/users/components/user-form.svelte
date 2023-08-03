@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { applyAction, enhance, type SubmitFunction } from "$app/forms";
+    import { applyAction, enhance } from "$app/forms";
     import { page } from "$app/stores";
     import { countries, states } from "$features/countries/store";
     import { Role } from "$features/users/enum";
@@ -21,6 +21,7 @@
     import TextInput from "$client/components/shared/text-input.svelte";
     import TextareaInput from "$client/components/shared/textarea-input.svelte";
 
+    import type { SubmitFunction } from "@sveltejs/kit";
     import { camelCase, startCase } from "lodash-es";
     import { onMount } from "svelte";
     import { CheckCircle, Icon } from "svelte-hero-icons";
@@ -28,7 +29,7 @@
     import { media } from "svelte-match-media";
     import type { SuiteRunResult } from "vest";
 
-    export let userData: UserData;
+	export let userData: UserData;
     export let actionType: "users" | "settings";
 
     let actionUrl = {

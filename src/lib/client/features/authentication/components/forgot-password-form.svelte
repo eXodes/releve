@@ -1,6 +1,7 @@
 <script lang="ts">
-    import { enhance, type SubmitFunction } from "$app/forms";
+	import { enhance  } from "$app/forms";
     import { Color } from "$client/enums/theme";
+    import type { MessageResponse } from "$client/types/response";
     import suite, {
         type ForgotPasswordPayload,
     } from "$features/authentication/validations/forgot-password";
@@ -10,8 +11,9 @@
     import Button from "$client/components/shared/button.svelte";
     import TextInput from "$client/components/shared/text-input.svelte";
 
-    import { camelCase } from "lodash-es";
+    import type { SubmitFunction } from "@sveltejs/kit";
     import { createEventDispatcher } from "svelte";
+    import { camelCase } from "lodash-es";
     import type { SuiteRunResult } from "vest";
 
     let result: SuiteRunResult;
@@ -36,7 +38,7 @@
         errors = result.getErrors();
     };
 
-    const handleSubmit: SubmitFunction<{ message: string }, ValidationError> =
+    const handleSubmit: SubmitFunction<MessageResponse, ValidationError> =
         () =>
         async ({ result, update }) => {
             if (result.type === "failure") {
@@ -71,8 +73,7 @@
             autocomplete="email"
             required
             errors={errors["email"]}
-            on:input={handleChange}
-        />
+            on:input={handleChange} />
     </div>
 
     <Alert show={!!successMessage} color={Color.SUCCESS}>

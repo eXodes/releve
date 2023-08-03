@@ -1,3 +1,4 @@
+import type { MessageResponse } from "$client/types/response";
 import { PasswordResetLinkEmail } from "$module/auth/actions/email";
 import { AuthService } from "$module/auth/auth.service";
 import { forgotPasswordSchema } from "$module/auth/validation/forgot-password.schema";
@@ -13,14 +14,8 @@ export type ForgotPasswordPayload = {
     email: string;
 };
 
-export type ForgotPasswordOutput = {
-    message: string;
-};
-
 export const actions: Actions = {
-    default: async ({
-        request,
-    }): Promise<ForgotPasswordOutput | ActionFailure<ValidationError>> => {
+    default: async ({ request }): Promise<MessageResponse | ActionFailure<ValidationError>> => {
         const formData = await request.formData();
 
         const payload = getFormData<ForgotPasswordPayload>(formData);

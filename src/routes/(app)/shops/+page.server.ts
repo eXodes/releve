@@ -1,3 +1,4 @@
+import type { MessageResponse } from "$client/types/response";
 import { ShopStatus } from "$features/shops/enum";
 import type { ShopData } from "$features/shops/types";
 import { ShopCollection } from "$module/shop/shop.collection";
@@ -62,16 +63,8 @@ export type CreateShopPayload = {
     private: string;
 };
 
-export interface CreateShopOutput {
-    message: string;
-}
-
 export interface DeleteShopsPayload extends Record<string, string> {
     uids: string;
-}
-
-export interface DeleteShopsOutput {
-    message: string;
 }
 
 export const actions: Actions = {
@@ -141,7 +134,7 @@ export const actions: Actions = {
 
             return {
                 message,
-            } satisfies CreateShopOutput;
+            } satisfies MessageResponse;
         } catch (error) {
             throw handleApiError(error);
         }
@@ -168,7 +161,7 @@ export const actions: Actions = {
 
             return {
                 message: "Shops deleted.",
-            } satisfies DeleteShopsOutput;
+            } satisfies MessageResponse;
         } catch (error) {
             throw handleApiError(error);
         }

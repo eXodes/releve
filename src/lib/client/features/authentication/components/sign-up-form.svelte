@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { enhance, type SubmitFunction } from "$app/forms";
+    import { enhance } from "$app/forms";
     import { Color } from "$client/enums/theme";
     import { signUpSuite, type SignUpPayload } from "$features/authentication/validations/sign-up";
     import type { ValidationError } from "$client/types/error";
@@ -9,8 +9,9 @@
     import PasswordInput from "$client/components/shared/password-input.svelte";
     import TextInput from "$client/components/shared/text-input.svelte";
 
-    import { camelCase } from "lodash-es";
+	import type { SubmitFunction } from "@sveltejs/kit";
     import { createEventDispatcher } from "svelte";
+    import { camelCase } from "lodash-es";
     import type { SuiteRunResult } from "vest";
 
     let result: SuiteRunResult;

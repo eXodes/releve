@@ -1,4 +1,4 @@
-import { ORIGIN } from "$env/static/private";
+import { base } from "$app/paths";
 import type { UserSession } from "$features/authentication/types";
 import type { CanSendEmail, HasAdmin } from "$module/auth/auth.contract";
 import type { HasData } from "$module/common/contract/data";
@@ -11,7 +11,7 @@ export class Auth implements HasData<UserSession>, HasAdmin, CanSendEmail {
     constructor(protected user: UserSession) {}
 
     private auth = getAuth(app);
-    private baseUrl = ORIGIN;
+    private baseUrl = base;
     private signInUrl = this.baseUrl + "/sign-in";
     private resetPasswordUrl = this.baseUrl + "/reset-password";
 

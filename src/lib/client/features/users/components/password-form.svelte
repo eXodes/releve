@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { applyAction, enhance, type SubmitFunction } from "$app/forms";
+    import { applyAction, enhance } from "$app/forms";
     import { goto } from "$app/navigation";
     import { Color } from "$client/enums/theme";
     import type {
@@ -14,8 +14,9 @@
     import Button from "$client/components/shared/button.svelte";
     import PasswordInput from "$client/components/shared/password-input.svelte";
 
-    import { camelCase } from "lodash-es";
+	import type { SubmitFunction } from "@sveltejs/kit";
     import { createEventDispatcher } from "svelte";
+    import { camelCase } from "lodash-es";
     import type { SuiteRunResult } from "vest";
 
     let result: SuiteRunResult;

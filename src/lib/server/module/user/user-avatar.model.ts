@@ -1,11 +1,9 @@
-import { env } from "$env/dynamic/private";
 import { MediaStorage } from "$module/common/services/media-storage";
 import type { Media, MediaImage } from "$client/types/media";
 import { getMd5Hash } from "$client/utils/generator";
 
 export class UserAvatar extends MediaStorage {
     private path: string;
-    private isEmulator = env.FUNCTIONS_EMULATOR === "true";
 
     constructor(private uid: string) {
         super();
