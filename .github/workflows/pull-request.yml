@@ -80,6 +80,9 @@ jobs:
           service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
+      - name: Authenticate to Firebase
+        uses: w9jds/setup-firebase@main
+
       - name: Deploy to Firebase Functions
         run: npm run firebase:deploy:functions
 
