@@ -47,7 +47,6 @@ jobs:
 
     environment: Preview
     env:
-      FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
       SVELTE_APP_NAME: ${{ vars.SVELTE_APP_NAME }}
       MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
       MAIL_FROM_ADDRESS: ${{ vars.MAIL_FROM_ADDRESS }}
@@ -76,6 +75,8 @@ jobs:
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
