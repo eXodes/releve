@@ -50,8 +50,8 @@ jobs:
 
     environment: Production
     env:
-      FIREBASE_CLI_EXPERIMENTS: pintags
-      SVELTE_APP_NAME: ${{ vars.SVELTE_APP_NAME }}
+      PUBLIC_APP_ENV: "production"
+      PUBLIC_APP_NAME: ${{ vars.PUBLIC_APP_NAME }}
       MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
       MAIL_FROM_ADDRESS: ${{ vars.MAIL_FROM_ADDRESS }}
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
@@ -74,16 +74,23 @@ jobs:
       - name: Run prepare
         run: npm run prepare
 
+      - name: Run build
+        run: npm run build
+
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
           service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
-      - name: Authenticate to Firebase
-        uses: w9jds/setup-firebase@main
-        with:
-          firebase_token: ${{ secrets.FIREBASE_TOKEN }}
+      - name: Deploy to Firebase Functions
+        run: npm run firebase:deploy:functions
 
-      - name: Deploy to Firebase
-        run: npm run firebase:deploy
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        env:
+          FIREBASE_CLI_EXPERIMENTS: pintags
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          channelId: live
