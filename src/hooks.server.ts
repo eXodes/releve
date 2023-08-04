@@ -3,7 +3,7 @@ import "dotenv/config";
 import { dev } from "$app/environment";
 import { SESSION_COOKIE } from "$server/utils/cookie";
 import { AuthService } from "$module/auth/auth.service";
-import { getCookie } from "$client/utils/endpoint";
+import { getCookieValue } from "$client/utils/endpoint";
 import "$server/services/firebase-admin";
 
 import type { Handle, HandleServerError } from "@sveltejs/kit";
@@ -11,7 +11,7 @@ import type { Handle, HandleServerError } from "@sveltejs/kit";
 export const handle: Handle = async ({ event, resolve }) => {
     try {
         event.locals.session = await AuthService.verifySession(
-            getCookie(event.request.headers, SESSION_COOKIE)
+            getCookieValue(event.request.headers, SESSION_COOKIE)
         );
 
         return resolve(event);
