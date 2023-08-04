@@ -74,22 +74,12 @@ jobs:
       - name: Run build
         run: npm run build
 
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
-          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-
-      - name: Authenticate to Firebase
-        uses: w9jds/setup-firebase@main
-
-      - name: Deploy to Firebase Functions
-        run: npm run firebase:deploy:functions
-
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
           channelId: ${{ vars.GITHUB_REF_NAME }}
-          projectId: ${{ vars.FIREBASE_PROJECT_ID }}
+
+      - name: Deploy to Firebase Functions
+        run: npm run firebase:deploy:functions

@@ -19,6 +19,7 @@ node_modules
 
 # Secrets
 /credentials.json
+gha-creds-*.json
 
 # Firebase
 /.firebase
