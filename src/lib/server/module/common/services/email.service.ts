@@ -1,5 +1,5 @@
 import { base } from "$app/paths";
-import { SVELTE_APP_NAME } from "$env/static/public";
+import { PUBLIC_APP_NAME } from "$env/static/public";
 import type { Auth } from "$module/auth/auth.model";
 import app from "$server/services/firebase-admin";
 
@@ -7,7 +7,7 @@ import type { App } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
 abstract class SendEmail {
-    protected name = SVELTE_APP_NAME;
+    protected name = PUBLIC_APP_NAME;
     protected baseUrl = base;
     protected logo = base + "/workflow-mark.svg";
 

@@ -17,7 +17,7 @@ const config = {
             $routes: resolve("src/routes"),
         },
         env: {
-            publicPrefix: "SVELTE_",
+            publicPrefix: "PUBLIC_",
         },
     },
 };
