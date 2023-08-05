@@ -1,6 +1,6 @@
 import { STORAGE_BUCKET, STORAGE_API } from "$env/static/private";
-import type { Storage } from "$module/common/contract/storage";
 import app from "$server/services/firebase-admin";
+import type { Storage } from "$module/common/contract/storage";
 import type { Media } from "$client/types/media";
 
 import type { File as StorageFile, GetSignedUrlResponse, SaveOptions } from "@google-cloud/storage";
@@ -44,17 +44,23 @@ export abstract class MediaStorage implements Storage<Media> {
     private getPublicSmall = async (path: string): Promise<string> => {
         const file = await this.getFile(path, 200);
 
+        await file.makePublic();
+
         return file.publicUrl();
     };
 
     private getPublicMedium = async (path: string): Promise<string> => {
         const file = await this.getFile(path, 500);
 
+        await file.makePublic();
+
         return file.publicUrl();
     };
 
     private getPublicLarge = async (path: string): Promise<string> => {
         const file = await this.getFile(path, 1200);
+
+        await file.makePublic();
 
         return file.publicUrl();
     };

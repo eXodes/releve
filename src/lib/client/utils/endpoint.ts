@@ -45,14 +45,14 @@ interface EndpointOptionsForm {
 
 type Options<T = unknown> = EndpointOptions | EndpointOptionsData<T> | EndpointOptionsBody;
 
-export const getCookie = (headers: Headers, key: string) => {
+export const getCookieValue = (headers: Headers, key: string) => {
     const cookies = parse(headers.get("cookie") || "");
 
-    const sessionCookie = cookies[key];
+    const cookieValue = cookies[key];
 
-    if (!sessionCookie) throw new Error("Session cookie not found.");
+    if (!cookieValue) throw new Error(`No cookie value with the key [${key}] not found.`);
 
-    return sessionCookie;
+    return cookieValue;
 };
 
 export const endpoint = async <ReturnType = void, DataType = undefined>(

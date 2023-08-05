@@ -1,7 +1,10 @@
 <script lang="ts">
-    import { enhance, type SubmitFunction } from "$app/forms";
+    import { enhance } from "$app/forms";
     import { goto, invalidate } from "$app/navigation";
     import { notification } from "$client/stores/notification";
+    import type { MessageResponse } from "$client/types/response";
+
+    import type { SubmitFunction } from "@sveltejs/kit";
     import { createEventDispatcher } from "svelte";
 
     export { classes as class };
@@ -12,7 +15,7 @@
         success: void;
     }>();
 
-    const handleSubmit: SubmitFunction<{ message: string }> = () => {
+    const handleSubmit: SubmitFunction<MessageResponse> = () => {
         return async ({ result, update }) => {
             if (result.type === "error") {
                 notification.send({

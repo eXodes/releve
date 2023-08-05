@@ -3,6 +3,7 @@
     import { invalidate } from "$app/navigation";
     import { page } from "$app/stores";
     import { Color } from "$client/enums/theme";
+    import type { MessageResponse } from "$client/types/response";
     import { handleAuthCatch } from "$features/authentication/errors";
     import { AuthService } from "$features/authentication/services";
     import { signInSuite, type SignInPayload } from "$features/authentication/validations/sign-in";
@@ -13,8 +14,9 @@
     import PasswordInput from "$client/components/shared/password-input.svelte";
     import TextInput from "$client/components/shared/text-input.svelte";
     import Tooltip from "$client/components/shared/tooltip.svelte";
-    import { FirebaseError } from "firebase/app";
 
+    import type { SubmitFunction } from "@sveltejs/kit";
+    import { FirebaseError } from "firebase/app";
     import { AuthErrorCodes } from "firebase/auth";
     import { camelCase } from "lodash-es";
 
@@ -69,39 +71,38 @@
 
             errorMessage = data.message;
 
-            if ("code" in data && data.code === AuthErrorCodes.UNVERIFIED_EMAIL) {
+            if (
+                "code" in data &&
+                data.code === AuthErrorCodes.UNVERIFIED_EMAIL &&
+                typeof data.uid === "string"
+            ) {
                 failedUid = data.uid;
             }
         }
     };
 
-    onMount(async () => {
-        const actionCode = $page.url.searchParams.get("actionCode");
-        const uid = $page.url.searchParams.get("uid");
-
+    const validateEmail = async ({ actionCode, uid }: { actionCode: string; uid: string }) => {
         let timeout: ReturnType<typeof setTimeout>;
 
-        if (actionCode && uid) {
-            try {
-                await AuthService.verifyEmail(uid, actionCode);
+        try {
+            await AuthService.verifyEmail(uid, actionCode);
 
-                successMessage = "Email verified successfully. Please sign in.";
+            successMessage = "Email verified successfully. Please sign in.";
 
-                timeout = setTimeout(() => {
-                    successMessage = undefined;
-                }, 3000);
-            } catch (error) {
-                const data = handleAuthCatch(error);
+            timeout = setTimeout(() => {
+                successMessage = undefined;
+            }, 3000);
+        } catch (error) {
+            const data = handleAuthCatch(error);
 
-                if (error instanceof FirebaseError) {
-                    errorMessage = data?.message;
+            if (error instanceof FirebaseError) {
+                errorMessage = data?.message;
 
-                    if (
-                        error.code === AuthErrorCodes.INVALID_OOB_CODE ||
-                        error.code === AuthErrorCodes.EXPIRED_OOB_CODE
-                    ) {
-                        failedUid = uid;
-                    }
+                if (
+                    error.code === AuthErrorCodes.INVALID_OOB_CODE ||
+                    error.code === AuthErrorCodes.EXPIRED_OOB_CODE
+                ) {
+                    failedUid = uid;
                 }
             }
         }
@@ -111,6 +112,24 @@
                 clearTimeout(timeout);
             }
         };
+    };
+
+    const handleResendValidation: SubmitFunction<MessageResponse> =
+        () =>
+        ({ result }) => {
+            if (result.type === "success") {
+                errorMessage = undefined;
+                successMessage = result.data?.message;
+            }
+        };
+
+    onMount(() => {
+        const actionCode = $page.url.searchParams.get("actionCode");
+        const uid = $page.url.searchParams.get("uid");
+
+        if (actionCode && uid) {
+            validateEmail({ actionCode, uid });
+        }
     });
 
     $: disabled = result?.hasErrors() || !result?.isValid();
@@ -175,13 +194,7 @@
             <form
                 action="?/resend-verification"
                 method="POST"
-                use:enhance={() =>
-                    ({ result }) => {
-                        if (result.type === "success") {
-                            errorMessage = undefined;
-                            successMessage = result.data?.message;
-                        }
-                    }}
+                use:enhance={handleResendValidation}
                 class="mt-2"
             >
                 <button

@@ -1,6 +1,6 @@
+import { handleApiError } from "$server/utils/error";
 import type { ShopData } from "$features/shops/types";
 import { UserShopsCollection } from "$module/user/user-shops.collection";
-import { handleApiError } from "$server/utils/error";
 import type { PaginationMeta, PaginationQuery } from "$client/types/meta";
 
 import { parse } from "qs";

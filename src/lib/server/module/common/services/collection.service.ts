@@ -1,5 +1,3 @@
-import type { BaseEntity } from "$module/common/contract/database";
-import { FirestoreDatabase } from "$module/common/contract/database";
 import app from "$server/services/firebase-admin";
 import type {
     FirestoreCollectionRef,
@@ -8,13 +6,15 @@ import type {
     FirestorePartialValue,
     FirestoreValue,
 } from "$server/type/firestore";
+import type { BaseEntity } from "$module/common/contract/database";
+import { FirestoreDatabase } from "$module/common/contract/database";
 
 import type { App } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
 export abstract class Collection<
     Entity extends FirestoreData,
-    Data
+    Data,
 > extends FirestoreDatabase<Entity> {
     protected constructor(
         protected collectionName: string,
@@ -60,7 +60,7 @@ export abstract class Collection<
 
         if (snapshot.empty) return [];
 
-        return snapshot.docs.map((data) => ({ uid: data.id, ...data.data() } as Entity));
+        return snapshot.docs.map((data) => ({ uid: data.id, ...data.data() }) as Entity);
     }
 
     protected async delete(uid: BaseEntity["uid"]) {

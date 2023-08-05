@@ -9,11 +9,14 @@ export const validate = <T = unknown>(schema: Joi.ObjectSchema<T>, payload: T) =
         abortEarly: false,
     });
 
-    const errors = error?.details.reduce((err, { context, message }) => {
-        err[kebabCase(context?.key) as string] = [message];
+    const errors = error?.details.reduce(
+        (err, { context, message }) => {
+            err[kebabCase(context?.key) as string] = [message];
 
-        return err;
-    }, {} as { [key: string]: string[] });
+            return err;
+        },
+        {} as { [key: string]: string[] }
+    );
 
     if (errors) {
         const invalidKeys = Object.keys(errors)

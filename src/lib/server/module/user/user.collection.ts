@@ -1,3 +1,5 @@
+import type { FirestoreQueryDocSnapshot } from "$server/type/firestore";
+import { handleApiError } from "$server/utils/error";
 import { AuthService } from "$module/auth/auth.service";
 import type { HasPagination, Paginated } from "$module/common/contract/pagination";
 import { Collection } from "$module/common/services/collection.service";
@@ -9,8 +11,6 @@ import { userConverter } from "$module/user/user.converter";
 import type { UserEntity } from "$module/user/user.entity";
 import type { User } from "$module/user/user.model";
 import type { PaginationMeta, PaginationQuery, SearchQuery } from "$client/types/meta";
-import type { FirestoreQueryDocSnapshot } from "$server/type/firestore";
-import { handleApiError } from "$server/utils/error";
 
 import { Timestamp } from "firebase-admin/firestore";
 

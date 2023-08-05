@@ -1,6 +1,6 @@
+import { handleApiError } from "$server/utils/error";
 import type { CategoryData } from "$features/categories/types";
 import { CategoryCollection } from "$module/category/category.collection";
-import { handleApiError } from "$server/utils/error";
 
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";

@@ -1,6 +1,6 @@
-import type { SignUpCheckPayload } from "$features/authentication/validations/sign-up-check";
-import { AuthService } from "$module/auth/auth.service";
 import { handleApiError } from "$server/utils/error";
+import type { SignUpCheckPayload } from "$features/authentication/validations/misc";
+import { AuthService } from "$module/auth/auth.service";
 
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";

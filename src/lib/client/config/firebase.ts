@@ -1,6 +1,6 @@
 import { env } from "$env/dynamic/public";
 
-export const firebaseEmulator = env.SVELTE_FIREBASE_EMULATOR;
+export const firebaseEmulator = env.PUBLIC_FIREBASE_EMULATOR === "true";
 
 export const firebaseConfig = {
     apiKey: "AIzaSyA3NgA6IkjdZvWucvPW4Kf9HWmQLx0yye8",

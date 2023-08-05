@@ -1,19 +1,12 @@
+import { handleApiError } from "$server/utils/error";
+import { validate } from "$server/utils/validation";
+import type { MessageResponse } from "$client/types/response";
 import type { ShopPayload } from "$features/shops/validations/shop";
 import { ShopCollection } from "$module/shop/shop.collection";
 import { shopSchema } from "$module/shop/validation/shop.schema";
-import { handleApiError } from "$server/utils/error";
-import { validate } from "$server/utils/validation";
 import { getFormData } from "$client/utils/data";
 
 import type { Actions } from "./$types";
-
-export interface UpdateShopOutput {
-    message: string;
-}
-
-export interface DeleteShopOutput {
-    message: string;
-}
 
 export const actions: Actions = {
     update: async ({ request, locals, params }) => {
@@ -52,7 +45,7 @@ export const actions: Actions = {
 
             return {
                 message: payload.name + " shop has been saved.",
-            } satisfies UpdateShopOutput;
+            } satisfies MessageResponse;
         } catch (error) {
             throw handleApiError(error);
         }
@@ -73,7 +66,7 @@ export const actions: Actions = {
 
             return {
                 message: "Shop deleted.",
-            } satisfies DeleteShopOutput;
+            } satisfies MessageResponse;
         } catch (error) {
             throw handleApiError(error);
         }

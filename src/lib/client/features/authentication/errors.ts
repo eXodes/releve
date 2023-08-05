@@ -1,25 +1,22 @@
+import type { MessageResponse } from "$client/types/response";
 import { FirebaseError } from "firebase/app";
 import { AuthErrorCodes } from "firebase/auth";
 
-interface BaseAuthError {
-    message: string;
-}
-
-interface UnverifiedEmailError extends BaseAuthError {
-    code: "auth/unverified-email";
+interface UnverifiedEmailError extends MessageResponse {
+    code: typeof AuthErrorCodes.UNVERIFIED_EMAIL;
     message: string;
     uid: string;
 }
 
-interface InvalidEmailError extends BaseAuthError {
-    code: "auth/invalid-email";
+interface InvalidEmailError extends MessageResponse {
+    code: typeof AuthErrorCodes.INVALID_EMAIL;
     message: string;
     email: string;
 }
 
 export const handleAuthCatch = (
     error: unknown
-): BaseAuthError | UnverifiedEmailError | InvalidEmailError => {
+): MessageResponse | UnverifiedEmailError | InvalidEmailError => {
     if (error instanceof FirebaseError) {
         switch (error.code) {
             case AuthErrorCodes.UNVERIFIED_EMAIL:

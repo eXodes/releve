@@ -9,16 +9,17 @@ export default runSeeder(async ({ bucket }) => {
 
     assets.map(async (file: string) => {
         const filePath = `${assetPath}/${file}`;
+        const destination = `assets/${file}`;
 
-        const bucketFile = bucket.file(filePath);
+        const bucketFile = bucket.file(destination);
 
         const [exists] = await bucketFile.exists();
 
         if (!exists) {
-            console.info("Seeding assets: " + filePath);
+            console.info("Seeding assets: " + destination);
 
             await bucket.upload(filePath, {
-                destination: `assets/${file}`,
+                destination,
                 public: true,
             });
         }

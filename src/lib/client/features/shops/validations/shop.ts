@@ -16,10 +16,6 @@ export type ShopPayload = {
     status?: ShopStatus;
 };
 
-export type ShopResponse = {
-    message: string;
-};
-
 enforce.extend({
     isURL: validator.isURL,
     isAlphanumeric: validator.isAlphanumeric,

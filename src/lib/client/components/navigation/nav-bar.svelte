@@ -1,6 +1,6 @@
 <script lang="ts">
     import { page } from "$app/stores";
-    import { SVELTE_APP_NAME } from "$env/static/public";
+    import { PUBLIC_APP_NAME } from "$env/static/public";
 
     import SignOutButton from "$features/authentication/components/sign-out-button.svelte";
     import UserMenu from "$features/users/components/user-menu.svelte";
@@ -8,7 +8,7 @@
     import { Popover, PopoverButton, PopoverPanel, Transition } from "@rgossiaux/svelte-headlessui";
     import { Icon, Bars3, XMark } from "svelte-hero-icons";
 
-    const appName = SVELTE_APP_NAME;
+    const appName = PUBLIC_APP_NAME;
 
     $: navigation = [
         { href: "/my/shops", name: "My Shops", show: $page.data.session.authenticated },
