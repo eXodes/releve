@@ -1,3 +1,4 @@
+import type { FirestoreQueryDocSnapshot } from "$server/type/firestore";
 import { ShopStatus } from "$features/shops/enum";
 import type { HasObserver, Observer } from "$module/common/contract/observable";
 import type { HasPagination, Paginated } from "$module/common/contract/pagination";
@@ -11,7 +12,6 @@ import { shopConverter } from "$module/shop/shop.converter";
 import type { ShopEntity } from "$module/shop/shop.entity";
 import type { Shop } from "$module/shop/shop.model";
 import type { PaginationMeta, PaginationQuery, SearchQuery } from "$client/types/meta";
-import type { FirestoreQueryDocSnapshot } from "$server/type/firestore";
 
 import { Timestamp } from "firebase-admin/firestore";
 

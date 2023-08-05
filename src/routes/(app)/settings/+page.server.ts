@@ -1,3 +1,5 @@
+import { handleApiError } from "$server/utils/error";
+import { validate } from "$server/utils/validation";
 import type { UserData } from "$features/users/types";
 import type {
     UpdatePasswordPayload,
@@ -15,8 +17,6 @@ import { UserAvatar } from "$module/user/user-avatar.model";
 import { UserInformationCollection } from "$module/user/user-information.collection";
 import { UserShopsCollection } from "$module/user/user-shops.collection";
 import { UserCollection } from "$module/user/user.collection";
-import { handleApiError } from "$server/utils/error";
-import { validate } from "$server/utils/validation";
 import type { ValidationError } from "$client/types/error";
 import type { Media } from "$client/types/media";
 import { getFormData } from "$client/utils/data";

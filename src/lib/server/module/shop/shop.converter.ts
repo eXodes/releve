@@ -1,7 +1,6 @@
+import type { FirestoreConverter, FirestoreQueryDocSnapshot } from "$server/type/firestore";
 import type { ShopEntity } from "$module/shop/shop.entity";
 import { Shop } from "$module/shop/shop.model";
-
-import type { FirestoreConverter, FirestoreQueryDocSnapshot } from "$server/type/firestore";
 
 export const shopConverter: FirestoreConverter<Shop> = {
     toFirestore(shop) {

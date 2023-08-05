@@ -1,6 +1,6 @@
+import { handleApiError } from "$server/utils/error";
 import type { UserSession } from "$features/authentication/types";
 import { AuthService } from "$module/auth/auth.service";
-import { handleApiError } from "$server/utils/error";
 
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";

@@ -1,8 +1,8 @@
+import { validate } from "$server/utils/validation";
 import type { MessageResponse } from "$client/types/response";
 import { PasswordResetLinkEmail } from "$module/auth/actions/email";
 import { AuthService } from "$module/auth/auth.service";
 import { forgotPasswordSchema } from "$module/auth/validation/forgot-password.schema";
-import { validate } from "$server/utils/validation";
 import { getFormData } from "$client/utils/data";
 import type { ValidationError } from "$client/types/error";
 

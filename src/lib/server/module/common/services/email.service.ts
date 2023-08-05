@@ -1,7 +1,7 @@
 import { base } from "$app/paths";
 import { PUBLIC_APP_NAME } from "$env/static/public";
-import type { Auth } from "$module/auth/auth.model";
 import app from "$server/services/firebase-admin";
+import type { Auth } from "$module/auth/auth.model";
 
 import type { App } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
