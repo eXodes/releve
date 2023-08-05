@@ -2,34 +2,28 @@
     "name": "releve",
     "version": "0.0.0",
     "type": "module",
-    "exports": {
-        ".": "./packages"
-    },
     "scripts": {
         "prepare": "svelte-kit sync",
-        "preinstall": "cd functions && npm ci",
         "dev": "vite dev --port 8000",
-        "prebuild": "npm run --prefix functions build",
         "build": "vite build",
         "preview": "vite preview",
         "test": "playwright test",
-        "precheck": "npm run --prefix functions check",
         "check": "svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
-        "prelint": "npm run --prefix functions lint",
         "lint": "prettier --check . && eslint .",
         "lint:fix": "prettier --write . && eslint .",
         "format": "prettier --write --plugin-search-dir=. .",
-        "prefirebase:emu:start": "npm run build",
         "firebase:emu:start": "firebase emulators:start",
         "firebase:seed": "tsx ./seeder",
         "firebase:seed:faker": "tsx ./seeder/faker",
+        "firebase:webframeworks": "firebase experiments:enable webframeworks",
         "firebase:deploy": "firebase deploy --only functions,hosting,",
         "firebase:deploy:functions": "firebase deploy --only functions"
     },
     "devDependencies": {
         "@faker-js/faker": "^8.0.2",
         "@playwright/test": "^1.36.2",
+        "@sveltejs/adapter-auto": "^2.1.0",
         "@sveltejs/kit": "^1.22.4",
         "@tailwindcss/aspect-ratio": "^0.4.2",
         "@tailwindcss/forms": "^0.5.4",
@@ -45,7 +39,6 @@
         "eslint": "^8.46.0",
         "eslint-config-prettier": "^8.9.0",
         "eslint-plugin-svelte3": "^4.0.0",
-        "firebase-tools": "^12.4.7",
         "postcss": "^8.4.27",
         "prettier": "^3.0.0",
         "prettier-plugin-svelte": "^3.0.3",
@@ -58,8 +51,7 @@
         "tailwindcss": "^3.3.3",
         "tslib": "^2.6.1",
         "tsx": "^3.12.7",
-        "typescript": "^5.1.6",
-        "vite": "^4.4.8"
+        "typescript": "^5.1.6"
     },
     "dependencies": {
         "@rgossiaux/svelte-headlessui": "^2.0.0",
@@ -74,7 +66,8 @@
         "qs": "^6.11.2",
         "svelte-hero-icons": "^5.0.0",
         "validator": "^13.9.0",
-        "vest": "^4.6.11"
+        "vest": "^4.6.11",
+        "vite": "^4.4.8"
     },
     "node": "18"
 }
