@@ -10,8 +10,6 @@ if (!admin.apps.length) {
 } else {
     const [defaultApp] = admin.apps;
 
-    console.info("[FIREBASE_ADMIN]: Firebase Admin SDK already initialized:", defaultApp);
-
     app = defaultApp ?? initializeApp();
 }
 
