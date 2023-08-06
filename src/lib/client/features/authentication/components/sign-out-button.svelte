@@ -4,6 +4,7 @@
 
     import { notification } from "$client/stores/notification";
     import type { MessageResponse } from "$client/types/response";
+    import * as Sentry from "@sentry/browser";
 
     import type { SubmitFunction } from "@sveltejs/kit";
     import { createEventDispatcher } from "svelte";
@@ -36,6 +37,8 @@
                 await update();
 
                 await invalidate("session");
+                Sentry.setUser(null);
+
                 await goto("/");
 
                 dispatch("success");
