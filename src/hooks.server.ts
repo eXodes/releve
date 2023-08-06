@@ -1,6 +1,8 @@
+import { PUBLIC_APP_ENV, PUBLIC_SENTRY_DSN, PUBLIC_SENTRY_TRACE_RATE } from "$env/static/public";
+import { sequence } from "@sveltejs/kit/hooks";
+import * as Sentry from "@sentry/sveltekit";
 import "dotenv/config";
 
-import { dev } from "$app/environment";
 import { SESSION_COOKIE } from "$server/utils/cookie";
 import { AuthService } from "$module/auth/auth.service";
 import { getCookieValue } from "$client/utils/endpoint";
@@ -8,7 +10,13 @@ import "$server/services/firebase-admin";
 
 import type { Handle, HandleServerError } from "@sveltejs/kit";
 
-export const handle: Handle = async ({ event, resolve }) => {
+Sentry.init({
+    environment: PUBLIC_APP_ENV,
+    dsn: PUBLIC_SENTRY_DSN,
+    tracesSampleRate: Number(PUBLIC_SENTRY_TRACE_RATE),
+});
+
+export const handle: Handle = sequence(Sentry.sentryHandle(), async ({ event, resolve }) => {
     try {
         event.locals.session = await AuthService.verifySession(
             getCookieValue(event.request.headers, SESSION_COOKIE)
@@ -18,16 +26,12 @@ export const handle: Handle = async ({ event, resolve }) => {
     } catch {
         return resolve(event);
     }
-};
+});
 
-export const handleError: HandleServerError = ({ error, event }) => {
-    if (dev) console.error("handleError", { error, event });
-    // TODO: integration with https://sentry.io/
-    // Sentry.captureException(error, { event });
-
+export const handleError = Sentry.handleErrorWithSentry<HandleServerError>(() => {
     return {
         status: 500,
         code: "InternalServerError",
         message: "An internal error has occurred.",
     };
-};
+});

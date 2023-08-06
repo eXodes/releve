@@ -26,3 +26,6 @@ gha-creds-*.json
 /extensions/
 /src/seeder/*.js
 /src/seeder/*.js.map
+
+# Sentry Auth Token
+.sentryclirc
