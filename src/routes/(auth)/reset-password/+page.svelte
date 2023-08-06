@@ -1,6 +1,6 @@
 <script lang="ts">
-    import Link from "$client/components/shared/link.svelte";
     import ResetPasswordForm from "$features/authentication/components/reset-password-form.svelte";
+    import Link from "$client/components/shared/link.svelte";
 </script>
 
 <svelte:head>

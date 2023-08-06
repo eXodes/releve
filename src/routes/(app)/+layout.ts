@@ -8,8 +8,10 @@ export const load: LayoutLoad = async ({ parent, fetch }) => {
     const { session } = await parent();
 
     if (session.authenticated) {
-        await countries.load({ fetch });
-        await categories.load({ fetch });
-        await deliveryServices.load({ fetch });
+        await Promise.all([
+            countries.load({ fetch }),
+            categories.load({ fetch }),
+            deliveryServices.load({ fetch }),
+        ]);
     }
 };

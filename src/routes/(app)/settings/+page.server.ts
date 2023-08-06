@@ -1,27 +1,26 @@
 import { handleApiError } from "$server/utils/error";
 import { validate } from "$server/utils/validation";
-import type { UserData } from "$features/users/types";
-import type {
-    UpdatePasswordPayload,
-    UpdatePasswordResponse,
-} from "$features/users/validations/update-password";
+import { AuthService } from "$module/auth/auth.service";
+import { updateAccountSchema } from "$module/auth/validation/update-account.schema";
+import { updatePasswordSchema } from "$module/auth/validation/update-password.schema";
+import { UserCollection } from "$module/user/user.collection";
+import { UserAvatar } from "$module/user/user-avatar.model";
+import { UserInformationCollection } from "$module/user/user-information.collection";
+import { UserShopsCollection } from "$module/user/user-shops.collection";
+import { ShopCollection } from "$module/shop/shop.collection";
+
 import type {
     UpdateUserPayload,
     UpdateUserResponse,
 } from "$features/users/validations/update-user";
-import { AuthService } from "$module/auth/auth.service";
-import { updateAccountSchema } from "$module/auth/validation/update-account.schema";
-import { updatePasswordSchema } from "$module/auth/validation/update-password.schema";
-import { ShopCollection } from "$module/shop/shop.collection";
-import { UserAvatar } from "$module/user/user-avatar.model";
-import { UserInformationCollection } from "$module/user/user-information.collection";
-import { UserShopsCollection } from "$module/user/user-shops.collection";
-import { UserCollection } from "$module/user/user.collection";
-import type { ValidationError } from "$client/types/error";
+import type {
+    UpdatePasswordPayload,
+    UpdatePasswordResponse,
+} from "$features/users/validations/update-password";
+import type { UserData } from "$features/users/types";
 import type { Media } from "$client/types/media";
 import { getFormData } from "$client/utils/data";
 
-import { type ActionFailure, fail } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 
 export interface SettingsAccountOutput {
@@ -32,7 +31,7 @@ export const load: PageServerLoad<SettingsAccountOutput> = async ({ locals, depe
     const session = locals.session;
 
     if (!session) {
-        throw handleApiError(new Error("Not authorized."));
+        throw handleApiError(new Error("Not authenticated."), 401);
     }
 
     const user = await UserCollection.getUserByUid(session.data.uid);
@@ -60,16 +59,11 @@ export const load: PageServerLoad<SettingsAccountOutput> = async ({ locals, depe
 };
 
 export const actions: Actions = {
-    account: async ({
-        request,
-        locals,
-    }): Promise<UpdateUserResponse | ActionFailure<ValidationError | { message: string }>> => {
+    account: async ({ request, locals }) => {
         const session = locals.session;
 
         if (!session) {
-            return fail(401, {
-                message: "Not authenticated.",
-            });
+            throw handleApiError(new Error("Not authenticated."), 401);
         }
 
         const formData = await request.formData();
@@ -79,59 +73,58 @@ export const actions: Actions = {
         const errors = validate<UpdateUserPayload>(updateAccountSchema, payload);
 
         if (errors) {
-            return fail(400, errors);
+            throw handleApiError(errors);
         }
 
-        let avatar: Media | undefined;
-        const userAvatar = new UserAvatar(session.data.uid);
+        try {
+            let avatar: Media | undefined;
+            const userAvatar = new UserAvatar(session.data.uid);
 
-        if (payload.userPhoto?.size) {
-            avatar = await userAvatar.addAvatar(payload.userPhoto);
-        }
+            if (payload.userPhoto?.size) {
+                avatar = await userAvatar.addAvatar(payload.userPhoto);
+            }
 
-        const user = await UserCollection.update({
-            uid: session.data.uid,
-            avatar: avatar,
-            displayName: payload.displayName,
-            about: payload.about,
-            email: payload.email,
-        });
-
-        const userInformation = await UserInformationCollection.update({
-            uid: session.data.uid,
-            firstName: payload.firstName,
-            lastName: payload.lastName,
-            address: {
-                street: payload.streetAddress,
-                city: payload.city,
-                state: payload.state,
-                postalCode: payload.postalCode,
-                country: payload.country,
-            },
-        });
-
-        user.attachObserver(new AuthService().createObserver());
-        user.attachObserver(new ShopCollection().createObserver());
-        user.attachObserver(new UserShopsCollection(user.data.uid).createObserver());
-        user.notifyObserver();
-
-        return {
-            user: {
-                ...user.data,
-                information: userInformation?.data,
-            },
-        };
-    },
-    password: async ({
-        request,
-        locals,
-    }): Promise<UpdatePasswordResponse | ActionFailure<ValidationError | { message: string }>> => {
-        const user = locals.session;
-
-        if (!user) {
-            return fail(400, {
-                message: "Not authenticated.",
+            const user = await UserCollection.update({
+                uid: session.data.uid,
+                avatar: avatar,
+                displayName: payload.displayName,
+                about: payload.about,
+                email: payload.email,
             });
+
+            const userInformation = await UserInformationCollection.update({
+                uid: session.data.uid,
+                firstName: payload.firstName,
+                lastName: payload.lastName,
+                address: {
+                    street: payload.streetAddress,
+                    city: payload.city,
+                    state: payload.state,
+                    postalCode: payload.postalCode,
+                    country: payload.country,
+                },
+            });
+
+            user.attachObserver(new AuthService().createObserver());
+            user.attachObserver(new ShopCollection().createObserver());
+            user.attachObserver(new UserShopsCollection(user.data.uid).createObserver());
+            user.notifyObserver();
+
+            return {
+                user: {
+                    ...user.data,
+                    information: userInformation?.data,
+                },
+            } satisfies UpdateUserResponse;
+        } catch (error) {
+            throw handleApiError(error);
+        }
+    },
+    password: async ({ request, locals }) => {
+        const session = locals.session;
+
+        if (!session) {
+            throw handleApiError(new Error("Not authenticated."), 401);
         }
 
         const formData = await request.formData();
@@ -141,13 +134,17 @@ export const actions: Actions = {
         const errors = validate<UpdatePasswordPayload>(updatePasswordSchema, payload);
 
         if (errors) {
-            return fail(400, errors);
+            throw handleApiError(errors);
         }
 
-        await AuthService.updatePassword(user.data.uid, payload.password);
+        try {
+            await AuthService.updatePassword(session.data.uid, payload.password);
 
-        return {
-            success: true,
-        };
+            return {
+                success: true,
+            } satisfies UpdatePasswordResponse;
+        } catch (error) {
+            throw handleApiError(error);
+        }
     },
 };

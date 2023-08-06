@@ -1,9 +1,10 @@
 import { handleApiError } from "$server/utils/error";
-import type { MessageResponse } from "$client/types/response";
-import { getFormData } from "$client/utils/data";
-import type { UserData } from "$features/users/types";
 import { UserCollection } from "$module/user/user.collection";
+
+import type { UserData } from "$features/users/types";
+import { getFormData } from "$client/utils/data";
 import type { PaginationMeta, PaginationQuery, SearchQuery } from "$client/types/meta";
+import type { MessageResponse } from "$client/types/response";
 
 import { parse } from "qs";
 
@@ -22,11 +23,11 @@ export const load: PageServerLoad<UsersOutput> = async ({ locals, url, depends }
     const session = locals.session;
 
     if (!session) {
-        throw handleApiError(new Error("Not authenticated."));
+        throw handleApiError(new Error("Not authenticated."), 401);
     }
 
     if (!session.isAdmin) {
-        throw handleApiError(new Error("Not authorized."));
+        throw handleApiError(new Error("Not authorized."), 403);
     }
 
     try {
@@ -51,15 +52,15 @@ export const load: PageServerLoad<UsersOutput> = async ({ locals, url, depends }
 };
 
 export const actions: Actions = {
-    delete: async ({ request, locals }) => {
+    deleteAll: async ({ request, locals }) => {
         const user = locals.session;
 
         if (!user) {
-            throw handleApiError(new Error("Not authenticated."));
+            throw handleApiError(new Error("Not authenticated."), 401);
         }
 
         if (!user.isAdmin) {
-            throw handleApiError(new Error("Not authorized."));
+            throw handleApiError(new Error("Not authorized."), 403);
         }
 
         const formData = await request.formData();

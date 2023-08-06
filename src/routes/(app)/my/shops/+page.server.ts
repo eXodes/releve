@@ -1,9 +1,11 @@
 import { handleApiError } from "$server/utils/error";
-import type { ShopData } from "$features/shops/types";
 import { UserShopsCollection } from "$module/user/user-shops.collection";
+
+import type { ShopData } from "$features/shops/types";
 import type { PaginationMeta, PaginationQuery } from "$client/types/meta";
 
 import { parse } from "qs";
+
 import type { PageServerLoad } from "./$types";
 
 export interface MyShopsOutput {
@@ -17,7 +19,7 @@ export const load: PageServerLoad<MyShopsOutput> = async ({ locals, url, depends
     const query = parse(url.searchParams.toString()) as PaginationQuery;
 
     if (!session) {
-        throw handleApiError(new Error("Not authenticated."));
+        throw handleApiError(new Error("Not authenticated."), 401);
     }
 
     try {

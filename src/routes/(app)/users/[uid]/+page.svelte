@@ -1,5 +1,6 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
+
     import { Size } from "$client/enums/theme";
 
     import Button from "$client/components/shared/button.svelte";
@@ -7,6 +8,7 @@
     import UserForm from "$features/users/components/user-form.svelte";
 
     import { ChevronLeft, Icon } from "svelte-hero-icons";
+
     import type { PageData } from "./$types";
 
     export let data: PageData;

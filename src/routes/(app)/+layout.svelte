@@ -8,6 +8,7 @@
     import ShopForm from "$features/shops/components/shop-form.svelte";
 
     import { ExclamationTriangle } from "svelte-hero-icons";
+
     import type { LayoutData } from "./$types";
 
     export let data: LayoutData;

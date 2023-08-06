@@ -1,10 +1,11 @@
 import { handleApiError } from "$server/utils/error";
 import { validate } from "$server/utils/validation";
-import type { MessageResponse } from "$client/types/response";
-import type { ShopPayload } from "$features/shops/validations/shop";
 import { ShopCollection } from "$module/shop/shop.collection";
 import { shopSchema } from "$module/shop/validation/shop.schema";
+
+import type { ShopPayload } from "$features/shops/validations/shop";
 import { getFormData } from "$client/utils/data";
+import type { MessageResponse } from "$client/types/response";
 
 import type { Actions } from "./$types";
 
@@ -13,20 +14,24 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new Error("Not authenticated."));
+            throw handleApiError(new Error("Not authenticated."), 401);
         }
 
         if (!session.isAdmin) {
-            throw handleApiError(new Error("Not authorized."));
+            throw handleApiError(new Error("Not authorized."), 403);
+        }
+
+        const formData = await request.formData();
+
+        const payload = getFormData<ShopPayload>(formData);
+
+        const errors = validate(shopSchema, payload);
+
+        if (errors) {
+            throw handleApiError(errors);
         }
 
         try {
-            const formData = await request.formData();
-
-            const payload = getFormData<ShopPayload>(formData);
-
-            validate(shopSchema, payload);
-
             await ShopCollection.update({
                 uid: params.uid,
                 name: payload.name,
@@ -54,11 +59,11 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new Error("Not authenticated."));
+            throw handleApiError(new Error("Not authenticated."), 401);
         }
 
         if (!session.isAdmin) {
-            throw handleApiError(new Error("Not authorized."));
+            throw handleApiError(new Error("Not authorized."), 403);
         }
 
         try {

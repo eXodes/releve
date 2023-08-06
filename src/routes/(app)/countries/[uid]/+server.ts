@@ -1,8 +1,10 @@
 import { handleApiError } from "$server/utils/error";
-import type { StateData } from "$features/countries/types";
 import { StateCollection } from "$module/country/state.collection";
 
+import type { StateData } from "$features/countries/types";
+
 import { json } from "@sveltejs/kit";
+
 import type { RequestHandler } from "./$types";
 
 export interface StateGetOutput {
@@ -13,7 +15,7 @@ export const GET: RequestHandler = async ({ locals, params }) => {
     const user = locals.session;
 
     if (!user) {
-        throw handleApiError(new Error("Not authenticated."));
+        throw handleApiError(new Error("Not authenticated."), 401);
     }
 
     try {
