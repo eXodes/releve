@@ -1,4 +1,5 @@
 import type { FirestoreQueryDocSnapshot } from "$server/type/firestore";
+
 import type { PaginationMeta, PaginationQuery } from "$client/types/meta";
 
 export abstract class HasPagination<Entity> {

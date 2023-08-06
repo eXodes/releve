@@ -1,6 +1,7 @@
-import type { StateData } from "$features/countries/types";
 import type { HasData } from "$module/common/contract/data";
 import type { StateEntity } from "$module/country/state.entity";
+
+import type { StateData } from "$features/countries/types";
 
 export class State implements HasData<StateData> {
     protected stateData: StateData;

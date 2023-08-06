@@ -1,7 +1,8 @@
 <script lang="ts">
     import { invalidate } from "$app/navigation";
-    import { Color } from "$client/enums/theme";
+
     import type { ShopData } from "$features/shops/types";
+    import { Color } from "$client/enums/theme";
 
     import ActionableModal from "$client/components/shared/actionable-modal.svelte";
     import Badge from "$client/components/shared/badge.svelte";

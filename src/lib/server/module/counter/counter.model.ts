@@ -1,5 +1,6 @@
 import type { HasData } from "$module/common/contract/data";
 import type { CounterEntity } from "$module/counter/counter.entity";
+
 import type { CounterData } from "$client/types/counter";
 
 export class Counter implements HasData<CounterData> {

@@ -1,6 +1,6 @@
-import type { Auth } from "$module/auth/auth.model";
 import type { EmailData, EmailService } from "$module/common/contract/email";
 import { EmailTriggerService } from "$module/common/services/email.service";
+import type { Auth } from "$module/auth/auth.model";
 
 export class VerificationEmail implements EmailService {
     private service: EmailTriggerService;

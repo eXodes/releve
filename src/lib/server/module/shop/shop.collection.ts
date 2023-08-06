@@ -1,16 +1,17 @@
 import type { FirestoreQueryDocSnapshot } from "$server/type/firestore";
-import { ShopStatus } from "$features/shops/enum";
+import { Collection } from "$module/common/services/collection.service";
 import type { HasObserver, Observer } from "$module/common/contract/observable";
 import type { HasPagination, Paginated } from "$module/common/contract/pagination";
-import { Collection } from "$module/common/services/collection.service";
-import { CounterCollection } from "$module/counter/counter.collection";
-import type { HasCounter } from "$module/counter/counter.contract";
-import type { CreateShopDto } from "$module/shop/dto/create-shop.dto";
-import type { UpdateShopDto } from "$module/shop/dto/update-shop.dto";
 import { ShopCollectionObserver } from "$module/shop/shop-collection.observer";
-import { shopConverter } from "$module/shop/shop.converter";
 import type { ShopEntity } from "$module/shop/shop.entity";
 import type { Shop } from "$module/shop/shop.model";
+import { shopConverter } from "$module/shop/shop.converter";
+import type { CreateShopDto } from "$module/shop/dto/create-shop.dto";
+import type { UpdateShopDto } from "$module/shop/dto/update-shop.dto";
+import { CounterCollection } from "$module/counter/counter.collection";
+import type { HasCounter } from "$module/counter/counter.contract";
+
+import { ShopStatus } from "$features/shops/enum";
 import type { PaginationMeta, PaginationQuery, SearchQuery } from "$client/types/meta";
 
 import { Timestamp } from "firebase-admin/firestore";

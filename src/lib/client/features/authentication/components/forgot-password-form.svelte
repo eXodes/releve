@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { enhance  } from "$app/forms";
-    import { Color } from "$client/enums/theme";
-    import type { MessageResponse } from "$client/types/response";
-    import suite, {
+    import { enhance } from "$app/forms";
+
+    import forgotPasswordSuite, {
         type ForgotPasswordPayload,
     } from "$features/authentication/validations/forgot-password";
     import type { ValidationError } from "$client/types/error";
+    import type { MessageResponse } from "$client/types/response";
+    import { Color } from "$client/enums/theme";
 
     import Alert from "$client/components/shared/alert.svelte";
     import Button from "$client/components/shared/button.svelte";
@@ -34,7 +35,7 @@
             ...user,
             [camelCase(detail.name)]: detail.value,
         };
-        result = suite(user, detail.name);
+        result = forgotPasswordSuite(user, detail.name);
         errors = result.getErrors();
     };
 
@@ -73,7 +74,8 @@
             autocomplete="email"
             required
             errors={errors["email"]}
-            on:input={handleChange} />
+            on:input={handleChange}
+        />
     </div>
 
     <Alert show={!!successMessage} color={Color.SUCCESS}>

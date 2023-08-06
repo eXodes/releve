@@ -1,7 +1,6 @@
 import { countries } from "$features/countries/store";
 import type { CountryData, StateData } from "$features/countries/types";
-import type { FetcherQuery } from "$client/utils/endpoint";
-import { endpoint } from "$client/utils/endpoint";
+import { endpoint, type FetcherQuery } from "$client/utils/endpoint";
 
 export const CountryService = {
     getAll: async (option?: FetcherQuery): Promise<CountryData[]> => {

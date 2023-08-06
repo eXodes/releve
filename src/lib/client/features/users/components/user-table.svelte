@@ -1,9 +1,9 @@
 <script lang="ts">
     import { goto, invalidate } from "$app/navigation";
-
     import { page } from "$app/stores";
-    import { Color, Size } from "$client/enums/theme";
+
     import type { UserData } from "$features/users/types";
+    import { Color, Size } from "$client/enums/theme";
     import type { PaginationMeta } from "$client/types/meta";
     import { getLocaleDatetime } from "$client/utils/datetime";
     import { classNames } from "$client/utils/style";
@@ -129,7 +129,7 @@
 <ActionableModal
     open={showDeleteUsers}
     title="Delete selected users?"
-    action="/users?/delete"
+    action="/users?/deleteAll"
     name="uids"
     value={selectedUsers.map((u) => u.uid).join(",")}
     confirmLabel="Delete All"

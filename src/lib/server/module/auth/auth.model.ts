@@ -1,9 +1,11 @@
 import { base } from "$app/paths";
+
 import app from "$server/services/firebase-admin";
-import type { UserSession } from "$features/authentication/types";
-import type { CanSendEmail, HasAdmin } from "$module/auth/auth.contract";
 import type { HasData } from "$module/common/contract/data";
 import type { EmailService } from "$module/common/contract/email";
+import type { CanSendEmail, HasAdmin } from "$module/auth/auth.contract";
+
+import type { UserSession } from "$features/authentication/types";
 
 import { type ActionCodeSettings, getAuth } from "firebase-admin/auth";
 

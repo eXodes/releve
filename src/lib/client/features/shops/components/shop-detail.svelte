@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { Color } from "$client/enums/theme";
     import type { ShopData } from "$features/shops/types";
+    import { Color } from "$client/enums/theme";
     import { getPlainDate, getRelativeDatetime } from "$client/utils/datetime";
     import { classNames } from "$client/utils/style";
 

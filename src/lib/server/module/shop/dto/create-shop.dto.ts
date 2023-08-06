@@ -1,5 +1,6 @@
-import type { ShopStatus } from "$features/shops/enum";
 import type { ShopEntity } from "$module/shop/shop.entity";
+
+import type { ShopStatus } from "$features/shops/enum";
 
 export interface CreateShopDto extends Partial<ShopEntity> {
     name: string;

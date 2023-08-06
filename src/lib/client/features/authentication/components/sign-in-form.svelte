@@ -2,11 +2,12 @@
     import { enhance } from "$app/forms";
     import { invalidate } from "$app/navigation";
     import { page } from "$app/stores";
-    import { Color } from "$client/enums/theme";
-    import type { MessageResponse } from "$client/types/response";
+
     import { handleAuthCatch } from "$features/authentication/errors";
     import { AuthService } from "$features/authentication/services";
-    import { signInSuite, type SignInPayload } from "$features/authentication/validations/sign-in";
+    import signInSuite, { type SignInPayload } from "$features/authentication/validations/sign-in";
+    import { Color } from "$client/enums/theme";
+    import type { MessageResponse } from "$client/types/response";
 
     import Alert from "$client/components/shared/alert.svelte";
     import Button from "$client/components/shared/button.svelte";

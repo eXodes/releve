@@ -1,5 +1,6 @@
 <script lang="ts">
     import { page } from "$app/stores";
+
     import { classNames } from "$client/utils/style";
 
     import SignOutButton from "$features/authentication/components/sign-out-button.svelte";

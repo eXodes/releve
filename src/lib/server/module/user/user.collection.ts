@@ -1,15 +1,16 @@
-import type { FirestoreQueryDocSnapshot } from "$server/type/firestore";
 import { handleApiError } from "$server/utils/error";
-import { AuthService } from "$module/auth/auth.service";
+import type { FirestoreQueryDocSnapshot } from "$server/type/firestore";
 import type { HasPagination, Paginated } from "$module/common/contract/pagination";
 import { Collection } from "$module/common/services/collection.service";
-import { CounterCollection } from "$module/counter/counter.collection";
-import type { HasCounter } from "$module/counter/counter.contract";
-import type { CreateUserDto } from "$module/user/dto/create-user.dto";
-import type { UpdateUserDto } from "$module/user/dto/update-user.dto";
-import { userConverter } from "$module/user/user.converter";
+import { AuthService } from "$module/auth/auth.service";
 import type { UserEntity } from "$module/user/user.entity";
 import type { User } from "$module/user/user.model";
+import { userConverter } from "$module/user/user.converter";
+import type { CreateUserDto } from "$module/user/dto/create-user.dto";
+import type { UpdateUserDto } from "$module/user/dto/update-user.dto";
+import { CounterCollection } from "$module/counter/counter.collection";
+import type { HasCounter } from "$module/counter/counter.contract";
+
 import type { PaginationMeta, PaginationQuery, SearchQuery } from "$client/types/meta";
 
 import { Timestamp } from "firebase-admin/firestore";

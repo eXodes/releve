@@ -1,8 +1,9 @@
 <script lang="ts">
     import { goto, invalidate } from "$app/navigation";
-    import { Color, Size } from "$client/enums/theme";
+
     import { ShopStatus } from "$features/shops/enum";
     import type { ShopData } from "$features/shops/types";
+    import { Color, Size } from "$client/enums/theme";
     import type { PaginationMeta } from "$client/types/meta";
     import { getLocaleDatetime } from "$client/utils/datetime";
     import { classNames } from "$client/utils/style";

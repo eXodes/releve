@@ -1,5 +1,5 @@
-import { paginationQuery } from "$client/config/query";
 import type { UserData } from "$features/users/types";
+import { paginationQuery } from "$client/config/query";
 import type { PaginationMeta, PaginationQuery } from "$client/types/meta";
 import { endpoint, type FetcherQuery } from "$client/utils/endpoint";
 

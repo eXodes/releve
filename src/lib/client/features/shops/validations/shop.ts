@@ -21,7 +21,7 @@ enforce.extend({
     isAlphanumeric: validator.isAlphanumeric,
 });
 
-const suite = create(
+const shopSuite = create(
     (
         { name, link, categories, deliveryProviders, streetAddress, city, postalCode }: ShopPayload,
         field?: string
@@ -62,4 +62,4 @@ const suite = create(
     }
 );
 
-export default suite;
+export default shopSuite;

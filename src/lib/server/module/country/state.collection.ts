@@ -1,8 +1,8 @@
 import { Collection } from "$module/common/services/collection.service";
 import { COUNTRY_COLLECTION_NAME } from "$module/country/country.collection";
-import { stateConverter } from "$module/country/state.converter";
 import type { StateEntity } from "$module/country/state.entity";
 import type { State } from "$module/country/state.model";
+import { stateConverter } from "$module/country/state.converter";
 
 export const STATE_COLLECTION_NAME = "states";
 

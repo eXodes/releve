@@ -1,6 +1,7 @@
 import { MediaStorage } from "$module/common/services/media-storage";
-import type { Media, MediaImage } from "$client/types/media";
+
 import { getMd5Hash } from "$client/utils/generator";
+import type { Media, MediaImage } from "$client/types/media";
 
 export class UserAvatar extends MediaStorage {
     private path: string;

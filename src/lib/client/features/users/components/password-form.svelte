@@ -1,12 +1,12 @@
 <script lang="ts">
     import { applyAction, enhance } from "$app/forms";
     import { goto } from "$app/navigation";
-    import { Color } from "$client/enums/theme";
-    import type {
-        UpdatePasswordPayload,
-        UpdatePasswordResponse,
+
+    import updatePasswordSuite, {
+        type UpdatePasswordPayload,
+        type UpdatePasswordResponse,
     } from "$features/users/validations/update-password";
-    import suite from "$features/users/validations/update-password";
+    import { Color } from "$client/enums/theme";
     import { notification } from "$client/stores/notification";
     import type { ValidationError } from "$client/types/error";
 
@@ -14,7 +14,7 @@
     import Button from "$client/components/shared/button.svelte";
     import PasswordInput from "$client/components/shared/password-input.svelte";
 
-	import type { SubmitFunction } from "@sveltejs/kit";
+    import type { SubmitFunction } from "@sveltejs/kit";
     import { createEventDispatcher } from "svelte";
     import { camelCase } from "lodash-es";
     import type { SuiteRunResult } from "vest";
@@ -37,7 +37,7 @@
             ...user,
             [camelCase(detail.name)]: detail.value,
         };
-        result = suite(user, detail.name);
+        result = updatePasswordSuite(user, detail.name);
         errors = result.getErrors();
     };
 

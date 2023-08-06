@@ -1,17 +1,17 @@
 <script lang="ts">
     import { applyAction, enhance } from "$app/forms";
     import { page } from "$app/stores";
-    import { Color } from "$client/enums/theme";
-    import type { MessageResponse } from "$client/types/response";
+
+    import { ShopStatus } from "$features/shops/enum";
+    import type { ShopData } from "$features/shops/types";
+    import shopSuite, { type ShopPayload } from "$features/shops/validations/shop";
     import { categories } from "$features/categories/store";
     import { countries, states } from "$features/countries/store";
     import { deliveryServices } from "$features/delivery-providers/store";
-    import { ShopStatus } from "$features/shops/enum";
-    import type { ShopData } from "$features/shops/types";
-    import type { ShopPayload } from "$features/shops/validations/shop";
-    import suite from "$features/shops/validations/shop";
+    import { Color } from "$client/enums/theme";
     import { notification } from "$client/stores/notification";
     import type { ValidationError } from "$client/types/error";
+    import type { MessageResponse } from "$client/types/response";
 
     import ActionableCard from "$client/components/shared/actionable-card.svelte";
     import Button from "$client/components/shared/button.svelte";
@@ -20,7 +20,7 @@
     import TextInput from "$client/components/shared/text-input.svelte";
     import UrlInput from "$client/components/shared/url-input.svelte";
 
-	import type { SubmitFunction } from "@sveltejs/kit";
+    import type { SubmitFunction } from "@sveltejs/kit";
     import { createEventDispatcher, onMount } from "svelte";
     import { camelCase, startCase } from "lodash-es";
     import type { SuiteRunResult } from "vest";
@@ -75,7 +75,7 @@
             await states.loadStates(detail.value as string);
         }
 
-        result = suite(shop, detail.name);
+        result = shopSuite(shop, detail.name);
         errors = result.getErrors();
     };
 
@@ -125,7 +125,7 @@
                 status: shopData.status,
             };
 
-            result = suite(shop);
+            result = shopSuite(shop);
             errors = result.getErrors();
             return;
         }

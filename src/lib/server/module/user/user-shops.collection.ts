@@ -1,11 +1,12 @@
-import { ShopStatus } from "$features/shops/enum";
 import type { Paginated } from "$module/common/contract/pagination";
+import { USER_COLLECTION_NAME } from "$module/user/user.collection";
+import { ShopCollection } from "$module/shop/shop.collection";
 import type { CreateUserShopDto } from "$module/shop/dto/create-shop.dto";
 import type { UpdateShopDto } from "$module/shop/dto/update-shop.dto";
-import { ShopCollection } from "$module/shop/shop.collection";
 import type { Shop } from "$module/shop/shop.model";
+
+import { ShopStatus } from "$features/shops/enum";
 import type { PaginationMeta, PaginationQuery } from "$client/types/meta";
-import { USER_COLLECTION_NAME } from "$module/user/user.collection";
 
 import { Timestamp } from "firebase-admin/firestore";
 

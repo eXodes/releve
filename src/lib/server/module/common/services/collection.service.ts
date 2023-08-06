@@ -6,8 +6,7 @@ import type {
     FirestorePartialValue,
     FirestoreValue,
 } from "$server/type/firestore";
-import type { BaseEntity } from "$module/common/contract/database";
-import { FirestoreDatabase } from "$module/common/contract/database";
+import { FirestoreDatabase, type BaseEntity } from "$module/common/contract/database";
 
 import type { App } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";

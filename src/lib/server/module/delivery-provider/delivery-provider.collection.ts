@@ -1,7 +1,7 @@
 import { Collection } from "$module/common/services/collection.service";
-import { deliveryProviderConverter } from "$module/delivery-provider/delivery-provider.converter";
 import type { DeliveryProviderEntity } from "$module/delivery-provider/delivery-provider.entity";
 import type { DeliveryProvider } from "$module/delivery-provider/delivery-provider.model";
+import { deliveryProviderConverter } from "$module/delivery-provider/delivery-provider.converter";
 
 export const DELIVERY_PROVIDER_COLLECTION_NAME = "delivery-providers";
 
