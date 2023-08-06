@@ -76,3 +76,5 @@ export const signUpSuite = create(
         });
     }
 );
+
+export default signUpSuite;

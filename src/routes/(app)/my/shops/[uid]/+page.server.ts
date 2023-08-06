@@ -1,9 +1,11 @@
 import { handleApiError } from "$server/utils/error";
 import { validate } from "$server/utils/validation";
-import type { MessageResponse } from "$client/types/response";
-import { getFormData } from "$client/utils/data";
-import { shopSchema } from "$module/shop/validation/shop.schema";
 import { UserShopsCollection } from "$module/user/user-shops.collection";
+import { shopSchema } from "$module/shop/validation/shop.schema";
+
+import { getFormData } from "$client/utils/data";
+import type { MessageResponse } from "$client/types/response";
+
 import type { Actions } from "./$types";
 
 export type UpdateUserShopPayload = {
@@ -23,25 +25,29 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new Error("Not authenticated."));
+            throw handleApiError(new Error("Not authenticated."), 401);
         }
 
         const shop = await UserShopsCollection.getUserShop(session.data.uid, params.uid);
 
         if (session.data.uid !== shop.data.createdBy.uid) {
-            throw handleApiError(new Error("Not authorized."));
+            throw handleApiError(new Error("Not authorized."), 403);
+        }
+
+        const formData = await request.formData();
+
+        const payload = getFormData<UpdateUserShopPayload>(formData);
+
+        const errors = validate(shopSchema, {
+            ...payload,
+            private: true,
+        });
+
+        if (errors) {
+            throw handleApiError(errors);
         }
 
         try {
-            const formData = await request.formData();
-
-            const payload = getFormData<UpdateUserShopPayload>(formData);
-
-            validate(shopSchema, {
-                ...payload,
-                private: true,
-            });
-
             await UserShopsCollection.updateShop(session.data.uid, {
                 uid: params.uid,
                 name: payload.name,
@@ -72,7 +78,7 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new Error("Not authenticated."));
+            throw handleApiError(new Error("Not authenticated."), 401);
         }
 
         try {

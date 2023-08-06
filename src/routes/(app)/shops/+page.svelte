@@ -1,6 +1,6 @@
 <script lang="ts">
-    import Container from "$client/components/shared/container.svelte";
     import ShopTable from "$features/shops/components/shop-table.svelte";
+    import Container from "$client/components/shared/container.svelte";
 
     import type { PageData } from "./$types";
 

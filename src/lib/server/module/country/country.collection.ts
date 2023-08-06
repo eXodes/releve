@@ -1,8 +1,8 @@
 import { Collection } from "$module/common/services/collection.service";
 import { CounterCollection } from "$module/counter/counter.collection";
-import { countryConverter } from "$module/country/country.converter";
 import type { CountryEntity } from "$module/country/country.entity";
 import type { Country } from "$module/country/country.model";
+import { countryConverter } from "$module/country/country.converter";
 
 export const COUNTRY_COLLECTION_NAME = "countries";
 

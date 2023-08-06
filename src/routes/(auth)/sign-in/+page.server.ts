@@ -1,9 +1,11 @@
-import { VerificationEmail } from "$module/auth/actions/email";
+import { handleApiError } from "$server/utils/error";
 import { AuthService } from "$module/auth/auth.service";
-import { UserAvatar } from "$module/user/user-avatar.model";
+import { VerificationEmail } from "$module/auth/actions/email";
 import { UserCollection } from "$module/user/user.collection";
+import { UserAvatar } from "$module/user/user-avatar.model";
 
-import { fail } from "@sveltejs/kit";
+import type { MessageResponse } from "$client/types/response";
+
 import type { Actions } from "./$types";
 
 export const actions: Actions = {
@@ -13,7 +15,7 @@ export const actions: Actions = {
         const uid = formData.get("uid") as string;
 
         if (!uid) {
-            return fail(400, { message: "User ID is required." });
+            throw handleApiError(new Error("User ID is required."));
         }
 
         const user = await AuthService.whereUid(uid);
@@ -22,7 +24,7 @@ export const actions: Actions = {
 
         return {
             message: "Email verification resent.",
-        };
+        } satisfies MessageResponse;
     },
     "verify": async ({ request }) => {
         const formData = await request.formData();
@@ -40,7 +42,7 @@ export const actions: Actions = {
                 user = await AuthService.whereEmail(email);
                 break;
             default:
-                return fail(400, { message: "User ID or email is required." });
+                throw handleApiError(new Error("User ID or email is required."));
         }
 
         await UserCollection.create({
@@ -58,6 +60,6 @@ export const actions: Actions = {
 
         return {
             message: "Account verified.",
-        };
+        } satisfies MessageResponse;
     },
 };

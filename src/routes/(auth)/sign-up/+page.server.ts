@@ -1,11 +1,13 @@
+import { handleApiError } from "$server/utils/error";
 import { validate } from "$server/utils/validation";
-import type { SignUpPayload } from "$features/authentication/validations/sign-up";
 import { VerificationEmail } from "$module/auth/actions/email";
 import { AuthService } from "$module/auth/auth.service";
 import { signUpSchema } from "$module/auth/validation/new-account.schema";
-import { getFormData } from "$client/utils/data";
 
-import { fail } from "@sveltejs/kit";
+import type { SignUpPayload } from "$features/authentication/validations/sign-up";
+import { getFormData } from "$client/utils/data";
+import type { MessageResponse } from "$client/types/response";
+
 import type { Actions } from "./$types";
 
 export const actions: Actions = {
@@ -17,7 +19,7 @@ export const actions: Actions = {
         const errors = validate(signUpSchema, payload);
 
         if (errors) {
-            return fail(400, errors);
+            throw handleApiError(errors);
         }
 
         const user = await AuthService.create(payload);
@@ -26,6 +28,6 @@ export const actions: Actions = {
 
         return {
             message: "Sign up successful.",
-        };
+        } satisfies MessageResponse;
     },
 };

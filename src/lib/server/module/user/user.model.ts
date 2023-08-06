@@ -1,7 +1,8 @@
-import type { UserData } from "$features/users/types";
 import type { HasData } from "$module/common/contract/data";
 import type { Observer, Publisher } from "$module/common/contract/observable";
 import type { UserEntity } from "$module/user/user.entity";
+
+import type { UserData } from "$features/users/types";
 
 import { Timestamp } from "firebase-admin/firestore";
 

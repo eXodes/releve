@@ -1,15 +1,17 @@
 import { handleApiError } from "$server/utils/error";
 import { validate } from "$server/utils/validation";
-import type { MessageResponse } from "$client/types/response";
-import { ShopStatus } from "$features/shops/enum";
-import type { ShopData } from "$features/shops/types";
 import { ShopCollection } from "$module/shop/shop.collection";
 import { shopSchema } from "$module/shop/validation/shop.schema";
 import { UserShopsCollection } from "$module/user/user-shops.collection";
-import type { PaginationMeta, PaginationQuery, SearchQuery } from "$client/types/meta";
+
+import { ShopStatus } from "$features/shops/enum";
+import type { ShopData } from "$features/shops/types";
 import { getFormData } from "$client/utils/data";
+import type { PaginationMeta, PaginationQuery, SearchQuery } from "$client/types/meta";
+import type { MessageResponse } from "$client/types/response";
 
 import { parse } from "qs";
+
 import type { Actions, PageServerLoad } from "./$types";
 
 export interface ShopsOutput {
@@ -21,11 +23,11 @@ export const load: PageServerLoad<ShopsOutput> = async ({ locals, url, depends }
     const session = locals.session;
 
     if (!session) {
-        throw handleApiError(new Error("Not authenticated."));
+        throw handleApiError(new Error("Not authenticated."), 401);
     }
 
     if (!session.isAdmin) {
-        throw handleApiError(new Error("Not authorized."));
+        throw handleApiError(new Error("Not authorized."), 403);
     }
 
     try {
@@ -72,22 +74,26 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new Error("Not authenticated."));
+            throw handleApiError(new Error("Not authenticated."), 401);
+        }
+
+        const formData = await request.formData();
+
+        const payload = getFormData<CreateShopPayload>(formData);
+
+        const isPrivate = payload.private === "true";
+
+        const errors = validate(shopSchema, {
+            ...payload,
+            status: payload.status ?? ShopStatus.PENDING,
+            private: isPrivate,
+        });
+
+        if (errors) {
+            throw handleApiError(errors);
         }
 
         try {
-            const formData = await request.formData();
-
-            const payload = getFormData<CreateShopPayload>(formData);
-
-            const isPrivate = payload.private === "true";
-
-            validate(shopSchema, {
-                ...payload,
-                status: payload.status ?? ShopStatus.PENDING,
-                private: isPrivate,
-            });
-
             if (isPrivate) {
                 await UserShopsCollection.createShop(session.data.uid, {
                     name: payload.name,
@@ -143,20 +149,20 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new Error("Not authenticated."));
+            throw handleApiError(new Error("Not authenticated."), 401);
         }
 
         if (!session.isAdmin) {
-            throw handleApiError(new Error("Not authorized."));
+            throw handleApiError(new Error("Not authorized."), 403);
         }
 
+        const formData = await request.formData();
+
+        const { uids: stringUids } = getFormData<DeleteShopsPayload>(formData);
+
+        const uids = stringUids.split(",");
+
         try {
-            const formData = await request.formData();
-
-            const { uids: stringUids } = getFormData<DeleteShopsPayload>(formData);
-
-            const uids = stringUids.split(",");
-
             await ShopCollection.deleteAll(uids);
 
             return {

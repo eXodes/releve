@@ -1,13 +1,14 @@
 import { validate } from "$server/utils/validation";
-import type { MessageResponse } from "$client/types/response";
-import { PasswordResetLinkEmail } from "$module/auth/actions/email";
+import { handleApiError } from "$server/utils/error";
 import { AuthService } from "$module/auth/auth.service";
+import { PasswordResetLinkEmail } from "$module/auth/actions/email";
 import { forgotPasswordSchema } from "$module/auth/validation/forgot-password.schema";
-import { getFormData } from "$client/utils/data";
-import type { ValidationError } from "$client/types/error";
 
-import { type ActionFailure, fail } from "@sveltejs/kit";
+import { getFormData } from "$client/utils/data";
+import type { MessageResponse } from "$client/types/response";
+
 import { AuthErrorCodes } from "firebase/auth";
+
 import type { Actions } from "./$types";
 
 export type ForgotPasswordPayload = {
@@ -15,7 +16,7 @@ export type ForgotPasswordPayload = {
 };
 
 export const actions: Actions = {
-    default: async ({ request }): Promise<MessageResponse | ActionFailure<ValidationError>> => {
+    default: async ({ request }) => {
         const formData = await request.formData();
 
         const payload = getFormData<ForgotPasswordPayload>(formData);
@@ -23,7 +24,7 @@ export const actions: Actions = {
         const errors = validate(forgotPasswordSchema, payload);
 
         if (errors) {
-            return fail(400, errors);
+            throw handleApiError(errors);
         }
 
         try {
@@ -33,19 +34,20 @@ export const actions: Actions = {
 
             return {
                 message: "Successfully sent password reset link.",
-            };
+            } satisfies MessageResponse;
         } catch (error) {
             if (
                 error instanceof Error &&
                 "code" in error &&
+                // To avoid leaking information about whether a user exists or not.
                 error.code === AuthErrorCodes.USER_DELETED
             ) {
                 return {
                     message: "Successfully sent password reset link.",
-                };
+                } satisfies MessageResponse;
             }
 
-            throw error;
+            throw handleApiError(error);
         }
     },
 };

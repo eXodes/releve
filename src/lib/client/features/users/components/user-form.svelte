@@ -1,14 +1,15 @@
 <script lang="ts">
     import { applyAction, enhance } from "$app/forms";
     import { page } from "$app/stores";
-    import { countries, states } from "$features/countries/store";
+
     import { Role } from "$features/users/enum";
     import type { UserData } from "$features/users/types";
-    import type {
-        UpdateUserPayload,
-        UpdateUserResponse,
+    import {
+        updateUserSuite,
+        type UpdateUserPayload,
+        type UpdateUserResponse,
     } from "$features/users/validations/update-user";
-    import { updateUserSuite } from "$features/users/validations/update-user";
+    import { countries, states } from "$features/countries/store";
     import { Color } from "$client/enums/theme";
     import { notification } from "$client/stores/notification";
     import type { ValidationError } from "$client/types/error";
@@ -29,7 +30,7 @@
     import { media } from "svelte-match-media";
     import type { SuiteRunResult } from "vest";
 
-	export let userData: UserData;
+    export let userData: UserData;
     export let actionType: "users" | "settings";
 
     let actionUrl = {
@@ -160,10 +161,7 @@
         states.loadStates(user.country);
     });
 
-    $: showRoleInput =
-        $page.data.session.user?.customClaims?.isAdmin &&
-        actionType === "users" &&
-        userData.uid !== $page.data.session.user?.uid;
+    $: showRoleInput = actionType === "users" && $page.data.session.user?.customClaims?.isAdmin;
 
     $: errorMessage &&
         notification.send({

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { invalidate } from "$app/navigation";
     import { page } from "$app/stores";
+
     import { classNames } from "$client/utils/style";
 
     import Container from "$client/components/shared/container.svelte";
@@ -9,6 +10,7 @@
 
     import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@rgossiaux/svelte-headlessui";
     import { Icon, Key, UserCircle } from "svelte-hero-icons";
+
     import type { PageData } from "./$types";
 
     export let data: PageData;

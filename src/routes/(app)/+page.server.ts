@@ -1,8 +1,10 @@
-import type { ShopData } from "$features/shops/types";
 import { ShopCollection } from "$module/shop/shop.collection";
+
+import type { ShopData } from "$features/shops/types";
 import type { PaginationMeta, PaginationQuery } from "$client/types/meta";
 
 import { parse } from "qs";
+
 import type { PageServerLoad } from "./$types";
 
 export interface IndexOutput {

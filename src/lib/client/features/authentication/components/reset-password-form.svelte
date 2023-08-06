@@ -1,12 +1,13 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import { page } from "$app/stores";
-    import { Color } from "$client/enums/theme";
+
     import { handleAuthCatch } from "$features/authentication/errors";
     import { AuthService } from "$features/authentication/services";
-    import suite, {
+    import resetPasswordSuite, {
         type ResetPasswordPayload,
     } from "$features/authentication/validations/reset-password";
+    import { Color } from "$client/enums/theme";
 
     import Alert from "$client/components/shared/alert.svelte";
     import Button from "$client/components/shared/button.svelte";
@@ -42,7 +43,7 @@
             ...user,
             [camelCase(detail.name)]: detail.value,
         };
-        result = suite(user, detail.name);
+        result = resetPasswordSuite(user, detail.name);
         errors = result.getErrors();
     };
 

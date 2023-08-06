@@ -1,4 +1,5 @@
 import type { MessageResponse } from "$client/types/response";
+
 import { FirebaseError } from "firebase/app";
 import { AuthErrorCodes } from "firebase/auth";
 

@@ -1,7 +1,7 @@
-import { categoryConverter } from "$module/category/category.converter";
+import { Collection } from "$module/common/services/collection.service";
 import type { CategoryEntity } from "$module/category/category.entity";
 import type { Category } from "$module/category/category.model";
-import { Collection } from "$module/common/services/collection.service";
+import { categoryConverter } from "$module/category/category.converter";
 
 export const CATEGORY_COLLECTION_NAME = "categories";
 

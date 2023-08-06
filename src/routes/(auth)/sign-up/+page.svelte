@@ -1,6 +1,6 @@
 <script lang="ts">
-    import Link from "$client/components/shared/link.svelte";
     import SignUpForm from "$features/authentication/components/sign-up-form.svelte";
+    import Link from "$client/components/shared/link.svelte";
 </script>
 
 <svelte:head>

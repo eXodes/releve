@@ -2,6 +2,7 @@ import type { SignUpCheckPayload } from "$features/authentication/validations/mi
 import type { MessageResponse } from "$client/types/response";
 import { endpoint, formEndpoint } from "$client/utils/endpoint";
 import { auth } from "$client/utils/firebase";
+
 import { FirebaseError } from "firebase/app";
 
 import {

@@ -1,4 +1,5 @@
 import { dev } from "$app/environment";
+
 import { firebaseConfig, firebaseEmulator } from "$client/config/firebase";
 
 import { initializeApp } from "firebase/app";

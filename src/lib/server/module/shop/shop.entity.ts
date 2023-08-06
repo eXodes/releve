@@ -1,4 +1,5 @@
 import type { FirestoreData } from "$server/type/firestore";
+
 import type { ShopStatus } from "$features/shops/enum";
 
 import type { Timestamp } from "firebase-admin/firestore";

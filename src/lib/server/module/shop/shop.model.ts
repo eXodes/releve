@@ -1,6 +1,7 @@
-import type { ShopData } from "$features/shops/types";
 import type { HasData } from "$module/common/contract/data";
 import type { ShopEntity } from "$module/shop/shop.entity";
+
+import type { ShopData } from "$features/shops/types";
 
 export class Shop implements HasData<ShopData> {
     protected shopData: ShopData;

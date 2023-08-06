@@ -1,6 +1,7 @@
-import type { UserInformationData } from "$features/users/types";
 import type { HasData } from "$module/common/contract/data";
 import type { UserInformationEntity } from "$module/user/user-information.entity";
+
+import type { UserInformationData } from "$features/users/types";
 
 export class UserInformation implements HasData<UserInformationData> {
     protected userInformationData: UserInformationData;

@@ -1,11 +1,12 @@
 import app from "$server/services/firebase-admin";
 import { options, SESSION_COOKIE } from "$server/utils/cookie";
-import type { UserSession } from "$features/authentication/types";
-import type { SignUpPayload } from "$features/authentication/validations/sign-up";
+import type { HasObserver, Observer } from "$module/common/contract/observable";
 import { Auth } from "$module/auth/auth.model";
 import { AuthObserver } from "$module/auth/auth.observer";
-import type { HasObserver, Observer } from "$module/common/contract/observable";
 import type { User } from "$module/user/user.model";
+
+import type { UserSession } from "$features/authentication/types";
+import type { SignUpPayload } from "$features/authentication/validations/sign-up";
 import { getDayInSecond } from "$client/utils/duration";
 import { getGravatarURL } from "$client/utils/generator";
 

@@ -26,3 +26,5 @@ export const signInSuite = create(({ email, password }: SignInPayload, field?: s
         enforce(password).isNotBlank();
     });
 });
+
+export default signInSuite;

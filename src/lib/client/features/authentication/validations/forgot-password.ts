@@ -9,7 +9,7 @@ enforce.extend({
     isEmail: validator.isEmail,
 });
 
-const suite = create(({ email }: ForgotPasswordPayload, field?: string) => {
+const forgotPasswordSuite = create(({ email }: ForgotPasswordPayload, field?: string) => {
     only(field);
 
     test("email", "Email is required.", () => {
@@ -21,4 +21,4 @@ const suite = create(({ email }: ForgotPasswordPayload, field?: string) => {
     });
 });
 
-export default suite;
+export default forgotPasswordSuite;

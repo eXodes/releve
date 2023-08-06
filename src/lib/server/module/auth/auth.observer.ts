@@ -1,5 +1,5 @@
-import { AuthService } from "$module/auth/auth.service";
 import type { Observer, Publisher } from "$module/common/contract/observable";
+import { AuthService } from "$module/auth/auth.service";
 import { UserCollection } from "$module/user/user.collection";
 import { User } from "$module/user/user.model";
 

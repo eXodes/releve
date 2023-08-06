@@ -1,7 +1,7 @@
 import { Collection } from "$module/common/services/collection.service";
-import { counterConverter } from "$module/counter/counter.converter";
 import type { CounterEntity } from "$module/counter/counter.entity";
 import { Counter } from "$module/counter/counter.model";
+import { counterConverter } from "$module/counter/counter.converter";
 
 export const COUNTER_COLLECTION_NAME = "counter";
 

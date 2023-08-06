@@ -3,6 +3,7 @@ import type { DeliveryProviderData } from "$features/delivery-providers/types";
 import { DeliveryProviderCollection } from "$module/delivery-provider/delivery-provider.collection";
 
 import { json } from "@sveltejs/kit";
+
 import type { RequestHandler } from "./$types";
 
 export interface DeliveryServiceGetOutput {
@@ -13,7 +14,7 @@ export const GET: RequestHandler = async ({ locals }) => {
     const user = locals.session;
 
     if (!user) {
-        throw handleApiError(new Error("Not authenticated."));
+        throw handleApiError(new Error("Not authenticated."), 401);
     }
 
     try {

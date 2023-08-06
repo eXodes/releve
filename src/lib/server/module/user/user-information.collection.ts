@@ -1,9 +1,9 @@
 import { Collection } from "$module/common/services/collection.service";
-import type { UpdateUserInformationDto } from "$module/user/dto/update-user-information.dto";
-import { userInformationConverter } from "$module/user/user-information.converter";
+import { USER_COLLECTION_NAME } from "$module/user/user.collection";
 import type { UserInformationEntity } from "$module/user/user-information.entity";
 import type { UserInformation } from "$module/user/user-information.model";
-import { USER_COLLECTION_NAME } from "$module/user/user.collection";
+import { userInformationConverter } from "$module/user/user-information.converter";
+import type { UpdateUserInformationDto } from "$module/user/dto/update-user-information.dto";
 
 export const USER_INFO_COLLECTION_NAME = "details";
 
