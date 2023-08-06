@@ -2,6 +2,7 @@ import { FirebaseError } from "$module/common/errors/firebase";
 import { ValidationError } from "$module/common/errors/validation";
 
 import { error } from "@sveltejs/kit";
+import * as Sentry from "@sentry/sveltekit";
 
 export const handleApiError = (err: unknown, status?: number) => {
     if (err instanceof ValidationError) {
@@ -28,6 +29,8 @@ export const handleApiError = (err: unknown, status?: number) => {
             stack: err.stack,
         });
     }
+
+    Sentry.captureException(err);
 
     return error(500, {
         status: 500,
