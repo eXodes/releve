@@ -1,4 +1,5 @@
 import { handleApiError } from "$server/utils/error";
+import { AuthError } from "$module/common/errors/auth";
 import { CategoryCollection } from "$module/category/category.collection";
 
 import type { CategoryData } from "$features/categories/types";
@@ -15,7 +16,7 @@ export const GET: RequestHandler = async ({ locals }) => {
     const user = locals.session;
 
     if (!user) {
-        throw handleApiError(new Error("Not authenticated."), 401);
+        throw handleApiError(new AuthError("Not authenticated."), 401);
     }
 
     try {

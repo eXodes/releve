@@ -1,5 +1,6 @@
 import { handleApiError } from "$server/utils/error";
 import { validate } from "$server/utils/validation";
+import { AuthError } from "$module/common/errors/auth";
 import { AuthService } from "$module/auth/auth.service";
 import { updateAccountSchema } from "$module/auth/validation/update-account.schema";
 import { UserCollection } from "$module/user/user.collection";
@@ -24,11 +25,11 @@ export const load: PageServerLoad<UserOutput> = async ({ locals, params }) => {
     const session = locals.session;
 
     if (!session) {
-        throw handleApiError(new Error("Not authenticated."), 401);
+        throw handleApiError(new AuthError("Not authenticated."), 401);
     }
 
     if (!session.isAdmin) {
-        throw handleApiError(new Error("Not authorized."), 403);
+        throw handleApiError(new AuthError("Not authorized."), 403);
     }
 
     const user = await UserCollection.getUserByUid(params.uid);
@@ -52,11 +53,11 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new Error("Not authenticated."), 401);
+            throw handleApiError(new AuthError("Not authenticated."), 401);
         }
 
         if (!session.isAdmin) {
-            throw handleApiError(new Error("Not authorized."), 403);
+            throw handleApiError(new AuthError("Not authorized."), 403);
         }
 
         const uid = params.uid;
@@ -117,11 +118,11 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new Error("Not authenticated."), 401);
+            throw handleApiError(new AuthError("Not authenticated."), 401);
         }
 
         if (!session.isAdmin) {
-            throw handleApiError(new Error("Not authorized."), 403);
+            throw handleApiError(new AuthError("Not authorized."), 403);
         }
 
         try {

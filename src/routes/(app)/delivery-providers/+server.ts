@@ -14,7 +14,7 @@ export const GET: RequestHandler = async ({ locals }) => {
     const user = locals.session;
 
     if (!user) {
-        throw handleApiError(new Error("Not authenticated."), 401);
+        throw handleApiError(new AuthError("Not authenticated."), 401);
     }
 
     try {
