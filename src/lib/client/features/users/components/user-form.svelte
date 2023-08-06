@@ -161,10 +161,7 @@
         states.loadStates(user.country);
     });
 
-    $: showRoleInput =
-        $page.data.session.user?.customClaims?.isAdmin &&
-        actionType === "users" &&
-        userData.uid !== $page.data.session.user?.uid;
+    $: showRoleInput = actionType === "users" && $page.data.session.user?.customClaims?.isAdmin;
 
     $: errorMessage &&
         notification.send({
