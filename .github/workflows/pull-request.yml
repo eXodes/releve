@@ -69,11 +69,11 @@ jobs:
           NODE_ENV: production
           PUBLIC_APP_ENV: preview
           PUBLIC_APP_NAME: ${{ vars.PUBLIC_APP_NAME }}
+          STORAGE_API: ${{ vars.STORAGE_API }}
+          STORAGE_BUCKET: ${{ vars.STORAGE_BUCKET }}
           MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
           MAIL_FROM_ADDRESS: ${{ vars.MAIL_FROM_ADDRESS }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-          STORAGE_API: ${{ vars.STORAGE_API }}
-          STORAGE_BUCKET: ${{ vars.STORAGE_BUCKET }}
           FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

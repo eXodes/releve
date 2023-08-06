@@ -49,6 +49,11 @@ jobs:
     runs-on: ubuntu-latest
 
     environment: Production
+    env:
+      MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
+      MAIL_FROM_ADDRESS: ${{ vars.MAIL_FROM_ADDRESS }}
+      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+      STORAGE_BUCKET: ${{ vars.STORAGE_BUCKET }}
 
     steps:
       - name: Checkout branch
@@ -78,16 +83,15 @@ jobs:
           NODE_ENV: production
           PUBLIC_APP_ENV: production
           PUBLIC_APP_NAME: ${{ vars.PUBLIC_APP_NAME }}
-          MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
-          MAIL_FROM_ADDRESS: ${{ vars.MAIL_FROM_ADDRESS }}
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-          STORAGE_API: ${{ secrets.STORAGE_API }}
-          STORAGE_BUCKET: ${{ vars.STORAGE_BUCKET }}
           PUBLIC_SENTRY_DSN: ${{ vars.SENTRY_DSN }}
           PUBLIC_SENTRY_TRACE_RATE: ${{ vars.SENTRY_TRACE_RATE }}
           PUBLIC_SENTRY_SESSION_RATE: ${{ vars.SENTRY_SESSION_RATE }}
           PUBLIC_SENTRY_ERROR_RATE: ${{ vars.SENTRY_ERROR_RATE }}
+          STORAGE_API: ${{ secrets.STORAGE_API }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
           SENTRY_RELEASE: ${{ vars.GITHUB_SHA }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
