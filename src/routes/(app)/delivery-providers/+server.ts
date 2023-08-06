@@ -1,6 +1,8 @@
 import { handleApiError } from "$server/utils/error";
-import type { DeliveryProviderData } from "$features/delivery-providers/types";
+import { AuthError } from "$module/common/errors/auth";
 import { DeliveryProviderCollection } from "$module/delivery-provider/delivery-provider.collection";
+
+import type { DeliveryProviderData } from "$features/delivery-providers/types";
 
 import { json } from "@sveltejs/kit";
 
