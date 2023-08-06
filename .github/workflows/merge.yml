@@ -83,11 +83,11 @@ jobs:
           NODE_ENV: production
           PUBLIC_APP_ENV: production
           PUBLIC_APP_NAME: ${{ vars.PUBLIC_APP_NAME }}
-          STORAGE_API: ${{ secrets.STORAGE_API }}
           PUBLIC_SENTRY_DSN: ${{ vars.SENTRY_DSN }}
           PUBLIC_SENTRY_TRACE_RATE: ${{ vars.SENTRY_TRACE_RATE }}
           PUBLIC_SENTRY_SESSION_RATE: ${{ vars.SENTRY_SESSION_RATE }}
           PUBLIC_SENTRY_ERROR_RATE: ${{ vars.SENTRY_ERROR_RATE }}
+          STORAGE_API: ${{ secrets.STORAGE_API }}
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
           SENTRY_RELEASE: ${{ vars.GITHUB_SHA }}
