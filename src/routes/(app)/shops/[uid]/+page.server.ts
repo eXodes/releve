@@ -1,5 +1,6 @@
 import { handleApiError } from "$server/utils/error";
 import { validate } from "$server/utils/validation";
+import { AuthError } from "$module/common/errors/auth";
 import { ShopCollection } from "$module/shop/shop.collection";
 import { shopSchema } from "$module/shop/validation/shop.schema";
 
@@ -14,11 +15,11 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new Error("Not authenticated."), 401);
+            throw handleApiError(new AuthError("Not authenticated."), 401);
         }
 
         if (!session.isAdmin) {
-            throw handleApiError(new Error("Not authorized."), 403);
+            throw handleApiError(new AuthError("Not authorized."), 403);
         }
 
         const formData = await request.formData();
@@ -59,11 +60,11 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new Error("Not authenticated."), 401);
+            throw handleApiError(new AuthError("Not authenticated."), 401);
         }
 
         if (!session.isAdmin) {
-            throw handleApiError(new Error("Not authorized."), 403);
+            throw handleApiError(new AuthError("Not authorized."), 403);
         }
 
         try {

@@ -1,5 +1,6 @@
 import { env } from "$env/dynamic/public";
 import { PUBLIC_APP_ENV } from "$env/static/public";
+
 import * as Sentry from "@sentry/sveltekit";
 import { handleErrorWithSentry, Replay } from "@sentry/sveltekit";
 

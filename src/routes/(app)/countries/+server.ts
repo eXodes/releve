@@ -1,4 +1,5 @@
 import { handleApiError } from "$server/utils/error";
+import { AuthError } from "$module/common/errors/auth";
 import { CountryCollection } from "$module/country/country.collection";
 
 import type { CountryData } from "$features/countries/types";
@@ -15,7 +16,7 @@ export const GET: RequestHandler = async ({ locals }) => {
     const user = locals.session;
 
     if (!user) {
-        throw handleApiError(new Error("Not authenticated."), 401);
+        throw handleApiError(new AuthError("Not authenticated."), 401);
     }
 
     try {

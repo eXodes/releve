@@ -1,6 +1,8 @@
 import { handleApiError } from "$server/utils/error";
-import type { DeliveryProviderData } from "$features/delivery-providers/types";
+import { AuthError } from "$module/common/errors/auth";
 import { DeliveryProviderCollection } from "$module/delivery-provider/delivery-provider.collection";
+
+import type { DeliveryProviderData } from "$features/delivery-providers/types";
 
 import { json } from "@sveltejs/kit";
 
@@ -14,7 +16,7 @@ export const GET: RequestHandler = async ({ locals }) => {
     const user = locals.session;
 
     if (!user) {
-        throw handleApiError(new Error("Not authenticated."), 401);
+        throw handleApiError(new AuthError("Not authenticated."), 401);
     }
 
     try {

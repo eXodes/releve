@@ -4,7 +4,6 @@ import { deserialize } from "$app/forms";
 import type { MetaQuery } from "$client/types/meta";
 
 import { redirect } from "@sveltejs/kit";
-import { parse } from "cookie";
 
 export type Fetch = (info: RequestInfo, init?: RequestInit) => Promise<Response>;
 
@@ -45,16 +44,6 @@ interface EndpointOptionsForm {
 }
 
 type Options<T = unknown> = EndpointOptions | EndpointOptionsData<T> | EndpointOptionsBody;
-
-export const getCookieValue = (headers: Headers, key: string) => {
-    const cookies = parse(headers.get("cookie") || "");
-
-    const cookieValue = cookies[key];
-
-    if (!cookieValue) throw new Error(`No cookie value with the key [${key}] not found.`);
-
-    return cookieValue;
-};
 
 export const endpoint = async <ReturnType = void, DataType = undefined>(
     resource: string,
