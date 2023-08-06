@@ -1,4 +1,5 @@
-import { PUBLIC_APP_ENV, PUBLIC_SENTRY_DSN, PUBLIC_SENTRY_TRACE_RATE } from "$env/static/public";
+import { env } from "$env/dynamic/public";
+import { PUBLIC_APP_ENV } from "$env/static/public";
 import { sequence } from "@sveltejs/kit/hooks";
 import * as Sentry from "@sentry/sveltekit";
 import "dotenv/config";
@@ -12,8 +13,8 @@ import type { Handle, HandleServerError } from "@sveltejs/kit";
 
 Sentry.init({
     environment: PUBLIC_APP_ENV,
-    dsn: PUBLIC_SENTRY_DSN,
-    tracesSampleRate: Number(PUBLIC_SENTRY_TRACE_RATE),
+    dsn: env.PUBLIC_SENTRY_DSN,
+    tracesSampleRate: Number(env.PUBLIC_SENTRY_TRACE_RATE),
 });
 
 export const handle: Handle = sequence(Sentry.sentryHandle(), async ({ event, resolve }) => {
