@@ -11,12 +11,6 @@ import type { HandleServerError } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
 import * as Sentry from "@sentry/sveltekit";
 
-console.info("Sentry Server", {
-    environment: PUBLIC_APP_ENV,
-    dsn: env.PUBLIC_SENTRY_DSN,
-    tracesSampleRate: Number(env.PUBLIC_SENTRY_TRACE_RATE),
-});
-
 Sentry.init({
     environment: PUBLIC_APP_ENV,
     dsn: env.PUBLIC_SENTRY_DSN,
