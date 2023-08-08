@@ -69,6 +69,10 @@ jobs:
           NODE_ENV: production
           PUBLIC_APP_ENV: preview
           PUBLIC_APP_NAME: ${{ vars.PUBLIC_APP_NAME }}
+          PUBLIC_SENTRY_DSN: ${{ vars.SENTRY_DSN }}
+          PUBLIC_SENTRY_TRACE_RATE: ${{ vars.SENTRY_TRACE_RATE }}
+          PUBLIC_SENTRY_SESSION_RATE: ${{ vars.SENTRY_SESSION_RATE }}
+          PUBLIC_SENTRY_ERROR_RATE: ${{ vars.SENTRY_ERROR_RATE }}
           STORAGE_API: ${{ vars.STORAGE_API }}
           STORAGE_BUCKET: ${{ vars.STORAGE_BUCKET }}
           MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
