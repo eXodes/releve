@@ -3,22 +3,22 @@ import { AuthError } from "$module/common/errors/auth";
 import { FirebaseError } from "$module/common/errors/firebase";
 import { ValidationError } from "$module/common/errors/validation";
 
-import { error } from "@sveltejs/kit";
+import { error, fail } from "@sveltejs/kit";
 import * as Sentry from "@sentry/sveltekit";
 
 export const handleApiError = (err: unknown, status?: number) => {
-    if (err instanceof AuthError) {
-        return error(status ?? 401, {
-            status: status ?? 401,
-            code: "AuthError",
+    if (err instanceof ValidationError) {
+        return fail(400, {
+            status: 400,
+            code: "ValidationError",
             message: err.message,
         });
     }
 
-    if (err instanceof ValidationError) {
-        return error(400, {
-            status: 400,
-            code: "ValidationError",
+    if (err instanceof AuthError) {
+        return error(err.status, {
+            status: err.status,
+            code: "AuthError",
             message: err.message,
         });
     }

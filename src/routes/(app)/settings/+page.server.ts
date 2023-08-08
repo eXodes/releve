@@ -32,7 +32,7 @@ export const load: PageServerLoad<SettingsAccountOutput> = async ({ locals, depe
     const session = locals.session;
 
     if (!session) {
-        throw handleApiError(new AuthError("Not authenticated."), 401);
+        throw handleApiError(new AuthError("Not authenticated.", 401));
     }
 
     const user = await UserCollection.getUserByUid(session.data.uid);
@@ -64,7 +64,7 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new AuthError("Not authenticated."), 401);
+            throw handleApiError(new AuthError("Not authenticated.", 401));
         }
 
         const formData = await request.formData();
@@ -125,7 +125,7 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new AuthError("Not authenticated."), 401);
+            throw handleApiError(new AuthError("Not authenticated.", 401));
         }
 
         const formData = await request.formData();

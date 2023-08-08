@@ -24,11 +24,11 @@ export const load: PageServerLoad<ShopsOutput> = async ({ locals, url, depends }
     const session = locals.session;
 
     if (!session) {
-        throw handleApiError(new AuthError("Not authenticated."), 401);
+        throw handleApiError(new AuthError("Not authenticated.", 401));
     }
 
     if (!session.isAdmin) {
-        throw handleApiError(new AuthError("Not authorized."), 403);
+        throw handleApiError(new AuthError("Not authorized.", 403));
     }
 
     try {
@@ -75,7 +75,7 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new AuthError("Not authenticated."), 401);
+            throw handleApiError(new AuthError("Not authenticated.", 401));
         }
 
         const formData = await request.formData();
@@ -150,11 +150,11 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new AuthError("Not authenticated."), 401);
+            throw handleApiError(new AuthError("Not authenticated.", 401));
         }
 
         if (!session.isAdmin) {
-            throw handleApiError(new AuthError("Not authorized."), 403);
+            throw handleApiError(new AuthError("Not authorized.", 403));
         }
 
         const formData = await request.formData();
