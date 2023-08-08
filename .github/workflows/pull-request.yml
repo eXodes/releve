@@ -63,25 +63,12 @@ jobs:
       - name: Run prepare
         run: npm run prepare
 
-      - name: Make .env file
-        uses: SpicyPizza/create-envfile@v2.0
-        with:
-          envkey_PUBLIC_SENTRY_DSN: ${{ vars.SENTRY_DSN }}
-          envkey_PUBLIC_SENTRY_TRACE_RATE: ${{ vars.SENTRY_TRACE_RATE }}
-          envkey_PUBLIC_SENTRY_SESSION_RATE: ${{ vars.SENTRY_SESSION_RATE }}
-          envkey_PUBLIC_SENTRY_ERROR_RATE: ${{ vars.SENTRY_ERROR_RATE }}
-          file_name: .env
-
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         env:
           NODE_ENV: production
           PUBLIC_APP_ENV: preview
           PUBLIC_APP_NAME: ${{ vars.PUBLIC_APP_NAME }}
-          PUBLIC_SENTRY_DSN: ${{ vars.SENTRY_DSN }}
-          PUBLIC_SENTRY_TRACE_RATE: ${{ vars.SENTRY_TRACE_RATE }}
-          PUBLIC_SENTRY_SESSION_RATE: ${{ vars.SENTRY_SESSION_RATE }}
-          PUBLIC_SENTRY_ERROR_RATE: ${{ vars.SENTRY_ERROR_RATE }}
           STORAGE_API: ${{ vars.STORAGE_API }}
           STORAGE_BUCKET: ${{ vars.STORAGE_BUCKET }}
           MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
