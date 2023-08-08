@@ -26,13 +26,13 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new AuthError("Not authenticated."), 401);
+            throw handleApiError(new AuthError("Not authenticated.", 401));
         }
 
         const shop = await UserShopsCollection.getUserShop(session.data.uid, params.uid);
 
         if (session.data.uid !== shop.data.createdBy.uid) {
-            throw handleApiError(new AuthError("Not authorized."), 403);
+            throw handleApiError(new AuthError("Not authorized.", 403));
         }
 
         const formData = await request.formData();
@@ -79,7 +79,7 @@ export const actions: Actions = {
         const session = locals.session;
 
         if (!session) {
-            throw handleApiError(new AuthError("Not authenticated."), 401);
+            throw handleApiError(new AuthError("Not authenticated.", 401));
         }
 
         try {
