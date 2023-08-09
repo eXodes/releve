@@ -1,5 +1,5 @@
-import { base } from "$app/paths";
 import { PUBLIC_APP_NAME } from "$env/static/public";
+import { ORIGIN } from "$env/static/private";
 
 import app from "$server/services/firebase-admin";
 import type { Auth } from "$module/auth/auth.model";
@@ -9,8 +9,8 @@ import { getFirestore } from "firebase-admin/firestore";
 
 abstract class SendEmail {
     protected name = PUBLIC_APP_NAME;
-    protected baseUrl = base;
-    protected logo = base + "/workflow-mark.svg";
+    protected baseUrl = ORIGIN;
+    protected logo = this.baseUrl + "/workflow-mark.png";
 
     abstract sendEmail<T>(data: T): Promise<void>;
 }

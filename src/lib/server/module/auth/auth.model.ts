@@ -1,4 +1,4 @@
-import { base } from "$app/paths";
+import { ORIGIN } from "$env/static/private";
 
 import app from "$server/services/firebase-admin";
 import type { HasData } from "$module/common/contract/data";
@@ -13,7 +13,7 @@ export class Auth implements HasData<UserSession>, HasAdmin, CanSendEmail {
     constructor(protected user: UserSession) {}
 
     private auth = getAuth(app);
-    private baseUrl = base;
+    private baseUrl = ORIGIN;
     private signInUrl = this.baseUrl + "/sign-in";
     private resetPasswordUrl = this.baseUrl + "/reset-password";
 
