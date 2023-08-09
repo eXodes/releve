@@ -10,11 +10,13 @@ import { AuthService } from "$module/auth/auth.service";
 import type { HandleServerError } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
 import * as Sentry from "@sentry/sveltekit";
+import { ProfilingIntegration } from "@sentry/profiling-node";
 
 Sentry.init({
     environment: PUBLIC_APP_ENV,
     dsn: env.PUBLIC_SENTRY_DSN,
     tracesSampleRate: Number(env.PUBLIC_SENTRY_TRACE_RATE),
+    integrations: [new ProfilingIntegration()],
 });
 
 export const handle = sequence(Sentry.sentryHandle(), async ({ event, resolve }) => {

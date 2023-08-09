@@ -55,6 +55,7 @@
     },
     "dependencies": {
         "@rgossiaux/svelte-headlessui": "^2.0.0",
+        "@sentry/profiling-node": "^1.1.2",
         "@sentry/sveltekit": "^7.61.1",
         "cookie": "^0.5.0",
         "date-fns": "^2.30.0",
