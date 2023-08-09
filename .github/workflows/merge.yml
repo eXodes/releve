@@ -90,6 +90,7 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         env:
           NODE_ENV: production
+          ORIGIN: ${{ vars.ORIGIN }}
           PUBLIC_APP_ENV: production
           PUBLIC_APP_NAME: ${{ vars.PUBLIC_APP_NAME }}
           STORAGE_API: ${{ secrets.STORAGE_API }}
