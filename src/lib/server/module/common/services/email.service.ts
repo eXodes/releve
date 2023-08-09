@@ -10,7 +10,7 @@ import { getFirestore } from "firebase-admin/firestore";
 abstract class SendEmail {
     protected name = PUBLIC_APP_NAME;
     protected baseUrl = ORIGIN;
-    protected logo = this.baseUrl + "/workflow-mark.svg";
+    protected logo = this.baseUrl + "/workflow-mark.png";
 
     abstract sendEmail<T>(data: T): Promise<void>;
 }
