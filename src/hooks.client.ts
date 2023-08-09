@@ -7,9 +7,9 @@ import { handleErrorWithSentry, Replay } from "@sentry/sveltekit";
 Sentry.init({
     environment: PUBLIC_APP_ENV,
     dsn: env.PUBLIC_SENTRY_DSN,
-    tracesSampleRate: Number(env.PUBLIC_SENTRY_TRACE_RATE),
-    replaysSessionSampleRate: Number(env.PUBLIC_SENTRY_SESSION_RATE),
-    replaysOnErrorSampleRate: Number(env.PUBLIC_SENTRY_ERROR_RATE),
+    tracesSampleRate: Number(env.PUBLIC_SENTRY_SAMPLE_RATE),
+    replaysSessionSampleRate: Number(env.PUBLIC_SENTRY_SAMPLE_RATE),
+    replaysOnErrorSampleRate: Number(env.PUBLIC_SENTRY_SAMPLE_RATE),
     integrations: [new Replay()],
 });
 

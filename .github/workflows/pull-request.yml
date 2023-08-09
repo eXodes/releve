@@ -67,9 +67,7 @@ jobs:
         uses: SpicyPizza/create-envfile@v2.0
         with:
           envkey_PUBLIC_SENTRY_DSN: ${{ vars.SENTRY_DSN }}
-          envkey_PUBLIC_SENTRY_TRACE_RATE: ${{ vars.SENTRY_TRACE_RATE }}
-          envkey_PUBLIC_SENTRY_SESSION_RATE: ${{ vars.SENTRY_SESSION_RATE }}
-          envkey_PUBLIC_SENTRY_ERROR_RATE: ${{ vars.SENTRY_ERROR_RATE }}
+          envkey_PUBLIC_SENTRY_SAMPLE_RATE: ${{ vars.SENTRY_SAMPLE_RATE }}
           file_name: .env
 
       - name: Deploy to Firebase Hosting
