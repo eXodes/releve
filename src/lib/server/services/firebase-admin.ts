@@ -15,6 +15,10 @@ if (!admin.apps.length) {
     const [defaultApp] = admin.apps;
 
     app = defaultApp ?? initializeApp();
+
+    getFirestore(app).settings({
+        ignoreUndefinedProperties: true,
+    });
 }
 
 export default app;
