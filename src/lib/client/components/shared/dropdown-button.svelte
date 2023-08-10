@@ -89,7 +89,7 @@
                                             active
                                                 ? "enabled:bg-gray-100 enabled:text-gray-900"
                                                 : "enabled:text-gray-700",
-                                            "block w-full px-4 py-2 text-left text-sm",
+                                            "block w-full px-4 py-2 text-left text-sm text-gray-400",
                                             item.disabled && "cursor-not-allowed"
                                         )}
                                         on:click={item.onClick}
