@@ -27,7 +27,6 @@
     import { onMount } from "svelte";
     import { CheckCircle, Icon } from "svelte-hero-icons";
     import { fade } from "svelte/transition";
-    import { media } from "svelte-match-media";
     import type { SuiteRunResult } from "vest";
 
     export let userData: UserData;
@@ -238,71 +237,68 @@
 
                 <div class="mt-6 flex-grow lg:ml-6 lg:mt-0 lg:flex-shrink-0 lg:flex-grow-0">
                     <p class="text-sm font-medium text-gray-700" aria-hidden="true">Photo</p>
-                    {#if $media?.mobile}
-                        <div class="mt-1">
-                            <div class="flex items-center">
-                                <div
-                                    class="inline-block h-12 w-12 flex-shrink-0 overflow-hidden rounded-full"
-                                    aria-hidden="true"
-                                >
-                                    <Image
-                                        src={userPhoto}
-                                        alt="{user.displayName} avatar"
-                                        fallback="/images/avatar.png"
-                                    />
-                                </div>
-                                <div class="ml-5 rounded-md shadow-sm">
-                                    <div
-                                        class="group relative flex items-center justify-center rounded-md border border-gray-300 px-3 py-2 focus-within:ring-2 focus-within:ring-rose-500 focus-within:ring-offset-2 hover:bg-gray-50"
-                                    >
-                                        <label
-                                            for="mobile-user-photo"
-                                            class="pointer-events-none relative text-sm font-medium leading-4 text-gray-700"
-                                        >
-                                            <span>Change</span>
-                                            <span class="sr-only"> user photo</span>
-                                        </label>
-                                        <input
-                                            type="file"
-                                            id="mobile-user-photo"
-                                            name="user-photo"
-                                            class="absolute h-full w-full cursor-pointer rounded-md border-gray-300 opacity-0"
-                                            on:input={handleFileChange}
-                                            accept="image/*"
-                                            capture="user"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {/if}
-                    {#if $media?.desktop}
-                        <div class="relative overflow-hidden rounded-full">
-                            <div class="relative h-40 w-40 rounded-full">
+                    <div class="mt-1 md:hidden">
+                        <div class="flex items-center">
+                            <div
+                                class="inline-block h-12 w-12 flex-shrink-0 overflow-hidden rounded-full"
+                                aria-hidden="true"
+                            >
                                 <Image
                                     src={userPhoto}
                                     alt="{user.displayName} avatar"
                                     fallback="/images/avatar.png"
                                 />
                             </div>
-                            <label
-                                for="desktop-user-photo"
-                                class="absolute inset-0 flex h-full w-full items-center justify-center bg-rose-700 bg-opacity-75 text-sm font-medium text-white opacity-0 focus-within:opacity-100 hover:opacity-100"
-                            >
-                                <span>Change</span>
-                                <span class="sr-only"> user photo</span>
-                                <input
-                                    type="file"
-                                    id="desktop-user-photo"
-                                    name="user-photo"
-                                    class="absolute inset-0 h-full w-full cursor-pointer rounded-md border-gray-300 opacity-0"
-                                    on:input={handleFileChange}
-                                    accept="image/*"
-                                    capture="user"
-                                />
-                            </label>
+                            <div class="ml-5 rounded-md shadow-sm">
+                                <div
+                                    class="group relative flex items-center justify-center rounded-md border border-gray-300 px-3 py-2 focus-within:ring-2 focus-within:ring-rose-500 focus-within:ring-offset-2 hover:bg-gray-50"
+                                >
+                                    <label
+                                        for="mobile-user-photo"
+                                        class="pointer-events-none relative text-sm font-medium leading-4 text-gray-700"
+                                    >
+                                        <span>Change</span>
+                                        <span class="sr-only"> user photo</span>
+                                    </label>
+                                    <input
+                                        type="file"
+                                        id="mobile-user-photo"
+                                        name="user-photo"
+                                        class="absolute h-full w-full cursor-pointer rounded-md border-gray-300 opacity-0"
+                                        on:input={handleFileChange}
+                                        accept="image/*"
+                                        capture="user"
+                                    />
+                                </div>
+                            </div>
                         </div>
-                    {/if}
+                    </div>
+
+                    <div class="relative overflow-hidden rounded-full hidden md:block">
+                        <div class="relative h-40 w-40 rounded-full">
+                            <Image
+                                src={userPhoto}
+                                alt="{user.displayName} avatar"
+                                fallback="/images/avatar.png"
+                            />
+                        </div>
+                        <label
+                            for="desktop-user-photo"
+                            class="absolute inset-0 flex h-full w-full items-center justify-center bg-rose-700 bg-opacity-75 text-sm font-medium text-white opacity-0 focus-within:opacity-100 hover:opacity-100"
+                        >
+                            <span>Change</span>
+                            <span class="sr-only"> user photo</span>
+                            <input
+                                type="file"
+                                id="desktop-user-photo"
+                                name="user-photo"
+                                class="absolute inset-0 h-full w-full cursor-pointer rounded-md border-gray-300 opacity-0"
+                                on:input={handleFileChange}
+                                accept="image/*"
+                                capture="user"
+                            />
+                        </label>
+                    </div>
                 </div>
             </div>
 
