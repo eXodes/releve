@@ -20,7 +20,6 @@
     import { FirebaseError } from "firebase/app";
     import { AuthErrorCodes } from "firebase/auth";
     import { camelCase } from "lodash-es";
-    import * as Sentry from "@sentry/sveltekit";
 
     import { createEventDispatcher, onMount } from "svelte";
     import { Icon, QuestionMarkCircle } from "svelte-hero-icons";
@@ -67,7 +66,6 @@
             successMessage = data.message;
 
             invalidateSession();
-            Sentry.setUser({ email: user.email });
 
             dispatch("success");
         } catch (error) {
