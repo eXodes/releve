@@ -24,7 +24,8 @@
             "$module/*": ["./src/lib/server/module/*"],
             "$routes": ["./src/routes"],
             "$routes/*": ["./src/routes/*"]
-        }
+        },
+        "types": ["vite-plugin-pwa/info", "vite-plugin-pwa/client"]
     },
     "include": [
         "./.svelte-kit/ambient.d.ts",
