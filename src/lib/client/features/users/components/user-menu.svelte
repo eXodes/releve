@@ -17,7 +17,7 @@
     const userNavigation = [{ name: "Settings", href: "/settings" }];
 </script>
 
-<Menu class="relative ml-3">
+<Menu class="relative">
     <MenuButton
         class="group relative flex max-w-xs items-center rounded-full bg-white text-sm shadow-md focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
     >
@@ -25,7 +25,7 @@
         <Image
             src={$page.data.session.user?.photoURL}
             alt="Avatar for {$page.data.session.user?.displayName}"
-            ratioClass="h-10 w-10 rounded-full overflow-hidden"
+            ratioClass="h-8 w-8 rounded-full overflow-hidden"
             fallback="/images/avatar.png"
         />
         <span

@@ -5,7 +5,7 @@
     interface $$Props extends Partial<HTMLButtonElement> {
         type?: "button" | "submit" | "reset";
         size?: Size;
-        color?: Color.PRIMARY | Color.SECONDARY | Color.DANGER | "default";
+        color?: Color.PRIMARY | Color.SECONDARY | Color.DANGER | Color.LIGHT | "default";
         block?: boolean;
         disabled?: boolean;
         ref?: HTMLButtonElement;
@@ -25,6 +25,7 @@
             "border-transparent bg-rose-100 text-rose-700 hover:enabled:bg-rose-200 disabled:bg-rose-50 disabled:text-rose-200",
         [Color.DANGER]:
             "border-transparent bg-red-100 text-red-700 hover:enabled:bg-red-200 disabled:bg-red-50 disabled:text-red-200",
+        [Color.LIGHT]: "border-transparent bg-white text-rose-600 hover:text-rose-500",
         ["default"]:
             "border-gray-300 bg-white text-gray-700 hover:enabled:bg-gray-50 disabled:border-gray-100 disabled:bg-gray-100 disabled:text-gray-400",
     };

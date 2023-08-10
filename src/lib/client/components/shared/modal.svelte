@@ -35,7 +35,7 @@
 <Transition show={open}>
     <Dialog
         as="div"
-        class="fixed inset-0 z-10 overflow-y-auto"
+        class="fixed inset-0 z-10 mt-20 overflow-y-auto md:mt-0"
         initialFocus={closeButtonRef}
         on:close={() => !sticky && handleClose()}
         static={sticky}

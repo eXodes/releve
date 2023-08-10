@@ -148,7 +148,7 @@
 </Modal>
 
 <div class="flex flex-col">
-    <div class="-mx-2 -my-2 sm:-mx-6 lg:-mx-8">
+    <div class="-mx-3 -my-3 sm:-mx-6 lg:-mx-8">
         <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
             <div class="relative bg-white shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
                 <table class="min-w-full table-fixed divide-y divide-gray-300">

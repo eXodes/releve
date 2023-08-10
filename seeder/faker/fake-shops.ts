@@ -34,21 +34,23 @@ runSeeder(async ({ auth, firestore }) => {
             link: faker.internet.domainWord() + ".com",
             categories: faker.helpers.arrayElements(
                 categories,
-                faker.datatype.number({ min: 1, max: 3 })
+                faker.number.int({ min: 1, max: 3 })
             ),
             deliveryProviders: faker.helpers.arrayElements(
                 deliveryProviders,
                 faker.datatype.number({ min: 1, max: 3 })
             ),
             address: {
-                street: faker.address.streetAddress(),
-                city: faker.address.city(),
-                state: faker.address.state(),
-                postalCode: faker.address.zipCode(),
-                country: faker.address.country(),
+                street: faker.location.streetAddress(),
+                city: faker.location.city(),
+                state: faker.location.state(),
+                postalCode: faker.location.zipCode(),
+                country: faker.location.country(),
             },
             status: faker.helpers.arrayElement(statuses),
-            createdAt: Timestamp.fromDate(new Date(faker.date.between("2019-01-02", "2019-12-31"))),
+            createdAt: Timestamp.fromDate(
+                new Date(faker.date.between({ from: "2019-01-02", to: "2019-12-31" }))
+            ),
             createdBy: {
                 uid: user.uid,
                 name: user.displayName as string,

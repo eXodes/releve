@@ -2,6 +2,7 @@ import type { SignUpCheckPayload } from "$features/authentication/validations/mi
 import type { MessageResponse } from "$client/types/response";
 import { endpoint, formEndpoint } from "$client/utils/endpoint";
 import { auth } from "$client/utils/firebase";
+import * as Sentry from "@sentry/sveltekit";
 
 import { FirebaseError } from "firebase/app";
 
@@ -81,6 +82,8 @@ export const AuthService = {
                 uid: credential.user.uid,
             });
         }
+
+        Sentry.setUser({ id: credential.user.uid });
 
         const idToken = await credential.user.getIdToken();
 
