@@ -16,7 +16,7 @@ runSeeder(async ({ auth, firestore }) => {
         const email = faker.internet.email();
 
         const user: UserEntity = {
-            displayName: faker.name.fullName(),
+            displayName: faker.person.fullName(),
             email: faker.internet.email(),
             emailVerified: true,
             avatar: {
@@ -40,7 +40,9 @@ runSeeder(async ({ auth, firestore }) => {
                 isAdmin: faker.helpers.arrayElement([true, false]),
             },
             disabled: false,
-            createdAt: Timestamp.fromDate(new Date(faker.date.between("2019-01-02", "2019-12-31"))),
+            createdAt: Timestamp.fromDate(
+                new Date(faker.date.between({ from: "2019-01-02", to: "2019-12-31" }))
+            ),
         };
 
         const record = await auth.createUser({
@@ -64,7 +66,7 @@ runSeeder(async ({ auth, firestore }) => {
                 customClaims: user.customClaims,
                 disabled: user.disabled,
                 createdAt: Timestamp.fromDate(
-                    new Date(faker.date.between("2019-01-02", "2019-12-31"))
+                    new Date(faker.date.between({ from: "2019-01-02", to: "2019-12-31" }))
                 ),
             });
     }
