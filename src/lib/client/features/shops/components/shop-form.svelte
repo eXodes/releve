@@ -83,7 +83,7 @@
         () =>
         async ({ result }) => {
             if (result.type === "failure") {
-                if (result.data?.name === "ValidationError" && result.data?.errors) {
+                if (result.data?.code === "ValidationError" && result.data?.errors) {
                     errors = result.data?.errors;
                 }
             }

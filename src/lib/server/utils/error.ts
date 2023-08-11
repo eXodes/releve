@@ -4,21 +4,16 @@ import { FirebaseError } from "$module/common/errors/firebase";
 import { ValidationError } from "$module/common/errors/validation";
 
 import { error, fail } from "@sveltejs/kit";
-import * as Sentry from "@sentry/sveltekit";
 
 export const handleApiError = (err: unknown, status?: number) => {
     if (err instanceof ValidationError) {
-        return fail(400, {
-            status: 400,
-            code: "ValidationError",
-            message: err.message,
-        });
+        return fail(400, err.toJSON());
     }
 
     if (err instanceof AuthError) {
         return error(err.status, {
             status: err.status,
-            code: "AuthError",
+            code: err.code,
             message: err.message,
         });
     }
@@ -40,7 +35,6 @@ export const handleApiError = (err: unknown, status?: number) => {
                 stack: err.stack,
             });
         } else {
-            Sentry.captureException(err);
             return error(status ?? 400, {
                 status: status ?? 400,
                 code: "RequestError",
@@ -49,7 +43,6 @@ export const handleApiError = (err: unknown, status?: number) => {
         }
     }
 
-    Sentry.captureException(err);
     return error(500, {
         status: 500,
         code: "InternalError",

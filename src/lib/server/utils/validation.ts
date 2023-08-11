@@ -23,6 +23,6 @@ export const validate = <T = unknown>(schema: Joi.ObjectSchema<T>, payload: T) =
             .map((key) => `"${key}"`)
             .join(", ");
 
-        return new ValidationError(`Invalid input: ${invalidKeys}`, errors).toJSON();
+        return new ValidationError(`Invalid input: ${invalidKeys}`, errors);
     }
 };
