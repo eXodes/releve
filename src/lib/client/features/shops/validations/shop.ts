@@ -1,6 +1,7 @@
 import type { ShopStatus } from "$features/shops/enum";
+import isURL from "validator/lib/isURL";
+import isAlphanumeric from "validator/lib/isAlphanumeric";
 
-import validator from "validator";
 import { create, enforce, only, test } from "vest";
 
 export type ShopPayload = {
@@ -17,8 +18,8 @@ export type ShopPayload = {
 };
 
 enforce.extend({
-    isURL: validator.isURL,
-    isAlphanumeric: validator.isAlphanumeric,
+    isURL: isURL,
+    isAlphanumeric: isAlphanumeric,
 });
 
 const shopSuite = create(
@@ -33,11 +34,15 @@ const shopSuite = create(
         });
 
         test("link", "Link is required.", () => {
-            enforce(name).isNotBlank();
+            enforce(link).isNotBlank();
         });
 
         test("link", "Link is not a valid URL.", () => {
-            enforce(link).isURL();
+            enforce(link).isURL({});
+        });
+
+        test("link", "URL doesn't require a protocol.", () => {
+            enforce(link).notMatches(/^https?:\/\/.+/);
         });
 
         test("categories[]", "Categories is required.", () => {

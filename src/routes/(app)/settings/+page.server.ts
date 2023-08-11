@@ -71,10 +71,10 @@ export const actions: Actions = {
 
         const payload = getFormData<UpdateUserPayload>(formData);
 
-        const errors = validate<UpdateUserPayload>(updateAccountSchema, payload);
+        const errors = validate(updateAccountSchema, payload);
 
         if (errors) {
-            throw handleApiError(errors);
+            return handleApiError(errors);
         }
 
         try {
@@ -132,10 +132,10 @@ export const actions: Actions = {
 
         const payload = getFormData<UpdatePasswordPayload>(formData);
 
-        const errors = validate<UpdatePasswordPayload>(updatePasswordSchema, payload);
+        const errors = validate(updatePasswordSchema, payload);
 
         if (errors) {
-            throw handleApiError(errors);
+            return handleApiError(errors);
         }
 
         try {

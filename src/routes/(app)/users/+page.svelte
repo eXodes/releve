@@ -14,8 +14,8 @@
 <Container>
     <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
-            <h1 class="text-xl font-semibold text-gray-900">Users</h1>
-            <p class="mt-2 text-sm text-gray-700">A list of all the users registered.</p>
+            <h1 class="text-xl font-semibold text-gray-900">User Management</h1>
+            <p class="mt-2 text-sm text-gray-700">List of all the users registered.</p>
         </div>
     </div>
 

@@ -24,7 +24,7 @@ export const actions: Actions = {
         const errors = validate(forgotPasswordSchema, payload);
 
         if (errors) {
-            throw handleApiError(errors);
+            return handleApiError(errors);
         }
 
         try {

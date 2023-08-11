@@ -1,6 +1,5 @@
 export type ValidationError = {
-    name: "ValidationError";
+    code: "ValidationError";
     message: string;
-    status: number;
     errors: Record<string, string[]> | undefined;
 };

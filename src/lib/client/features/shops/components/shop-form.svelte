@@ -1,5 +1,6 @@
 <script lang="ts">
     import { applyAction, enhance } from "$app/forms";
+    import { invalidate } from "$app/navigation";
     import { page } from "$app/stores";
 
     import { ShopStatus } from "$features/shops/enum";
@@ -19,10 +20,12 @@
     import SelectInput from "$client/components/shared/select-input.svelte";
     import TextInput from "$client/components/shared/text-input.svelte";
     import UrlInput from "$client/components/shared/url-input.svelte";
+    import Tooltip from "$client/components/shared/tooltip.svelte";
 
     import type { SubmitFunction } from "@sveltejs/kit";
     import { createEventDispatcher, onMount } from "svelte";
     import { camelCase, startCase } from "lodash-es";
+    import { Icon, QuestionMarkCircle } from "svelte-hero-icons";
     import type { SuiteRunResult } from "vest";
 
     const ActionType = {
@@ -83,7 +86,7 @@
         () =>
         async ({ result }) => {
             if (result.type === "failure") {
-                if (result.data?.name === "ValidationError" && result.data?.errors) {
+                if (result.data?.code === "ValidationError" && result.data?.errors) {
                     errors = result.data?.errors;
                 }
             }
@@ -103,6 +106,16 @@
                     });
 
                 await applyAction(result);
+
+                await invalidate("shops");
+
+                if (isPrivate) {
+                    await invalidate("shops:my");
+                }
+
+                if (shop.status === ShopStatus.APPROVED) {
+                    await invalidate("shops:approved");
+                }
 
                 dispatch("success");
             }
@@ -294,7 +307,9 @@
                 >
                     {#if $states}
                         {#each $states as state}
-                            <option value={state.name}>{state.name}</option>
+                            <option value={state.name} selected={shop.state === state.name}>
+                                {state.name}
+                            </option>
                         {/each}
                     {/if}
                 </SelectInput>
@@ -314,15 +329,33 @@
             </div>
 
             {#if actionType === "create"}
-                <div class="col-span-6">
+                <div class="col-span-6 flex gap-2">
                     <CheckboxInput
-                        label="Make this shop private"
+                        label="Make it private"
                         id="private"
                         name="private"
                         value="true"
                         checked={isPrivate}
                         on:input={handleChange}
                     />
+
+                    <Tooltip>
+                        <svelte:fragment slot="button">
+                            <Icon
+                                src={QuestionMarkCircle}
+                                solid
+                                class="h-5 w-5 text-gray-500 hover:text-gray-600"
+                            />
+
+                            <span class="sr-only">Private shop information tooltip</span>
+                        </svelte:fragment>
+
+                        <svelte:fragment slot="content">
+                            If checked, this shop will be saved as your private collection that can
+                            only be viewed in
+                            <span class="font-semibold">My Shops</span>.
+                        </svelte:fragment>
+                    </Tooltip>
                 </div>
             {/if}
         </div>

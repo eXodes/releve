@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { invalidate } from "$app/navigation";
-
     import Header from "$client/components/layouts/header.svelte";
     import Background from "$client/components/layouts/background.svelte";
     import Modal from "$client/components/shared/modal.svelte";
@@ -10,8 +8,6 @@
 
     const handleShopSubmit = async () => {
         showShopForm = false;
-
-        await invalidate("shops");
     };
 </script>
 

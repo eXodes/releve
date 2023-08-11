@@ -19,7 +19,7 @@ export const actions: Actions = {
         const errors = validate(signUpSchema, payload);
 
         if (errors) {
-            throw handleApiError(errors);
+            return handleApiError(errors);
         }
 
         const user = await AuthService.create(payload);

@@ -29,7 +29,7 @@ export const actions: Actions = {
         const errors = validate(shopSchema, payload);
 
         if (errors) {
-            throw handleApiError(errors);
+            return handleApiError(errors);
         }
 
         try {

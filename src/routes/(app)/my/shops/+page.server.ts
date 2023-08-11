@@ -31,7 +31,7 @@ export const load: PageServerLoad<MyShopsOutput> = async ({ locals, url, depends
             search: query.search,
         });
 
-        depends("shops");
+        depends("shops:my");
 
         return {
             shops: shops.map((shop) => shop.data),

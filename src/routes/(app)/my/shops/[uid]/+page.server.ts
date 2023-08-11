@@ -45,7 +45,7 @@ export const actions: Actions = {
         });
 
         if (errors) {
-            throw handleApiError(errors);
+            return handleApiError(errors);
         }
 
         try {

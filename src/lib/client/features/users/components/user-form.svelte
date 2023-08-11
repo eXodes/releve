@@ -97,7 +97,7 @@
         () =>
         async ({ result }) => {
             if (result.type === "failure") {
-                if (result.data?.name === "ValidationError" && result.data?.errors) {
+                if (result.data?.code === "ValidationError" && result.data?.errors) {
                     errors = result.data?.errors;
                 }
             }
@@ -121,7 +121,7 @@
         () =>
         async ({ result }) => {
             if (result.type === "failure") {
-                if (result.data?.name === "ValidationError" && result.data?.errors) {
+                if (result.data?.code === "ValidationError" && result.data?.errors) {
                     errors = result.data?.errors;
                 }
             }
@@ -274,7 +274,7 @@
                         </div>
                     </div>
 
-                    <div class="relative overflow-hidden rounded-full hidden md:block">
+                    <div class="relative hidden overflow-hidden rounded-full md:block">
                         <div class="relative h-40 w-40 rounded-full">
                             <Image
                                 src={userPhoto}
@@ -417,7 +417,9 @@
                         disabled={$states.length === 0}
                     >
                         {#each $states as state}
-                            <option value={state.name}>{state.name}</option>
+                            <option value={state.name} selected={user.state === state.name}>
+                                {state.name}
+                            </option>
                         {/each}
                     </SelectInput>
                 </div>

@@ -14,9 +14,9 @@
 <Container>
     <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
-            <h1 class="text-xl font-semibold text-gray-900">Shops</h1>
+            <h1 class="text-xl font-semibold text-gray-900">Shop Management</h1>
             <p class="mt-2 text-sm text-gray-700">
-                A list of all the shop that has been added regardless status.
+                List of all the shop that has been added regardless status.
             </p>
         </div>
     </div>

@@ -61,8 +61,6 @@
 
     const handleUpdate = async () => {
         showUpdateShop = false;
-
-        await invalidate("shops");
     };
 
     const handleDelete = async () => {
