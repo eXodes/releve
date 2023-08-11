@@ -3,7 +3,9 @@
 </script>
 
 <Popover class="relative">
-    <PopoverButton class="flex items-center">
+    <PopoverButton
+        class="flex items-center rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500"
+    >
         <slot name="button" />
     </PopoverButton>
 
