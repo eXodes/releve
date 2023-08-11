@@ -181,7 +181,7 @@
 
                 <!-- Add shop (lg-) -->
                 {#if $page.data.session.authenticated}
-                    <div class="fixed bottom-4 right-4 lg:hidden">
+                    <div class="fixed bottom-4 right-4 z-10 lg:hidden">
                         <Button
                             color={Color.PRIMARY}
                             size={Size.SMALL}
@@ -236,7 +236,7 @@
                 <div class="flex px-4 pb-2 pt-5">
                     <button
                         type="button"
-                        class="-m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400"
+                        class="-m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
                         on:click={handleToggleMobileNav}
                     >
                         <span class="sr-only">Close menu</span>
@@ -250,7 +250,7 @@
                             <div class="flow-root">
                                 <a
                                     href={page.href}
-                                    class="-m-2 block p-2 font-medium text-gray-900"
+                                    class="-m-2 block rounded-md p-2 font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-rose-500"
                                 >
                                     {page.name}
                                 </a>

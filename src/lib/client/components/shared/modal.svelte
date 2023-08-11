@@ -35,7 +35,7 @@
 <Transition show={open}>
     <Dialog
         as="div"
-        class="fixed inset-0 z-10 mt-20 overflow-y-auto md:mt-0"
+        class="fixed inset-0 z-10 overflow-y-auto"
         initialFocus={closeButtonRef}
         on:close={() => !sticky && handleClose()}
         static={sticky}
@@ -59,7 +59,7 @@
 
             <TransitionChild
                 class={classNames(
-                    "relative mt-auto inline-block w-full transform overflow-hidden rounded-t-lg bg-white text-left align-middle shadow-xl transition-all sm:max-h-[80vh] sm:w-full sm:max-w-3xl md:rounded-lg xl:max-w-5xl",
+                    "relative mt-20 inline-block w-full transform overflow-hidden rounded-t-lg bg-white text-left align-middle shadow-xl transition-all sm:max-h-[80vh] sm:w-full sm:max-w-3xl md:mt-auto md:rounded-lg xl:max-w-5xl",
                     padding && "px-4 pb-4 pt-5 sm:p-6"
                 )}
                 enter="ease-out duration-300"
