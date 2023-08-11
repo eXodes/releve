@@ -1,12 +1,10 @@
 <script lang="ts">
     import { Popover, PopoverButton, PopoverPanel, Transition } from "@rgossiaux/svelte-headlessui";
-
-    export let content: string;
 </script>
 
 <Popover class="relative">
     <PopoverButton class="flex items-center">
-        <slot />
+        <slot name="button" />
     </PopoverButton>
 
     <Transition
@@ -19,7 +17,9 @@
         leaveTo="transform scale-95 opacity-0"
     >
         <PopoverPanel class="rounded bg-stone-700 px-2.5 py-1.5 shadow-md shadow-gray-500/20">
-            <p class="min-w-[12rem] text-center text-xs text-white">{content}</p>
+            <p class="min-w-[12rem] text-center text-xs text-white">
+                <slot name="content" />
+            </p>
         </PopoverPanel>
 
         <span

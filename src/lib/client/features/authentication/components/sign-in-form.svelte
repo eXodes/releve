@@ -173,15 +173,23 @@
             bind:checked={user.rememberMe}
         />
 
-        <Tooltip
-            content="If checked, your session will be remembered for 7 days. Otherwise, it will be remembered for 1 day."
-        >
-            <Icon
-                src={QuestionMarkCircle}
-                solid
-                class="h-5 w-5 text-gray-500 hover:text-gray-600"
-            />
-            <span class="sr-only">Remember me information tooltip</span>
+        <Tooltip>
+            <svelte:fragment slot="button">
+                <Icon
+                    src={QuestionMarkCircle}
+                    solid
+                    class="h-5 w-5 text-gray-500 hover:text-gray-600"
+                />
+
+                <span class="sr-only">Remember me information tooltip</span>
+            </svelte:fragment>
+
+            <svelte:fragment slot="content">
+                <span>
+                    If checked, your session will be remembered for 7 days. Otherwise, it will be
+                    remembered for 1 day.
+                </span>
+            </svelte:fragment>
         </Tooltip>
     </div>
 
