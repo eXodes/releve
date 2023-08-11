@@ -1,17 +1,26 @@
 import { ShopStatus } from "$features/shops/enum";
 
 import Joi from "joi";
+import isURL from "validator/lib/isURL";
 
 export const shopSchema = Joi.object({
     name: Joi.string().required().messages({
         "any.required": "Name is required.",
         "string.base": "Name must be a string.",
     }),
-    link: Joi.string().domain().required().messages({
-        "any.required": "Link is required.",
-        "string.base": "Link must be a string.",
-        "string.domain": "Link must be a valid domain.",
-    }),
+    link: Joi.string()
+        .required()
+        .messages({
+            "any.required": "Link is required.",
+            "string.base": "Link must be a string.",
+        })
+        .custom((value, helpers) => {
+            if (!isURL(value, {})) {
+                helpers.message({
+                    custom: "Link must be a valid URL.",
+                });
+            }
+        }),
     categories: Joi.array()
         .items(
             Joi.string().required().messages({
@@ -42,7 +51,7 @@ export const shopSchema = Joi.object({
         "any.required": "City is required.",
         "string.base": "City must be a string.",
     }),
-    state: Joi.string().required().messages({
+    state: Joi.string().messages({
         "any.required": "State is required.",
         "string.base": "State must be a string.",
     }),

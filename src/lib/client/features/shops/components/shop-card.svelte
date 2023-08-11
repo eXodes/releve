@@ -28,8 +28,6 @@
 
     const handleUpdatePrivateShop = async () => {
         showPrivateShopForm = false;
-
-        await invalidate("shops");
     };
 
     const handleDeletePrivateShop = async () => {

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { applyAction, enhance } from "$app/forms";
+    import { invalidate } from "$app/navigation";
     import { page } from "$app/stores";
 
     import { ShopStatus } from "$features/shops/enum";
@@ -103,6 +104,16 @@
                     });
 
                 await applyAction(result);
+
+                await invalidate("shops");
+
+                if (isPrivate) {
+                    await invalidate("shops:my");
+                }
+
+                if (shop.status === ShopStatus.APPROVED) {
+                    await invalidate("shops:approved");
+                }
 
                 dispatch("success");
             }
