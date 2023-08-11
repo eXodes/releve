@@ -305,7 +305,9 @@
                 >
                     {#if $states}
                         {#each $states as state}
-                            <option value={state.name}>{state.name}</option>
+                            <option value={state.name} selected={shop.state === state.name}>
+                                {state.name}
+                            </option>
                         {/each}
                     {/if}
                 </SelectInput>
