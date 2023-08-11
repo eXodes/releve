@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { applicationDefault } from "firebase-admin/app";
 
-import { initializeSeeder } from "./_fireseed";
+import { initializeSeeder, runSeeder } from "./_fireseed";
 
 const config = {
     credential: applicationDefault(),
@@ -9,3 +9,7 @@ const config = {
 };
 
 initializeSeeder(config);
+
+await runSeeder(async ({ firestore }) => {
+    firestore.settings({ ignoreUndefinedProperties: true });
+});

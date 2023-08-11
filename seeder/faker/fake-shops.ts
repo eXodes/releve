@@ -18,6 +18,16 @@ runSeeder(async ({ auth, firestore }) => {
         .get()
         .then((snapshot) => snapshot.docs.map((doc) => doc.data().name));
 
+    const countries: { id: string; name: string }[] = await firestore
+        .collection("countries")
+        .get()
+        .then((snapshot) =>
+            snapshot.docs.map((doc) => {
+                const data = doc.data();
+                return { id: doc.id, name: data.name };
+            })
+        );
+
     const statuses: ShopStatus[] = Object.values(ShopStatus);
 
     const COUNT = 100;
@@ -29,6 +39,15 @@ runSeeder(async ({ auth, firestore }) => {
     if (!user) throw new Error("User not found");
 
     for (let index = 0; index < shops.length; index++) {
+        const country = faker.helpers.arrayElement(countries);
+
+        const states: string[] = await firestore
+            .collection("countries/" + country.id + "/states")
+            .get()
+            .then((snapshot) => snapshot.docs.map((doc) => doc.data().name));
+
+        const state = states.length ? faker.helpers.arrayElement(states) : "";
+
         const shop: ShopEntity = {
             name: faker.company.name(),
             link: faker.internet.domainWord() + ".com",
@@ -38,14 +57,14 @@ runSeeder(async ({ auth, firestore }) => {
             ),
             deliveryProviders: faker.helpers.arrayElements(
                 deliveryProviders,
-                faker.datatype.number({ min: 1, max: 3 })
+                faker.number.int({ min: 1, max: 3 })
             ),
             address: {
                 street: faker.location.streetAddress(),
                 city: faker.location.city(),
-                state: faker.location.state(),
                 postalCode: faker.location.zipCode(),
-                country: faker.location.country(),
+                state,
+                country: country.name,
             },
             status: faker.helpers.arrayElement(statuses),
             createdAt: Timestamp.fromDate(
