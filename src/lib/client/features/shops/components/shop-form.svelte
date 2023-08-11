@@ -20,10 +20,12 @@
     import SelectInput from "$client/components/shared/select-input.svelte";
     import TextInput from "$client/components/shared/text-input.svelte";
     import UrlInput from "$client/components/shared/url-input.svelte";
+    import Tooltip from "$client/components/shared/tooltip.svelte";
 
     import type { SubmitFunction } from "@sveltejs/kit";
     import { createEventDispatcher, onMount } from "svelte";
     import { camelCase, startCase } from "lodash-es";
+    import { Icon, QuestionMarkCircle } from "svelte-hero-icons";
     import type { SuiteRunResult } from "vest";
 
     const ActionType = {
@@ -327,15 +329,33 @@
             </div>
 
             {#if actionType === "create"}
-                <div class="col-span-6">
+                <div class="col-span-6 flex gap-2">
                     <CheckboxInput
-                        label="Make this shop private"
+                        label="Make it private"
                         id="private"
                         name="private"
                         value="true"
                         checked={isPrivate}
                         on:input={handleChange}
                     />
+
+                    <Tooltip>
+                        <svelte:fragment slot="button">
+                            <Icon
+                                src={QuestionMarkCircle}
+                                solid
+                                class="h-5 w-5 text-gray-500 hover:text-gray-600"
+                            />
+
+                            <span class="sr-only">Private shop information tooltip</span>
+                        </svelte:fragment>
+
+                        <svelte:fragment slot="content">
+                            If checked, this shop will be saved as your private collection that can
+                            only be viewed in
+                            <span class="font-semibold">My Shops</span>.
+                        </svelte:fragment>
+                    </Tooltip>
                 </div>
             {/if}
         </div>
