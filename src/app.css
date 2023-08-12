@@ -34,7 +34,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 kbd {
-    @apply px-1 pt-px text-xs font-medium text-gray-500 bg-gray-50 rounded-sm;
+    @apply rounded-sm bg-gray-50 px-1 pt-px text-xs font-medium text-gray-500;
 }
 
 /*** Nprogress ***/
@@ -71,4 +71,3 @@ kbd {
     -ms-transform: rotate(3deg) translate(0px, -4px);
     transform: rotate(3deg) translate(0px, -4px);
 }
-
