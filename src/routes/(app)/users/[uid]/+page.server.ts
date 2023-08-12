@@ -14,6 +14,7 @@ import { Role } from "$features/users/enum";
 import type { UserData } from "$features/users/types";
 import { getFormData } from "$client/utils/data";
 import type { Media } from "$client/types/media";
+import { log } from "firebase-functions/logger";
 
 import type { Actions, PageServerLoad } from "./$types";
 
@@ -74,9 +75,13 @@ export const actions: Actions = {
         let avatar: Media | undefined;
         const userAvatar = new UserAvatar(uid);
 
+        log("User Photo: ", payload.userPhoto);
+
         if (payload.userPhoto?.size) {
             avatar = await userAvatar.addAvatar(payload.userPhoto);
         }
+
+        log("User Avatar: ", avatar);
 
         const user = await UserCollection.update({
             uid,
