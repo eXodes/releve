@@ -150,6 +150,7 @@
             type="email"
             autocomplete="email"
             inputmode="email"
+            enterkeyhint="next"
             required
             errors={errors["email"]}
             on:input={handleChange}
@@ -163,6 +164,7 @@
             name="password"
             type="password"
             autocomplete="current-password"
+            enterkeyhint="send"
             minlength={8}
             required
             errors={errors["password"]}

@@ -83,6 +83,7 @@
             id="name"
             name="display-name"
             autocomplete="name"
+            enterkeyhint="next"
             required
             errors={errors["display-name"]}
             on:input={handleChange}
@@ -97,6 +98,7 @@
             name="email"
             autocomplete="email"
             inputmode="email"
+            enterkeyhint="next"
             required
             errors={errors["email"]}
             on:input={handleChange}
@@ -109,6 +111,7 @@
             id="password"
             name="password"
             autocomplete="new-password"
+            enterkeyhint="next"
             minlength={8}
             required
             errors={errors["password"]}
@@ -122,6 +125,7 @@
             id="confirm-password"
             name="confirm-password"
             autocomplete="confirm-new-password"
+            enterkeyhint="send"
             minlength={8}
             required
             errors={errors["confirm-password"]}
