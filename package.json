@@ -67,6 +67,7 @@
         "dotenv": "^16.3.1",
         "firebase": "^10.1.0",
         "firebase-admin": "^11.10.1",
+        "firebase-functions": "^4.4.1",
         "joi": "^17.9.2",
         "lodash-es": "^4.17.21",
         "md5": "^2.3.0",

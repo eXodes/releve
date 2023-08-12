@@ -7,6 +7,7 @@ import type { Media } from "$client/types/media";
 
 import type { File as StorageFile, GetSignedUrlResponse, SaveOptions } from "@google-cloud/storage";
 import { getStorage } from "firebase-admin/storage";
+import { log } from "firebase-functions/logger";
 
 export abstract class MediaStorage implements Storage<Media> {
     protected readonly bucket = getStorage(app).bucket(STORAGE_BUCKET);
@@ -27,7 +28,7 @@ export abstract class MediaStorage implements Storage<Media> {
             ...option,
         });
 
-        console.info("Uploaded file: ", storageFile);
+        log("Uploaded file: ", storageFile);
     }
 
     async getFile(path: string, size: 200 | 500 | 1200 = 500): Promise<StorageFile> {
@@ -47,7 +48,7 @@ export abstract class MediaStorage implements Storage<Media> {
 
         await storageFile.makePublic();
 
-        console.info("Public File: ", storageFile);
+        log("Public File: ", storageFile);
 
         return storageFile;
     }
