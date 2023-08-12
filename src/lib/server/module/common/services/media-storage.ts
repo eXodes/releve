@@ -46,23 +46,17 @@ export abstract class MediaStorage implements Storage<Media> {
     private getPublicSmall = async (path: string): Promise<string> => {
         const file = await this.getFile(path, 200);
 
-        await file.makePublic();
-
         return file.publicUrl();
     };
 
     private getPublicMedium = async (path: string): Promise<string> => {
         const file = await this.getFile(path, 500);
 
-        await file.makePublic();
-
         return file.publicUrl();
     };
 
     private getPublicLarge = async (path: string): Promise<string> => {
         const file = await this.getFile(path, 1200);
-
-        await file.makePublic();
 
         return file.publicUrl();
     };
