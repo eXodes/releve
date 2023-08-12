@@ -58,6 +58,7 @@
     };
 
     let result: SuiteRunResult;
+    let isSubmitting = false;
     let errors: { [key: string]: string[] } = {};
 
     const dispatch = createEventDispatcher<{
@@ -82,16 +83,21 @@
         errors = result.getErrors();
     };
 
-    const handleSubmit: SubmitFunction<MessageResponse, ValidationError> =
-        () =>
-        async ({ result }) => {
+    const handleSubmit: SubmitFunction<MessageResponse, ValidationError> = () => {
+        isSubmitting = true;
+
+        return async ({ result }) => {
             if (result.type === "failure") {
+                isSubmitting = false;
+
                 if (result.data?.code === "ValidationError" && result.data?.errors) {
                     errors = result.data?.errors;
                 }
             }
 
             if (result.type === "error") {
+                isSubmitting = false;
+
                 notification.send({
                     type: "error",
                     message: result.error.message,
@@ -99,13 +105,13 @@
             }
 
             if (result.type === "success") {
+                await applyAction(result);
+
                 if (result.data)
                     notification.send({
                         type: "success",
                         message: result.data.message,
                     });
-
-                await applyAction(result);
 
                 await invalidate("shops");
 
@@ -120,6 +126,7 @@
                 dispatch("success");
             }
         };
+    };
 
     onMount(() => {
         if (shopData) {
@@ -367,7 +374,14 @@
                     <Button on:click={() => dispatch("cancel")}>Cancel</Button>
                 {/if}
 
-                <Button type="submit" color={Color.PRIMARY} disabled={disabled}>Save</Button>
+                <Button
+                    type="submit"
+                    color={Color.PRIMARY}
+                    disabled={disabled}
+                    isLoading={isSubmitting}
+                >
+                    Save
+                </Button>
             </div>
         </svelte:fragment>
     </ActionableCard>

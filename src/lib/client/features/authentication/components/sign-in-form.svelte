@@ -30,6 +30,7 @@
     }>();
 
     let result: SuiteRunResult;
+    let isSubmitting = false;
     let errors: { [key: string]: string[] } = {};
     let successMessage: string | undefined = undefined;
     let errorMessage: string | undefined = undefined;
@@ -58,6 +59,7 @@
     };
 
     const handleSignIn = async () => {
+        isSubmitting = true;
         successMessage = errorMessage = undefined;
 
         try {
@@ -69,6 +71,8 @@
 
             dispatch("success");
         } catch (error) {
+            isSubmitting = false;
+
             const data = handleAuthCatch(error);
 
             errorMessage = data.message;
@@ -221,7 +225,13 @@
     </Alert>
 
     <div>
-        <Button type="submit" block={true} color={Color.PRIMARY} disabled={disabled}>
+        <Button
+            type="submit"
+            block={true}
+            color={Color.PRIMARY}
+            disabled={disabled}
+            isLoading={isSubmitting}
+        >
             Sign in
         </Button>
     </div>

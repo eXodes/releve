@@ -19,6 +19,7 @@
 
     let formElement: HTMLFormElement;
     let result: SuiteRunResult;
+    let isSubmitting = false;
     let errors: { [key: string]: string[] } = {};
     let errorMessage: string | undefined = undefined;
     let successMessage: string | undefined = undefined;
@@ -48,6 +49,7 @@
     };
 
     const handleReset = async () => {
+        isSubmitting = true;
         successMessage = errorMessage = undefined;
 
         if (!actionCode) {
@@ -66,8 +68,10 @@
                 goto("/sign-in");
             }, 5000);
 
-            return () => clearTimeout(timeout);
+            () => clearTimeout(timeout);
         } catch (error) {
+            isSubmitting = false;
+
             const data = handleAuthCatch(error);
             errorMessage = data.message;
         }

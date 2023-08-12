@@ -55,6 +55,7 @@
 
     let userPhoto: string | undefined = userData.avatar.small.url;
     let result: SuiteRunResult;
+    let isSubmitting = false;
     let errors: { [key: string]: string[] } = {};
     let errorMessage: string | undefined = undefined;
     let profileSuccess = false;
@@ -93,9 +94,10 @@
         }
     };
 
-    const handleProfileSubmit: SubmitFunction<UpdateUserResponse, ValidationError> =
-        () =>
-        async ({ result }) => {
+    const handleProfileSubmit: SubmitFunction<UpdateUserResponse, ValidationError> = () => {
+        isSubmitting = true;
+
+        return async ({ result }) => {
             if (result.type === "failure") {
                 if (result.data?.code === "ValidationError" && result.data?.errors) {
                     errors = result.data?.errors;
@@ -115,11 +117,16 @@
 
                 await applyAction(result);
             }
-        };
 
-    const handleInformationSubmit: SubmitFunction<UpdateUserResponse, ValidationError> =
-        () =>
-        async ({ result }) => {
+            isSubmitting = false;
+        };
+    };
+
+    const handleInformationSubmit: SubmitFunction<UpdateUserResponse, ValidationError> = () => {
+        isSubmitting = true;
+
+        return async ({ result }) => {
+            console.log("result", result);
             if (result.type === "failure") {
                 if (result.data?.code === "ValidationError" && result.data?.errors) {
                     errors = result.data?.errors;
@@ -139,7 +146,10 @@
 
                 await applyAction(result);
             }
+
+            isSubmitting = false;
         };
+    };
 
     onMount(() => {
         user = {
@@ -170,7 +180,13 @@
 </script>
 
 <div class="space-y-6">
-    <form action={actionUrl[actionType]} method="POST" use:enhance={handleProfileSubmit} on:submit>
+    <form
+        action={actionUrl[actionType]}
+        method="POST"
+        use:enhance={handleProfileSubmit}
+        on:submit
+        enctype="multipart/form-data"
+    >
         <ActionableCard>
             <div>
                 <h3 class="text-lg font-medium leading-6 text-gray-900">Profile</h3>
@@ -286,12 +302,17 @@
                     </span>
                 {/if}
 
-                <Button type="submit" color={Color.PRIMARY}>Save</Button>
+                <Button type="submit" color={Color.PRIMARY} isLoading={isSubmitting}>Save</Button>
             </svelte:fragment>
         </ActionableCard>
     </form>
 
-    <form action={actionUrl[actionType]} method="POST" use:enhance={handleInformationSubmit}>
+    <form
+        action={actionUrl[actionType]}
+        method="POST"
+        use:enhance={handleInformationSubmit}
+        enctype="multipart/form-data"
+    >
         <ActionableCard>
             <div>
                 <h3 class="text-lg font-medium leading-6 text-gray-900">Personal Information</h3>
@@ -328,9 +349,9 @@
                 <div class="col-span-6 sm:col-span-4">
                     <TextInput
                         type="email"
-                        id="email-address"
+                        id="email"
                         label="Email address"
-                        name="email-address"
+                        name="email"
                         value={user.email}
                         autocomplete="email"
                         required
@@ -422,12 +443,7 @@
                     </span>
                 {/if}
 
-                <button
-                    type="submit"
-                    class="inline-flex justify-center rounded-md border border-transparent bg-rose-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
-                >
-                    Save
-                </button>
+                <Button type="submit" color={Color.PRIMARY} isLoading={isSubmitting}>Save</Button>
             </svelte:fragment>
         </ActionableCard>
     </form>

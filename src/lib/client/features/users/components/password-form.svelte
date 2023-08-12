@@ -20,6 +20,7 @@
     import type { SuiteRunResult } from "vest";
 
     let result: SuiteRunResult;
+    let isSubmitting = false;
     let errors: { [key: string]: string[] } = {};
     let errorMessage: string | undefined = undefined;
 
@@ -41,18 +42,23 @@
         errors = result.getErrors();
     };
 
-    const handleSubmit: SubmitFunction<UpdatePasswordResponse, ValidationError> =
-        () =>
-        async ({ result }) => {
+    const handleSubmit: SubmitFunction<UpdatePasswordResponse, ValidationError> = () => {
+        isSubmitting = true;
+
+        return async ({ result }) => {
             let timeout: ReturnType<typeof setTimeout>;
 
             if (result.type === "failure") {
+                isSubmitting = false;
+
                 if (result.data?.code === "ValidationError" && result.data?.errors) {
                     errors = result.data?.errors;
                 }
             }
 
             if (result.type === "error") {
+                isSubmitting = false;
+
                 errorMessage = result.error.message;
             }
 
@@ -73,6 +79,7 @@
 
             return () => clearTimeout(timeout);
         };
+    };
 
     $: errorMessage &&
         notification.send({

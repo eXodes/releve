@@ -16,6 +16,7 @@
     import type { SuiteRunResult } from "vest";
 
     let result: SuiteRunResult;
+    let isSubmitting = false;
     let errors: { [key: string]: string[] } = {};
     let errorMessage: string | undefined = undefined;
     let successMessage: string | undefined = undefined;
@@ -44,16 +45,21 @@
         });
     };
 
-    const handleSubmit: SubmitFunction<{ message: string }, ValidationError> =
-        () =>
-        async ({ result, update }) => {
+    const handleSubmit: SubmitFunction<{ message: string }, ValidationError> = () => {
+        isSubmitting = true;
+
+        return async ({ result, update }) => {
             if (result.type === "failure") {
+                isSubmitting = false;
+
                 if (result.data?.code === "ValidationError" && result.data?.errors) {
                     errors = result.data?.errors;
                 }
             }
 
             if (result.type === "error") {
+                isSubmitting = false;
+
                 errorMessage = result.error.message;
             }
 
@@ -65,6 +71,7 @@
                 dispatch("success");
             }
         };
+    };
 
     $: disabled = result?.hasErrors() || !result?.isValid();
 </script>
@@ -131,7 +138,13 @@
     </Alert>
 
     <div>
-        <Button type="submit" block={true} color={Color.PRIMARY} disabled={disabled}>
+        <Button
+            type="submit"
+            block={true}
+            color={Color.PRIMARY}
+            disabled={disabled}
+            isLoading={isSubmitting}
+        >
             Sign up
         </Button>
     </div>
