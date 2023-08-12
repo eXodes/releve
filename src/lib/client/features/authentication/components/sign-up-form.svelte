@@ -89,6 +89,7 @@
             id="email"
             name="email"
             autocomplete="email"
+            inputmode="email"
             required
             errors={errors["email"]}
             on:input={handleChange}
@@ -101,7 +102,7 @@
             id="password"
             name="password"
             autocomplete="new-password"
-            minLength={8}
+            minlength={8}
             required
             errors={errors["password"]}
             on:input={handleChange}
@@ -114,7 +115,7 @@
             id="confirm-password"
             name="confirm-password"
             autocomplete="confirm-new-password"
-            minLength={8}
+            minlength={8}
             required
             errors={errors["confirm-password"]}
             on:input={handleChange}

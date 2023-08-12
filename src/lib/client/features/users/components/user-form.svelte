@@ -227,7 +227,7 @@
                             name="about"
                             value={user.about}
                             placeholder="Tell us about yourself"
-                            maxLength={250}
+                            maxlength={250}
                             hint="Brief description for your profile."
                             errors={errors["about"]}
                             on:input={handleChange}
@@ -334,7 +334,7 @@
                         value={user.email}
                         autocomplete="email"
                         required
-                        disabled
+                        readonly
                     />
                 </div>
 
@@ -404,6 +404,7 @@
                         name="postal-code"
                         value={user.postalCode}
                         autocomplete="postal-code"
+                        inputmode="numeric"
                         errors={errors["postal-code"]}
                         on:input={handleChange}
                     />

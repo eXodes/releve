@@ -322,6 +322,7 @@
                     name="postal-code"
                     value={shop.postalCode}
                     autocomplete="postal-code"
+                    inputmode="numeric"
                     required
                     errors={errors["postal-code"]}
                     on:input={handleChange}

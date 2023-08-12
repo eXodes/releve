@@ -72,6 +72,7 @@
             id="email"
             name="email"
             autocomplete="email"
+            inputmode="email"
             required
             errors={errors["email"]}
             on:input={handleChange}

@@ -145,6 +145,7 @@
             name="email"
             type="email"
             autocomplete="email"
+            inputmode="email"
             required
             errors={errors["email"]}
             on:input={handleChange}
@@ -158,7 +159,7 @@
             name="password"
             type="password"
             autocomplete="current-password"
-            minLength={8}
+            minlength={8}
             required
             errors={errors["password"]}
             on:input={handleChange}

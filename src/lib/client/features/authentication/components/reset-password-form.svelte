@@ -98,7 +98,7 @@
             id="password"
             name="password"
             autocomplete="new-password"
-            minLength={8}
+            minlength={8}
             required
             errors={errors["password"]}
             on:input={handleChange}
@@ -112,7 +112,7 @@
             id="confirm-password"
             name="confirm-password"
             autocomplete="confirm-new-password"
-            minLength={8}
+            minlength={8}
             required
             errors={errors["confirm-password"]}
             on:input={handleChange}
