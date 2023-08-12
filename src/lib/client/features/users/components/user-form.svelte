@@ -126,7 +126,6 @@
         isSubmitting = true;
 
         return async ({ result }) => {
-            console.log("result", result);
             if (result.type === "failure") {
                 if (result.data?.code === "ValidationError" && result.data?.errors) {
                     errors = result.data?.errors;
