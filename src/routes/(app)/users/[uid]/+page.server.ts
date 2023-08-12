@@ -78,15 +78,17 @@ export const actions: Actions = {
             avatar = await userAvatar.addAvatar(payload.userPhoto);
         }
 
+        const customClaims = {
+            isAdmin: payload.role === Role.ADMIN,
+        };
+
         const user = await UserCollection.update({
             uid,
             avatar: avatar,
             displayName: payload.displayName,
             about: payload.about,
             email: payload.email,
-            customClaims: {
-                isAdmin: payload.role === Role.ADMIN,
-            },
+            customClaims: payload.role ? customClaims : undefined,
         });
 
         const userInformation = await UserInformationCollection.update({
