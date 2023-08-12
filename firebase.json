@@ -11,8 +11,7 @@
         "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
         "frameworksBackend": {
             "region": "asia-east1",
-            "maxInstances": 1,
-            "serviceAccount": "{FIREBASE_RUNNER_SERVICE_ACCOUNT_ID}"
+            "maxInstances": 1
         }
     },
     "remoteconfig": {

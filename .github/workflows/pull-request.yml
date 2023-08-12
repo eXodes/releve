@@ -70,15 +70,6 @@ jobs:
           envkey_PUBLIC_SENTRY_SAMPLE_RATE: ${{ vars.SENTRY_SAMPLE_RATE }}
           file_name: .env
 
-      - name: Update firebase.json
-        uses: cschleiden/replace-tokens@v1
-        with:
-          tokenPrefix: '{'
-          tokenSuffix: '}'
-          files: '["firebase.json"]'
-        env:
-          FIREBASE_RUNNER_SERVICE_ACCOUNT_ID: ${{ vars.FIREBASE_RUNNER_SERVICE_ACCOUNT_ID }}
-
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         env:
