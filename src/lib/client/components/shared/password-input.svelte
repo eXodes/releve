@@ -3,11 +3,12 @@
 
     import Hint from "$client/components/shared/hint-text.svelte";
 
-    import { Popover, PopoverButton, PopoverPanel, Transition } from "@rgossiaux/svelte-headlessui";
     import { createEventDispatcher } from "svelte";
+    import type { HTMLInputAttributes } from "svelte/elements";
+    import { Popover, PopoverButton, PopoverPanel, Transition } from "@rgossiaux/svelte-headlessui";
     import { ExclamationCircle, Eye, EyeSlash, Icon } from "svelte-hero-icons";
 
-    interface $$Props extends Partial<HTMLInputElement> {
+    interface $$Props extends HTMLInputAttributes {
         type?: string;
         id: string;
         label: string;

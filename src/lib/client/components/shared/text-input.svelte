@@ -6,9 +6,10 @@
 
     import { Popover, PopoverButton, PopoverPanel, Transition } from "@rgossiaux/svelte-headlessui";
     import { createEventDispatcher } from "svelte";
+    import type { HTMLInputAttributes } from "svelte/elements";
     import { ExclamationCircle, Icon } from "svelte-hero-icons";
 
-    interface $$Props extends Partial<HTMLInputElement> {
+    interface $$Props extends HTMLInputAttributes {
         type?: string;
         id: string;
         label: string;
@@ -65,14 +66,14 @@
     {/if}
 
     <input
+        {...$$restProps}
         type={type}
         id={id}
         name={name}
         value={value}
         on:input={handleInput}
-        {...$$restProps}
         class={classNames(
-            "peer block w-full appearance-none rounded-md border px-3 py-2 placeholder-gray-400 shadow-sm focus:enabled:outline-none focus:enabled:ring-1 disabled:bg-gray-100 sm:text-sm",
+            "peer block w-full appearance-none rounded-md border px-3 py-2 placeholder-gray-400 shadow-sm read-only:bg-gray-100 focus:enabled:outline-none focus:enabled:ring-1 disabled:bg-gray-100 sm:text-sm",
             $$slots.prefix && "pl-10",
             $$slots.suffix && "pr-10",
             errors?.length

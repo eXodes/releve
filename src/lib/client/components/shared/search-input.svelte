@@ -36,6 +36,7 @@
         placeholder={placeholder}
         hideLabel={true}
         hideOptional={true}
+        inputmode="search"
         on:input
         class="ml-auto font-normal sm:w-48"
     >
