@@ -2,11 +2,13 @@
     import { classNames } from "$client/utils/style";
 
     import Hint from "$client/components/shared/hint-text.svelte";
+    import Tooltip from "$client/components/shared/tooltip.svelte";
 
     import { createEventDispatcher } from "svelte";
     import type { HTMLSelectAttributes } from "svelte/elements";
     import { Popover, PopoverButton, PopoverPanel, Transition } from "@rgossiaux/svelte-headlessui";
-    import { ExclamationCircle, Icon } from "svelte-hero-icons";
+    import { ExclamationCircle, Icon, QuestionMarkCircle } from "svelte-hero-icons";
+    import { lowerCase } from "lodash-es";
 
     interface $$Props extends HTMLSelectAttributes {
         id: string;
@@ -47,10 +49,29 @@
     };
 
     $: value = multiple ? values?.join(",") : value;
+    $: inputName = lowerCase(name.slice(0, name.length - 2).toLowerCase());
 </script>
 
-<label for={id} class="block text-sm font-medium text-gray-700">
+<label for={id} class="flex gap-2 text-sm font-medium text-gray-700">
     {label}
+
+    {#if multiple}
+        <Tooltip>
+            <svelte:fragment slot="button">
+                <Icon
+                    src={QuestionMarkCircle}
+                    solid
+                    class="hidden h-5 w-5 text-gray-500 hover:text-gray-600 md:block"
+                />
+
+                <span class="sr-only">Select {name} tooltip</span>
+            </svelte:fragment>
+
+            <svelte:fragment slot="content">
+                Press <kbd>CTRL</kbd> / <kbd>CMD</kbd> to select multiple {inputName}.
+            </svelte:fragment>
+        </Tooltip>
+    {/if}
 </label>
 <div class={classNames("relative mt-1", classes)}>
     <select
