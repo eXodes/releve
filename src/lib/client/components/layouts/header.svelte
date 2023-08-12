@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { goto } from "$app/navigation";
     import { page } from "$app/stores";
     import { PUBLIC_APP_NAME } from "$env/static/public";
 
@@ -35,6 +36,12 @@
     const dispatch = createEventDispatcher<{
         addShop: void;
     }>();
+
+    const handleNavigate = (href: string) => {
+        showMobileNav = false;
+
+        goto(href, { replaceState: true });
+    };
 
     $: navigation = [
         {
@@ -244,16 +251,20 @@
                     </button>
                 </div>
 
+                <!-- Navbar (lg-) -->
                 <div class="space-y-6 px-4 py-6">
-                    {#each navigation as page (page.name)}
-                        {#if page.show}
+                    {#each navigation as item (item.name)}
+                        {#if item.show}
                             <div class="flow-root">
-                                <a
-                                    href={page.href}
-                                    class="-m-2 block rounded-md p-2 font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                                <button
+                                    on:click={() => handleNavigate(item.href)}
+                                    class={classNames(
+                                        "-m-2 block w-full rounded-md p-2 text-left font-medium focus:outline-none focus:ring-2 focus:ring-rose-500",
+                                        item.active ? "text-rose-600" : "text-gray-900"
+                                    )}
                                 >
-                                    {page.name}
-                                </a>
+                                    {item.name}
+                                </button>
                             </div>
                         {/if}
                     {/each}
