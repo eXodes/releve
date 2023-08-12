@@ -26,6 +26,8 @@ export abstract class MediaStorage implements Storage<Media> {
             resumable: false,
             ...option,
         });
+
+        console.info("Uploaded file: ", storageFile);
     }
 
     async getFile(path: string, size: 200 | 500 | 1200 = 500): Promise<StorageFile> {
@@ -44,6 +46,8 @@ export abstract class MediaStorage implements Storage<Media> {
         const storageFile = await this.getFile(path, size);
 
         await storageFile.makePublic();
+
+        console.info("Public File: ", storageFile);
 
         return storageFile;
     }
