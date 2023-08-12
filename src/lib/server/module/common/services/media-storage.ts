@@ -16,63 +16,12 @@ export abstract class MediaStorage implements Storage<Media> {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
     };
 
-    private getSignedSmall = async (path: string): Promise<GetSignedUrlResponse> => {
-        const file = await this.getFile(path, 200);
-
-        return file.getSignedUrl({
-            action: "read",
-            expires: this.config.expires,
-        });
-    };
-
-    private getSignedMedium = async (path: string): Promise<GetSignedUrlResponse> => {
-        const file = await this.getFile(path, 500);
-
-        return file.getSignedUrl({
-            action: "read",
-            expires: this.config.expires,
-        });
-    };
-
-    private getSignedLarge = async (path: string): Promise<GetSignedUrlResponse> => {
-        const file = await this.getFile(path, 1200);
-
-        return file.getSignedUrl({
-            action: "read",
-            expires: this.config.expires,
-        });
-    };
-
-    private getPublicSmall = async (path: string): Promise<string> => {
-        const file = await this.getFile(path, 200);
-
-        await file.makePublic();
-
-        return file.publicUrl();
-    };
-
-    private getPublicMedium = async (path: string): Promise<string> => {
-        const file = await this.getFile(path, 500);
-
-        await file.makePublic();
-
-        return file.publicUrl();
-    };
-
-    private getPublicLarge = async (path: string): Promise<string> => {
-        const file = await this.getFile(path, 1200);
-
-        await file.makePublic();
-
-        return file.publicUrl();
-    };
-
     async uploadFile(path: string, file: File, option?: SaveOptions): Promise<void> {
-        const bucketFile = this.bucket.file(path);
+        const storageFile = this.bucket.file(path);
 
         const buffer = Buffer.from(await file.arrayBuffer());
 
-        await bucketFile.save(buffer, {
+        await storageFile.save(buffer, {
             contentType: file.type,
             resumable: false,
             ...option,
@@ -80,16 +29,69 @@ export abstract class MediaStorage implements Storage<Media> {
     }
 
     async getFile(path: string, size: 200 | 500 | 1200 = 500): Promise<StorageFile> {
-        const file = this.bucket.file(path + `_${size}x${size}`);
+        const storageFile = this.bucket.file(path + `_${size}x${size}`);
 
-        const [exists] = await file.exists();
+        const [exists] = await storageFile.exists();
 
         if (!exists) {
             throw new Error(`File ${path} with ${size}x${size} does not exist.`);
         }
 
-        return file;
+        return storageFile;
     }
+
+    async getPublicFile(path: string, size: 200 | 500 | 1200 = 500): Promise<StorageFile> {
+        const storageFile = await this.getFile(path, size);
+
+        await storageFile.makePublic();
+
+        return storageFile;
+    }
+
+    private getSignedSmall = async (path: string): Promise<GetSignedUrlResponse> => {
+        const storageFile = await this.getFile(path, 200);
+
+        return storageFile.getSignedUrl({
+            action: "read",
+            expires: this.config.expires,
+        });
+    };
+
+    private getSignedMedium = async (path: string): Promise<GetSignedUrlResponse> => {
+        const storageFile = await this.getFile(path, 500);
+
+        return storageFile.getSignedUrl({
+            action: "read",
+            expires: this.config.expires,
+        });
+    };
+
+    private getSignedLarge = async (path: string): Promise<GetSignedUrlResponse> => {
+        const storageFile = await this.getFile(path, 1200);
+
+        return storageFile.getSignedUrl({
+            action: "read",
+            expires: this.config.expires,
+        });
+    };
+
+    private getPublicSmall = async (path: string): Promise<string> => {
+        const storageFile = await this.getPublicFile(path, 200);
+
+        return storageFile.publicUrl();
+    };
+
+    private getPublicMedium = async (path: string): Promise<string> => {
+        const storageFile = await this.getPublicFile(path, 500);
+
+        return storageFile.publicUrl();
+    };
+
+    private getPublicLarge = async (path: string): Promise<string> => {
+        const storageFile = await this.getPublicFile(path, 1200);
+
+        return storageFile.publicUrl();
+    };
 
     async getPublicUrl(path: string): Promise<Media> {
         const urlSmall = await this.getPublicSmall(path);

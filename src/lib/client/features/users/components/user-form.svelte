@@ -237,10 +237,10 @@
 
                 <div class="mt-6 flex-grow lg:ml-6 lg:mt-0 lg:flex-shrink-0 lg:flex-grow-0">
                     <p class="text-sm font-medium text-gray-700" aria-hidden="true">Photo</p>
-                    <div class="mt-1 md:hidden">
-                        <div class="flex items-center">
+                    <div class="mt-1">
+                        <div class="relative flex items-center">
                             <div
-                                class="inline-block h-12 w-12 flex-shrink-0 overflow-hidden rounded-full"
+                                class="inline-block h-12 w-12 flex-shrink-0 overflow-hidden rounded-full lg:h-40 lg:w-40"
                                 aria-hidden="true"
                             >
                                 <Image
@@ -249,55 +249,28 @@
                                     fallback="/images/avatar.png"
                                 />
                             </div>
-                            <div class="ml-5 rounded-md shadow-sm">
+                            <div class="ml-5 rounded-md shadow-sm lg:absolute lg:inset-0 lg:m-0">
                                 <div
-                                    class="group relative flex items-center justify-center rounded-md border border-gray-300 px-3 py-2 focus-within:ring-2 focus-within:ring-rose-500 focus-within:ring-offset-2 hover:bg-gray-50"
+                                    class="group relative flex items-center justify-center rounded-md border border-gray-300 px-3 py-2 focus-within:ring-2 focus-within:ring-rose-500 focus-within:ring-offset-2 hover:bg-gray-50 lg:h-full lg:rounded-full lg:bg-opacity-75 lg:text-sm lg:font-medium lg:text-white lg:opacity-0 lg:focus-within:bg-rose-700 lg:focus-within:bg-opacity-75 lg:focus-within:opacity-100 lg:hover:bg-rose-700 lg:hover:bg-opacity-75 lg:hover:opacity-100"
                                 >
                                     <label
-                                        for="mobile-user-photo"
-                                        class="pointer-events-none relative text-sm font-medium leading-4 text-gray-700"
+                                        for="user-photo"
+                                        class="pointer-events-none relative text-sm font-medium leading-4 text-gray-700 lg:text-white"
                                     >
                                         <span>Change</span>
                                         <span class="sr-only"> user photo</span>
                                     </label>
                                     <input
                                         type="file"
-                                        id="mobile-user-photo"
+                                        id="user-photo"
                                         name="user-photo"
-                                        class="absolute h-full w-full cursor-pointer rounded-md border-gray-300 opacity-0"
+                                        class="absolute inset-0 h-full w-full cursor-pointer rounded-md border-gray-300 opacity-0"
                                         on:input={handleFileChange}
                                         accept="image/*"
-                                        capture="user"
                                     />
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="relative hidden overflow-hidden rounded-full md:block">
-                        <div class="relative h-40 w-40 rounded-full">
-                            <Image
-                                src={userPhoto}
-                                alt="{user.displayName} avatar"
-                                fallback="/images/avatar.png"
-                            />
-                        </div>
-                        <label
-                            for="desktop-user-photo"
-                            class="absolute inset-0 flex h-full w-full items-center justify-center bg-rose-700 bg-opacity-75 text-sm font-medium text-white opacity-0 focus-within:opacity-100 hover:opacity-100"
-                        >
-                            <span>Change</span>
-                            <span class="sr-only"> user photo</span>
-                            <input
-                                type="file"
-                                id="desktop-user-photo"
-                                name="user-photo"
-                                class="absolute inset-0 h-full w-full cursor-pointer rounded-md border-gray-300 opacity-0"
-                                on:input={handleFileChange}
-                                accept="image/*"
-                                capture="user"
-                            />
-                        </label>
                     </div>
                 </div>
             </div>
