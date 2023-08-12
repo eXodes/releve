@@ -60,7 +60,7 @@
         value={value}
         on:input={handleInput}
         class={classNames(
-            "peer block w-full appearance-none rounded-md border px-3 py-2 placeholder-gray-400 shadow-sm read-only:bg-gray-100 focus:enabled:outline-none focus:enabled:ring-1 disabled:bg-gray-100 sm:text-sm",
+            "peer block w-full appearance-none rounded-md border px-3 py-2 placeholder-gray-400 shadow-sm focus:enabled:outline-none focus:enabled:ring-1 disabled:bg-gray-100 sm:text-sm",
             errors?.length
                 ? "border-red-300 pr-10 text-red-900 focus:enabled:border-red-500 focus:enabled:ring-red-500"
                 : "border-gray-300 focus:enabled:border-rose-500 focus:enabled:ring-rose-500"
