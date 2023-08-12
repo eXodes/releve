@@ -2,12 +2,16 @@
     import { Color, Size } from "$client/enums/theme";
     import { classNames } from "$client/utils/style";
 
-    interface $$Props extends Partial<HTMLButtonElement> {
+    import Spinner from "$client/components/shared/spinner.svelte";
+
+    import type { HTMLButtonAttributes } from "svelte/elements";
+
+    interface $$Props extends HTMLButtonAttributes {
         type?: "button" | "submit" | "reset";
         size?: Size;
         color?: Color.PRIMARY | Color.SECONDARY | Color.DANGER | Color.LIGHT | "default";
         block?: boolean;
-        disabled?: boolean;
+        isLoading?: boolean;
         ref?: HTMLButtonElement;
     }
 
@@ -31,10 +35,10 @@
     };
 
     export let type: $$Props["type"] = "button";
-    export let block: $$Props["block"] = false;
-    export let disabled: $$Props["disabled"] = false;
     export let size: $$Props["size"] = Size.MEDIUM;
     export let color: $$Props["color"] = "default";
+    export let block: $$Props["block"] = false;
+    export let isLoading: $$Props["isLoading"] = false;
     export let ref: $$Props["ref"] = undefined;
     export { classes as class };
 
@@ -42,18 +46,25 @@
 </script>
 
 <button
+    {...$$restProps}
     type={type}
-    disabled={disabled}
     on:click
     class={classNames(
-        "inline-flex items-center justify-center rounded-md border font-medium shadow-sm focus:enabled:outline-none focus:enabled:ring-2 focus:enabled:ring-rose-500 focus:enabled:ring-offset-2",
+        "relative inline-flex items-center justify-center rounded-md border font-medium shadow-sm focus:enabled:outline-none focus:enabled:ring-2 focus:enabled:ring-rose-500 focus:enabled:ring-offset-2",
         size && sizeClass[size],
         color && colorClass[color],
         block && "w-full",
+        isLoading && "cursor-wait disabled:text-transparent",
         classes
     )}
+    disabled={isLoading || $$restProps.disabled}
     bind:this={ref}
-    {...$$restProps}
 >
     <slot />
+
+    {#if isLoading}
+        <span class="absolute inset-0 flex place-content-center place-items-center">
+            <Spinner />
+        </span>
+    {/if}
 </button>
