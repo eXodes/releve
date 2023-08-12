@@ -16,6 +16,38 @@ export abstract class MediaStorage implements Storage<Media> {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
     };
 
+    async uploadFile(path: string, file: File, option?: SaveOptions): Promise<void> {
+        const bucketFile = this.bucket.file(path);
+
+        const buffer = Buffer.from(await file.arrayBuffer());
+
+        await bucketFile.save(buffer, {
+            contentType: file.type,
+            resumable: false,
+            ...option,
+        });
+    }
+
+    async getFile(path: string, size: 200 | 500 | 1200 = 500): Promise<StorageFile> {
+        const file = this.bucket.file(path + `_${size}x${size}`);
+
+        const [exists] = await file.exists();
+
+        if (!exists) {
+            throw new Error(`File ${path} with ${size}x${size} does not exist.`);
+        }
+
+        return file;
+    }
+
+    async getPublicFile(path: string, size: 200 | 500 | 1200 = 500): Promise<StorageFile> {
+        const file = await this.getFile(path, size);
+
+        await file.makePublic();
+
+        return file;
+    }
+
     private getSignedSmall = async (path: string): Promise<GetSignedUrlResponse> => {
         const file = await this.getFile(path, 200);
 
@@ -44,46 +76,22 @@ export abstract class MediaStorage implements Storage<Media> {
     };
 
     private getPublicSmall = async (path: string): Promise<string> => {
-        const file = await this.getFile(path, 200);
+        const file = await this.getPublicFile(path, 200);
 
         return file.publicUrl();
     };
 
     private getPublicMedium = async (path: string): Promise<string> => {
-        const file = await this.getFile(path, 500);
+        const file = await this.getPublicFile(path, 500);
 
         return file.publicUrl();
     };
 
     private getPublicLarge = async (path: string): Promise<string> => {
-        const file = await this.getFile(path, 1200);
+        const file = await this.getPublicFile(path, 1200);
 
         return file.publicUrl();
     };
-
-    async uploadFile(path: string, file: File, option?: SaveOptions): Promise<void> {
-        const bucketFile = this.bucket.file(path);
-
-        const buffer = Buffer.from(await file.arrayBuffer());
-
-        await bucketFile.save(buffer, {
-            contentType: file.type,
-            resumable: false,
-            ...option,
-        });
-    }
-
-    async getFile(path: string, size: 200 | 500 | 1200 = 500): Promise<StorageFile> {
-        const file = this.bucket.file(path + `_${size}x${size}`);
-
-        const [exists] = await file.exists();
-
-        if (!exists) {
-            throw new Error(`File ${path} with ${size}x${size} does not exist.`);
-        }
-
-        return file;
-    }
 
     async getPublicUrl(path: string): Promise<Media> {
         const urlSmall = await this.getPublicSmall(path);
