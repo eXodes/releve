@@ -59,21 +59,21 @@ const createNotificationStore = (duration: number) => {
     const notification: Readable<Notification[]> = derived(
         _notification,
         ($_notifications, set) => {
+            let timer: NodeJS.Timeout;
+
             set($_notifications);
 
             if ($_notifications.length) {
-                const timer = setTimeout(() => {
+                timer = setTimeout(() => {
                     _notification.update(([head, ...rest]) => {
                         if (head.clear) head.clear(head.id);
 
                         return rest;
                     });
                 }, $_notifications[0].timeout);
-
-                return () => {
-                    clearTimeout(timer);
-                };
             }
+
+            return () => clearTimeout(timer);
         }
     );
 
