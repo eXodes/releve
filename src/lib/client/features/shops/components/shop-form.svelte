@@ -127,7 +127,13 @@
         };
     };
 
+    $: showStatusInput = $page.data?.session.user?.customClaims.isAdmin && !isPrivate;
+
+    $: disabled = result?.hasErrors() || !result?.isValid() || $form.isSuccess;
+
     onMount(() => {
+        form.reset();
+
         if (shopData) {
             states.loadStates(shopData.address.country);
 
@@ -151,12 +157,6 @@
 
         states.loadStates(shop.country);
     });
-
-    $: showStatusInput = $page.data?.session.user?.customClaims.isAdmin && !isPrivate;
-
-    $: disabled = result?.hasErrors() || !result?.isValid() || $form.isSuccess;
-
-    onMount(() => form.reset());
 </script>
 
 <form action={actionUrl[actionType]} method="POST" use:enhance={handleSubmit} on:submit>
