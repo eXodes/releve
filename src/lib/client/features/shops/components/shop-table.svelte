@@ -156,7 +156,6 @@
 <div class="flex flex-col">
     <div class="-mx-3 -my-3 sm:-mx-6 lg:-mx-8">
         <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-            <pre>{JSON.stringify({ selectedShop }, null, 2)}</pre>
             <div class="relative bg-white shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
                 <table class="min-w-full table-fixed divide-y divide-gray-300">
                     <thead class="bg-gray-50">
@@ -222,7 +221,6 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         {#each shops as shop, shopIdx (shop.uid)}
-                            <pre>{JSON.stringify(shop, null, 2)}</pre>
                             <tr class={selectedShops.includes(shop) ? "bg-gray-50" : undefined}>
                                 <td class="relative hidden w-12 px-6 sm:w-16 sm:px-8 md:table-cell">
                                     {#if selectedShops.includes(shop)}
