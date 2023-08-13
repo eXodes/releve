@@ -11,6 +11,7 @@
     } from "$features/users/validations/update-user";
     import { countries, states } from "$features/countries/store";
     import { Color } from "$client/enums/theme";
+    import { form } from "$client/stores/form";
     import { notification } from "$client/stores/notification";
     import type { ValidationError } from "$client/types/error";
     import { getFileData } from "$client/utils/data";
@@ -55,11 +56,6 @@
 
     let userPhoto: string | undefined = userData.avatar.small.url;
     let result: SuiteRunResult;
-    let isSubmitting = false;
-    let errors: { [key: string]: string[] } = {};
-    let errorMessage: string | undefined = undefined;
-    let profileSuccess = false;
-    let informationSuccess = false;
 
     const handleChange = ({ detail }: CustomEvent<{ name: string; value: string | string[] }>) => {
         user = {
@@ -73,7 +69,7 @@
         }
 
         result = updateUserSuite(user, detail.name);
-        errors = result.getErrors();
+        form.validatedErrors(result.getErrors());
     };
 
     const handleFileChange = async (event: Event) => {
@@ -87,7 +83,7 @@
         };
 
         result = updateUserSuite(user, input.name);
-        errors = result.getErrors();
+        form.validatedErrors(result.getErrors());
 
         if (user.userPhoto) {
             userPhoto = (await getFileData(user.userPhoto)) as string;
@@ -95,58 +91,54 @@
     };
 
     const handleProfileSubmit: SubmitFunction<UpdateUserResponse, ValidationError> = () => {
-        isSubmitting = true;
+        form.submit();
 
         return async ({ result }) => {
             if (result.type === "failure") {
                 if (result.data?.code === "ValidationError" && result.data?.errors) {
-                    errors = result.data?.errors;
+                    form.validatedErrors(result.data?.errors);
                 }
             }
 
             if (result.type === "error") {
-                errorMessage = result.error.message;
+                form.submitError({ message: result.error.message });
             }
 
             if (result.type === "success") {
-                profileSuccess = true;
+                form.submitSuccess({ message: "profile" });
 
                 setTimeout(() => {
-                    profileSuccess = false;
+                    form.reset();
                 }, 2000);
 
                 await applyAction(result);
             }
-
-            isSubmitting = false;
         };
     };
 
     const handleInformationSubmit: SubmitFunction<UpdateUserResponse, ValidationError> = () => {
-        isSubmitting = true;
+        form.submit();
 
         return async ({ result }) => {
             if (result.type === "failure") {
                 if (result.data?.code === "ValidationError" && result.data?.errors) {
-                    errors = result.data?.errors;
+                    form.validatedErrors(result.data?.errors);
                 }
             }
 
             if (result.type === "error") {
-                errorMessage = result.error.message;
+                form.submitError({ message: result.error.message });
             }
 
             if (result.type === "success") {
-                informationSuccess = true;
+                form.submitSuccess({ message: "information" });
 
                 setTimeout(() => {
-                    informationSuccess = false;
+                    form.reset();
                 }, 2000);
 
                 await applyAction(result);
             }
-
-            isSubmitting = false;
         };
     };
 
@@ -171,11 +163,13 @@
 
     $: showRoleInput = actionType === "users" && $page.data.session.user?.customClaims?.isAdmin;
 
-    $: errorMessage &&
-        notification.send({
-            type: "error",
-            message: errorMessage,
-        });
+    $: (() => {
+        if ($form.isError && $form.message)
+            notification.send({
+                type: "error",
+                message: $form.message,
+            });
+    })();
 </script>
 
 <div class="space-y-6">
@@ -205,7 +199,7 @@
                                 value={user.displayName}
                                 autocomplete="nickname"
                                 required
-                                errors={errors["display-name"]}
+                                errors={$form.errors["display-name"]}
                                 on:input={handleChange}
                             />
                         </div>
@@ -219,7 +213,7 @@
                                     value={user.role}
                                     autocomplete="role"
                                     required
-                                    errors={errors["role"]}
+                                    errors={$form.errors["role"]}
                                     on:input={handleChange}
                                 >
                                     <svelte:fragment>
@@ -244,7 +238,7 @@
                             placeholder="Tell us about yourself"
                             maxlength={250}
                             hint="Brief description for your profile."
-                            errors={errors["about"]}
+                            errors={$form.errors["about"]}
                             on:input={handleChange}
                         />
                     </div>
@@ -291,7 +285,7 @@
             </div>
 
             <svelte:fragment slot="action">
-                {#if profileSuccess}
+                {#if $form.message === "profile"}
                     <span
                         class="flex items-center gap-0.5 text-xs text-green-600"
                         transition:fade={{ duration: 100 }}
@@ -301,7 +295,9 @@
                     </span>
                 {/if}
 
-                <Button type="submit" color={Color.PRIMARY} isLoading={isSubmitting}>Save</Button>
+                <Button type="submit" color={Color.PRIMARY} isLoading={$form.isLoading}>
+                    Save
+                </Button>
             </svelte:fragment>
         </ActionableCard>
     </form>
@@ -328,7 +324,7 @@
                         name="first-name"
                         value={user.firstName}
                         autocomplete="given-name"
-                        errors={errors["first-name"]}
+                        errors={$form.errors["first-name"]}
                         on:input={handleChange}
                     />
                 </div>
@@ -340,7 +336,7 @@
                         name="last-name"
                         value={user.lastName}
                         autocomplete="family-name"
-                        errors={errors["last-name"]}
+                        errors={$form.errors["last-name"]}
                         on:input={handleChange}
                     />
                 </div>
@@ -365,7 +361,7 @@
                         name="country"
                         value={user.country}
                         autocomplete="country-name"
-                        errors={errors["country"]}
+                        errors={$form.errors["country"]}
                         on:input={handleChange}
                     >
                         {#each $countries as country}
@@ -381,7 +377,7 @@
                         name="street-address"
                         value={user.streetAddress}
                         autocomplete="street-address"
-                        errors={errors["street-address"]}
+                        errors={$form.errors["street-address"]}
                         on:input={handleChange}
                     />
                 </div>
@@ -393,7 +389,7 @@
                         name="city"
                         value={user.city}
                         autocomplete="address-level2"
-                        errors={errors["city"]}
+                        errors={$form.errors["city"]}
                         on:input={handleChange}
                     />
                 </div>
@@ -405,7 +401,7 @@
                         name="state"
                         value={user.state}
                         autocomplete="address-level1"
-                        errors={errors["state"]}
+                        errors={$form.errors["state"]}
                         on:input={handleChange}
                         disabled={$states.length === 0}
                     >
@@ -425,14 +421,14 @@
                         value={user.postalCode}
                         autocomplete="postal-code"
                         inputmode="numeric"
-                        errors={errors["postal-code"]}
+                        errors={$form.errors["postal-code"]}
                         on:input={handleChange}
                     />
                 </div>
             </div>
 
             <svelte:fragment slot="action">
-                {#if informationSuccess}
+                {#if $form.message === "information"}
                     <span
                         class="flex items-center gap-0.5 text-xs text-green-600"
                         transition:fade={{ duration: 100 }}
@@ -442,7 +438,9 @@
                     </span>
                 {/if}
 
-                <Button type="submit" color={Color.PRIMARY} isLoading={isSubmitting}>Save</Button>
+                <Button type="submit" color={Color.PRIMARY} isLoading={$form.isLoading}>
+                    Save
+                </Button>
             </svelte:fragment>
         </ActionableCard>
     </form>

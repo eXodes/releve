@@ -7,6 +7,7 @@
         type UpdatePasswordResponse,
     } from "$features/users/validations/update-password";
     import { Color } from "$client/enums/theme";
+    import { form } from "$client/stores/form";
     import { notification } from "$client/stores/notification";
     import type { ValidationError } from "$client/types/error";
 
@@ -39,30 +40,28 @@
             [camelCase(detail.name)]: detail.value,
         };
         result = updatePasswordSuite(user, detail.name);
-        errors = result.getErrors();
+        form.validatedErrors(result.getErrors());
     };
 
     const handleSubmit: SubmitFunction<UpdatePasswordResponse, ValidationError> = () => {
-        isSubmitting = true;
+        form.submit();
 
         return async ({ result }) => {
             let timeout: ReturnType<typeof setTimeout>;
 
             if (result.type === "failure") {
-                isSubmitting = false;
-
                 if (result.data?.code === "ValidationError" && result.data?.errors) {
-                    errors = result.data?.errors;
+                    form.validatedErrors(result.data?.errors);
                 }
             }
 
             if (result.type === "error") {
-                isSubmitting = false;
-
-                errorMessage = result.error.message;
+                form.submitError({ message: result.error.message });
             }
 
             if (result.type === "success") {
+                form.submitSuccess();
+
                 await applyAction(result);
 
                 notification.send({
@@ -74,19 +73,22 @@
 
                 timeout = setTimeout(() => {
                     goto("/sign-in");
-                }, 5000);
+                }, 2000);
             }
 
             return () => clearTimeout(timeout);
         };
     };
 
-    $: errorMessage &&
-        notification.send({
-            type: "error",
-            message: errorMessage,
-        });
     $: disabled = result?.hasErrors() || !result?.isValid();
+
+    $: (() => {
+        if ($form.isError && $form.message)
+            notification.send({
+                type: "error",
+                message: $form.message,
+            });
+    })();
 </script>
 
 <form action="/settings?/password" method="POST" use:enhance={handleSubmit}>
@@ -107,7 +109,7 @@
                     name="password"
                     autocomplete="new-password"
                     required
-                    errors={errors["password"]}
+                    errors={$form.errors["password"]}
                     on:input={handleChange}
                 />
             </div>
@@ -120,7 +122,7 @@
                     name="confirm-password"
                     autocomplete="new-password"
                     required
-                    errors={errors["confirm-password"]}
+                    errors={$form.errors["confirm-password"]}
                     on:input={handleChange}
                 />
             </div>
@@ -131,7 +133,7 @@
                 type="submit"
                 color={Color.PRIMARY}
                 disabled={disabled}
-                isLoading={isSubmitting}
+                isLoading={$form.isLoading}
             >
                 Save
             </Button>

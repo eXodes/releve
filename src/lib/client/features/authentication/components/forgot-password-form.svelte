@@ -4,6 +4,7 @@
     import forgotPasswordSuite, {
         type ForgotPasswordPayload,
     } from "$features/authentication/validations/forgot-password";
+    import { form } from "$client/stores/form";
     import type { ValidationError } from "$client/types/error";
     import type { MessageResponse } from "$client/types/response";
     import { Color } from "$client/enums/theme";
@@ -13,16 +14,11 @@
     import TextInput from "$client/components/shared/text-input.svelte";
 
     import type { SubmitFunction } from "@sveltejs/kit";
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import { camelCase } from "lodash-es";
     import type { SuiteRunResult } from "vest";
 
     let result: SuiteRunResult;
-    let isSubmitting = false;
-    let errors: { [key: string]: string[] } = {};
-    let errorMessage: string | undefined = undefined;
-    let successMessage: string | undefined = undefined;
-
     let user: ForgotPasswordPayload = {
         email: "",
     };
@@ -36,30 +32,27 @@
             ...user,
             [camelCase(detail.name)]: detail.value,
         };
+
         result = forgotPasswordSuite(user, detail.name);
-        errors = result.getErrors();
+        form.validatedErrors(result.getErrors());
     };
 
     const handleSubmit: SubmitFunction<MessageResponse, ValidationError> = () => {
-        isSubmitting = true;
+        form.submit();
 
         return async ({ result, update }) => {
             if (result.type === "failure") {
-                isSubmitting = false;
-
                 if (result.data?.code === "ValidationError" && result.data?.errors) {
-                    errors = result.data?.errors;
+                    form.validatedErrors(result.data.errors);
                 }
             }
 
             if (result.type === "error") {
-                isSubmitting = false;
-
-                errorMessage = result.error.message;
+                form.submitError({ message: result.error.message });
             }
 
             if (result.type === "success") {
-                successMessage = result.data?.message;
+                form.submitSuccess({ message: result.data?.message });
 
                 await update();
 
@@ -67,6 +60,10 @@
             }
         };
     };
+
+    onMount(() => {
+        form.reset();
+    });
 
     $: disabled = result?.hasErrors() || !result?.isValid();
 </script>
@@ -81,21 +78,27 @@
             autocomplete="email"
             inputmode="email"
             required
-            errors={errors["email"]}
+            errors={$form.errors["email"]}
             on:input={handleChange}
         />
     </div>
 
-    <Alert show={!!successMessage} color={Color.SUCCESS}>
-        {successMessage} Please check your email.
+    <Alert show={$form.isSuccess} color={Color.SUCCESS}>
+        {$form.message} Please check your email.
     </Alert>
 
-    <Alert show={!!errorMessage} color={Color.DANGER}>
-        {errorMessage}
+    <Alert show={$form.isError} color={Color.DANGER}>
+        {$form.message}
     </Alert>
 
     <div>
-        <Button type="submit" block={true} color={Color.PRIMARY} disabled={disabled}>
+        <Button
+            type="submit"
+            block={true}
+            color={Color.PRIMARY}
+            disabled={disabled}
+            isLoading={$form.isLoading}
+        >
             Send link
         </Button>
     </div>

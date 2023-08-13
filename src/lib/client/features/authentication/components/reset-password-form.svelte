@@ -7,6 +7,7 @@
     import resetPasswordSuite, {
         type ResetPasswordPayload,
     } from "$features/authentication/validations/reset-password";
+    import { form } from "$client/stores/form";
     import { Color } from "$client/enums/theme";
 
     import Alert from "$client/components/shared/alert.svelte";
@@ -19,10 +20,6 @@
 
     let formElement: HTMLFormElement;
     let result: SuiteRunResult;
-    let isSubmitting = false;
-    let errors: { [key: string]: string[] } = {};
-    let errorMessage: string | undefined = undefined;
-    let successMessage: string | undefined = undefined;
 
     let user: ResetPasswordPayload = {
         password: "",
@@ -45,53 +42,55 @@
             [camelCase(detail.name)]: detail.value,
         };
         result = resetPasswordSuite(user, detail.name);
-        errors = result.getErrors();
+        form.validatedErrors(result.getErrors());
     };
 
     const handleReset = async () => {
-        isSubmitting = true;
-        successMessage = errorMessage = undefined;
+        let timeout: ReturnType<typeof setTimeout>;
+
+        form.submit();
 
         if (!actionCode) {
-            errorMessage =
-                "The action code is invalid. Please check the link in the email and try again.";
-            return;
+            return form.submitError({
+                message:
+                    "The action code is invalid. Please check the link in the email and try again.",
+            });
         }
 
         try {
             const { message } = await AuthService.resetPassword(user.password, actionCode);
 
-            successMessage = message;
+            form.submitSuccess({ message });
             resetForm();
 
-            const timeout = setTimeout(() => {
+            timeout = setTimeout(() => {
                 goto("/sign-in");
             }, 5000);
-
-            () => clearTimeout(timeout);
         } catch (error) {
-            isSubmitting = false;
-
             const data = handleAuthCatch(error);
-            errorMessage = data.message;
+
+            form.submitError({ message: data.message });
         }
+
+        return () => clearTimeout(timeout);
     };
 
     onMount(() => {
         if (!actionCode) {
-            errorMessage =
-                "The action code is invalid. Please check the link in the email and try again.";
-
+            form.submitError({
+                message:
+                    "The action code is invalid. Please check the link in the email and try again.",
+            });
             return;
         }
 
         AuthService.checkActionCode(actionCode).catch((error) => {
             const data = handleAuthCatch(error);
-            errorMessage = data.message;
+            form.submitError({ message: data.message });
         });
     });
 
-    $: disabled = result?.hasErrors() || !result?.isValid() || !!errorMessage || !!successMessage;
+    $: disabled = result?.hasErrors() || !result?.isValid() || $form.isSuccess;
 </script>
 
 <form on:submit|preventDefault={handleReset} class="space-y-6" bind:this={formElement}>
@@ -104,7 +103,7 @@
             autocomplete="new-password"
             minlength={8}
             required
-            errors={errors["password"]}
+            errors={$form.errors["password"]}
             on:input={handleChange}
         />
     </div>
@@ -118,21 +117,27 @@
             autocomplete="confirm-new-password"
             minlength={8}
             required
-            errors={errors["confirm-password"]}
+            errors={$form.errors["confirm-password"]}
             on:input={handleChange}
         />
     </div>
 
-    <Alert show={!!successMessage} color={Color.SUCCESS}>
-        {successMessage} Please <a class="underline" href="/sign-in">sign in</a> to continue.
+    <Alert show={$form.isSuccess} color={Color.SUCCESS}>
+        {$form.message} Please <a class="underline" href="/sign-in">sign in</a> to continue.
     </Alert>
 
-    <Alert show={!!errorMessage} color={Color.DANGER}>
-        {errorMessage}
+    <Alert show={$form.isError} color={Color.DANGER}>
+        {$form.message}
     </Alert>
 
     <div>
-        <Button type="submit" block={true} color={Color.PRIMARY} disabled={disabled}>
+        <Button
+            type="submit"
+            block={true}
+            color={Color.PRIMARY}
+            disabled={disabled}
+            isLoading={$form.isLoading}
+        >
             Update password
         </Button>
     </div>
