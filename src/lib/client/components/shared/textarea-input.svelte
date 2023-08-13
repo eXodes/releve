@@ -4,11 +4,12 @@
 
     import Hint from "$client/components/shared/hint-text.svelte";
 
-    import { Popover, PopoverButton, PopoverPanel, Transition } from "@rgossiaux/svelte-headlessui";
     import { createEventDispatcher } from "svelte";
+    import type { HTMLTextareaAttributes } from "svelte/elements";
+    import { Popover, PopoverButton, PopoverPanel, Transition } from "@rgossiaux/svelte-headlessui";
     import { ExclamationCircle, Icon } from "svelte-hero-icons";
 
-    interface $$Props extends Partial<HTMLTextAreaElement> {
+    interface $$Props extends HTMLTextareaAttributes {
         id: string;
         label: string;
         name: string;
@@ -52,14 +53,14 @@
 </label>
 <div class={classNames("relative mt-1", classes)}>
     <textarea
+        {...$$restProps}
         id={id}
         name={name}
         value={value}
         rows={rows}
         on:input={handleInput}
-        {...$$restProps}
         class={classNames(
-            "peer block w-full resize-none appearance-none rounded-md border px-3 py-2 placeholder-gray-400 shadow-sm focus:enabled:outline-none focus:enabled:ring-1 sm:text-sm",
+            "peer block w-full resize-none appearance-none rounded-md border px-3 py-2 placeholder-gray-400 shadow-sm read-only:bg-gray-100 focus:enabled:outline-none focus:enabled:ring-1 disabled:bg-gray-100 sm:text-sm",
             errors?.length
                 ? "border-red-300 pr-10 text-red-900 caret-red-500 focus:enabled:border-red-500 focus:enabled:ring-red-500"
                 : "border-gray-300 caret-rose-500 focus:enabled:border-rose-500 focus:enabled:ring-rose-500"

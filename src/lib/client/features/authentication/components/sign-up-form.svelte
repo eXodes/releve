@@ -2,6 +2,7 @@
     import { enhance } from "$app/forms";
 
     import signUpSuite, { type SignUpPayload } from "$features/authentication/validations/sign-up";
+    import { form } from "$client/stores/form";
     import { Color } from "$client/enums/theme";
     import type { ValidationError } from "$client/types/error";
 
@@ -16,9 +17,6 @@
     import type { SuiteRunResult } from "vest";
 
     let result: SuiteRunResult;
-    let errors: { [key: string]: string[] } = {};
-    let errorMessage: string | undefined = undefined;
-    let successMessage: string | undefined = undefined;
 
     let user: SignUpPayload = {
         displayName: "",
@@ -40,33 +38,35 @@
 
         result.done((res) => {
             result = res as SuiteRunResult;
-            errors = result.getErrors();
+            form.validatedErrors(result.getErrors());
         });
     };
 
-    const handleSubmit: SubmitFunction<{ message: string }, ValidationError> =
-        () =>
-        async ({ result, update }) => {
+    const handleSubmit: SubmitFunction<{ message: string }, ValidationError> = () => {
+        form.submit();
+
+        return async ({ result, update }) => {
             if (result.type === "failure") {
                 if (result.data?.code === "ValidationError" && result.data?.errors) {
-                    errors = result.data?.errors;
+                    form.validatedErrors(result.data?.errors);
                 }
             }
 
             if (result.type === "error") {
-                errorMessage = result.error.message;
+                form.submitError({ message: result.error.message });
             }
 
             if (result.type === "success") {
-                successMessage = result.data?.message;
+                form.submitSuccess({ message: result.data?.message });
 
                 await update();
 
                 dispatch("success");
             }
         };
+    };
 
-    $: disabled = result?.hasErrors() || !result?.isValid();
+    $: disabled = result?.hasErrors() || !result?.isValid() || $form.isSuccess;
 </script>
 
 <form action="/sign-up" method="post" use:enhance={handleSubmit} class="space-y-6">
@@ -77,7 +77,7 @@
             name="display-name"
             autocomplete="name"
             required
-            errors={errors["display-name"]}
+            errors={$form.errors["display-name"]}
             on:input={handleChange}
         />
     </div>
@@ -89,8 +89,9 @@
             id="email"
             name="email"
             autocomplete="email"
+            inputmode="email"
             required
-            errors={errors["email"]}
+            errors={$form.errors["email"]}
             on:input={handleChange}
         />
     </div>
@@ -101,9 +102,9 @@
             id="password"
             name="password"
             autocomplete="new-password"
-            minLength={8}
+            minlength={8}
             required
-            errors={errors["password"]}
+            errors={$form.errors["password"]}
             on:input={handleChange}
         />
     </div>
@@ -114,23 +115,29 @@
             id="confirm-password"
             name="confirm-password"
             autocomplete="confirm-new-password"
-            minLength={8}
+            minlength={8}
             required
-            errors={errors["confirm-password"]}
+            errors={$form.errors["confirm-password"]}
             on:input={handleChange}
         />
     </div>
 
-    <Alert show={!!successMessage} color={Color.SUCCESS}>
-        {successMessage} Please check your email for a verification link.
+    <Alert show={$form.isSuccess} color={Color.SUCCESS}>
+        {$form.message} Please check your email for a verification link.
     </Alert>
 
-    <Alert show={!!errorMessage} color={Color.DANGER}>
-        {errorMessage}
+    <Alert show={$form.isError} color={Color.DANGER}>
+        {$form.message}
     </Alert>
 
     <div>
-        <Button type="submit" block={true} color={Color.PRIMARY} disabled={disabled}>
+        <Button
+            type="submit"
+            block={true}
+            color={Color.PRIMARY}
+            disabled={disabled}
+            isLoading={$form.isLoading}
+        >
             Sign up
         </Button>
     </div>

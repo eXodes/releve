@@ -59,8 +59,16 @@
             : selectedShops.filter((p) => p !== shop);
     };
 
-    const handleUpdate = async () => {
+    const handleUpdate = () => {
         showUpdateShop = false;
+
+        selectedShop = undefined;
+    };
+
+    const handleCancelUpdate = () => {
+        showUpdateShop = false;
+
+        selectedShop = undefined;
     };
 
     const handleDelete = async () => {
@@ -80,19 +88,19 @@
         await invalidate("shops");
     };
 
-    const getButtonsProps = (shop: ShopData) => {
+    const getButtonsProps = (shopIndex: number) => {
         return [
             {
                 label: "Edit",
                 onClick: () => {
-                    selectedShop = shop;
+                    selectedShop = shops[shopIndex];
                     showUpdateShop = true;
                 },
             },
             {
                 label: "Delete",
                 onClick: () => {
-                    selectedShop = shop;
+                    selectedShop = shops[shopIndex];
                     showDeleteShop = true;
                 },
             },
@@ -136,12 +144,12 @@
     </p>
 </ActionableModal>
 
-<Modal open={showUpdateShop} padding={false} on:close={() => (showUpdateShop = false)}>
+<Modal open={showUpdateShop} padding={false} on:close={handleCancelUpdate}>
     <ShopForm
         shopData={selectedShop}
         actionType="update-public"
         on:success={handleUpdate}
-        on:cancel={() => (showUpdateShop = false)}
+        on:cancel={handleCancelUpdate}
     />
 </Modal>
 
@@ -212,7 +220,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                        {#each shops as shop (shop.uid)}
+                        {#each shops as shop, shopIdx (shop.uid)}
                             <tr class={selectedShops.includes(shop) ? "bg-gray-50" : undefined}>
                                 <td class="relative hidden w-12 px-6 sm:w-16 sm:px-8 md:table-cell">
                                     {#if selectedShops.includes(shop)}
@@ -272,7 +280,7 @@
                                 <td
                                     class="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
                                 >
-                                    <DropdownButton buttons={getButtonsProps(shop)} />
+                                    <DropdownButton buttons={getButtonsProps(shopIdx)} />
                                 </td>
                             </tr>
                         {/each}

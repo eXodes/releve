@@ -6,6 +6,7 @@
     import { handleAuthCatch } from "$features/authentication/errors";
     import { AuthService } from "$features/authentication/services";
     import signInSuite, { type SignInPayload } from "$features/authentication/validations/sign-in";
+    import { form } from "$client/stores/form";
     import { Color } from "$client/enums/theme";
     import type { MessageResponse } from "$client/types/response";
 
@@ -30,9 +31,7 @@
     }>();
 
     let result: SuiteRunResult;
-    let errors: { [key: string]: string[] } = {};
-    let successMessage: string | undefined = undefined;
-    let errorMessage: string | undefined = undefined;
+    let disabledResendValidation = false;
 
     let failedUid: string | undefined = undefined;
 
@@ -47,8 +46,9 @@
             ...user,
             [camelCase(detail.name)]: detail.value,
         };
+
         result = signInSuite(user, detail.name);
-        errors = result.getErrors();
+        form.validatedErrors(result.getErrors());
     };
 
     const invalidateSession = () => {
@@ -58,12 +58,12 @@
     };
 
     const handleSignIn = async () => {
-        successMessage = errorMessage = undefined;
+        form.submit();
 
         try {
             const data = await AuthService.signIn(user.email, user.password, user.rememberMe);
 
-            successMessage = data.message;
+            form.submitSuccess({ message: data.message });
 
             invalidateSession();
 
@@ -71,7 +71,7 @@
         } catch (error) {
             const data = handleAuthCatch(error);
 
-            errorMessage = data.message;
+            form.submitError({ message: data.message });
 
             if (
                 "code" in data &&
@@ -86,19 +86,21 @@
     const validateEmail = async ({ actionCode, uid }: { actionCode: string; uid: string }) => {
         let timeout: ReturnType<typeof setTimeout>;
 
+        form.submit();
+
         try {
             await AuthService.verifyEmail(uid, actionCode);
 
-            successMessage = "Email verified successfully. Please sign in.";
+            form.submitSuccess({ message: "Email verified successfully. Please sign in." });
 
             timeout = setTimeout(() => {
-                successMessage = undefined;
+                form.reset();
             }, 3000);
         } catch (error) {
             const data = handleAuthCatch(error);
 
             if (error instanceof FirebaseError) {
-                errorMessage = data?.message;
+                form.submitError({ message: data?.message });
 
                 if (
                     error.code === AuthErrorCodes.INVALID_OOB_CODE ||
@@ -116,16 +118,18 @@
         };
     };
 
-    const handleResendValidation: SubmitFunction<MessageResponse> =
-        () =>
-        ({ result }) => {
+    const handleResendValidation: SubmitFunction<MessageResponse> = () => {
+        disabledResendValidation = true;
+
+        return ({ result }) => {
             if (result.type === "success") {
-                errorMessage = undefined;
-                successMessage = result.data?.message;
+                form.submitSuccess({ message: result.data?.message });
             }
         };
+    };
 
     onMount(() => {
+        form.reset();
         const actionCode = $page.url.searchParams.get("actionCode");
         const uid = $page.url.searchParams.get("uid");
 
@@ -134,7 +138,7 @@
         }
     });
 
-    $: disabled = result?.hasErrors() || !result?.isValid();
+    $: disabled = result?.hasErrors() || !result?.isValid() || $form.isSuccess;
 </script>
 
 <form on:submit|preventDefault={handleSignIn} class="space-y-6">
@@ -145,8 +149,9 @@
             name="email"
             type="email"
             autocomplete="email"
+            inputmode="email"
             required
-            errors={errors["email"]}
+            errors={$form.errors["email"]}
             on:input={handleChange}
         />
     </div>
@@ -158,9 +163,9 @@
             name="password"
             type="password"
             autocomplete="current-password"
-            minLength={8}
+            minlength={8}
             required
-            errors={errors["password"]}
+            errors={$form.errors["password"]}
             on:input={handleChange}
         />
     </div>
@@ -193,12 +198,12 @@
         </Tooltip>
     </div>
 
-    <Alert show={!!successMessage} color={Color.SUCCESS}>
-        {successMessage}
+    <Alert show={$form.isSuccess} color={Color.SUCCESS}>
+        {$form.message}
     </Alert>
 
-    <Alert show={!!errorMessage} color={Color.DANGER}>
-        {errorMessage}
+    <Alert show={$form.isError} color={Color.DANGER}>
+        {$form.message}
 
         {#if failedUid}
             <form
@@ -211,7 +216,8 @@
                     type="submit"
                     name="uid"
                     value={failedUid}
-                    class="inline-flex items-center gap-0.5 font-medium text-rose-600 hover:text-rose-500 hover:underline hover:decoration-rose-500 hover:decoration-2"
+                    class="inline-flex items-center gap-0.5 font-medium text-rose-600 hover:text-rose-500 hover:underline hover:decoration-rose-500 hover:decoration-2 disabled:cursor-not-allowed disabled:text-rose-400 disabled:no-underline"
+                    disabled={disabledResendValidation}
                 >
                     Resend verification email
                 </button>
@@ -220,7 +226,13 @@
     </Alert>
 
     <div>
-        <Button type="submit" block={true} color={Color.PRIMARY} disabled={disabled}>
+        <Button
+            type="submit"
+            block={true}
+            color={Color.PRIMARY}
+            disabled={disabled}
+            isLoading={$form.isLoading}
+        >
             Sign in
         </Button>
     </div>

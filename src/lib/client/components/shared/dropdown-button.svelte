@@ -28,25 +28,27 @@
     import { ChevronDown, Icon } from "svelte-hero-icons";
 
     export let buttons: DropdownButtonsProps;
+
+    const [firstButton, ...otherButtons] = buttons;
 </script>
 
 <span class="relative inline-flex rounded-md shadow-sm">
-    {#if buttons[0].href}
+    {#if firstButton.href}
         <a
-            href={buttons[0].href}
+            href={firstButton.href}
             class="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500"
         >
-            {buttons[0].label}
+            {firstButton.label}
         </a>
     {/if}
-    {#if buttons[0].onClick}
+    {#if firstButton.onClick}
         <button
             type="button"
             class="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500"
-            on:click={buttons[0].onClick}
-            disabled={buttons[0].disabled}
+            on:click={firstButton.onClick}
+            disabled={firstButton.disabled}
         >
-            {buttons[0].label}
+            {firstButton.label}
         </button>
     {/if}
     <Menu as="span" class="relative -ml-px block">
@@ -69,37 +71,35 @@
                 class="absolute right-0 -mr-1 mt-2 w-32 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
             >
                 <div class="py-1">
-                    {#each buttons as item, itemIdx (item.label)}
-                        {#if itemIdx > 0}
-                            <MenuItem let:active>
-                                {#if item.href}
-                                    <a
-                                        href={item.href}
-                                        class={classNames(
-                                            active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                                            "block px-4 py-2 text-left text-sm"
-                                        )}
-                                    >
-                                        {item.label}
-                                    </a>
-                                {/if}
-                                {#if item.onClick}
-                                    <button
-                                        class={classNames(
-                                            active
-                                                ? "enabled:bg-gray-100 enabled:text-gray-900"
-                                                : "enabled:text-gray-700",
-                                            "block w-full px-4 py-2 text-left text-sm text-gray-400",
-                                            item.disabled && "cursor-not-allowed"
-                                        )}
-                                        on:click={item.onClick}
-                                        disabled={item.disabled}
-                                    >
-                                        {item.label}
-                                    </button>
-                                {/if}
-                            </MenuItem>
-                        {/if}
+                    {#each otherButtons as item, itemIdx (item.label)}
+                        <MenuItem let:active>
+                            {#if item.href}
+                                <a
+                                    href={item.href}
+                                    class={classNames(
+                                        active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                                        "block px-4 py-2 text-left text-sm"
+                                    )}
+                                >
+                                    {item.label}
+                                </a>
+                            {/if}
+                            {#if item.onClick}
+                                <button
+                                    class={classNames(
+                                        active
+                                            ? "enabled:bg-gray-100 enabled:text-gray-900"
+                                            : "enabled:text-gray-700",
+                                        "block w-full px-4 py-2 text-left text-sm text-gray-400",
+                                        item.disabled && "cursor-not-allowed"
+                                    )}
+                                    on:click={item.onClick}
+                                    disabled={item.disabled}
+                                >
+                                    {item.label}
+                                </button>
+                            {/if}
+                        </MenuItem>
                     {/each}
                 </div>
             </MenuItems>

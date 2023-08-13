@@ -33,6 +33,10 @@ input[type="search"]::-webkit-search-results-decoration {
     -webkit-appearance: none;
 }
 
+kbd {
+    @apply rounded-sm bg-gray-50 px-1 pt-px text-xs font-medium text-gray-500;
+}
+
 /*** Nprogress ***/
 /* Make clicks pass-through */
 #nprogress {

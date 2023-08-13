@@ -3,6 +3,7 @@
     import { Color } from "$client/enums/theme";
 
     import Button from "$client/components/shared/button.svelte";
+    import { form } from "$client/stores/form";
     import { notification } from "$client/stores/notification";
 
     import type { SubmitFunction } from "@sveltejs/kit";
@@ -13,7 +14,7 @@
         Transition,
         TransitionChild,
     } from "@rgossiaux/svelte-headlessui";
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import { ExclamationTriangle, Icon } from "svelte-hero-icons";
 
     export let open = false;
@@ -31,10 +32,13 @@
         cancel: void;
     }>();
 
-    const handleSubmit: SubmitFunction =
-        () =>
-        async ({ result }) => {
+    const handleSubmit: SubmitFunction = () => {
+        form.submit();
+
+        return async ({ result }) => {
             if (result.type === "error") {
+                form.submitError({ message: result.error.message });
+
                 notification.send({
                     type: "error",
                     message: result.error.message,
@@ -42,11 +46,12 @@
             }
 
             if (result.type === "success") {
-                if (result.data)
-                    notification.send({
-                        type: "success",
-                        message: result.data.message,
-                    });
+                form.submitSuccess({ message: result.data?.message });
+
+                notification.send({
+                    type: "success",
+                    message: result.data?.message,
+                });
 
                 await applyAction(result);
 
@@ -55,12 +60,17 @@
                 open = false;
             }
         };
+    };
 
     const handleCancel = () => {
         dispatch("cancel");
 
         open = false;
     };
+
+    onMount(() => {
+        form.reset();
+    });
 </script>
 
 <Transition show={open}>
@@ -88,6 +98,7 @@
             <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">
                 &#8203;
             </span>
+
             <TransitionChild
                 class="relative inline-block transform rounded-lg bg-white px-4 pb-4 pt-5 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle"
                 enter="ease-out duration-300"
@@ -129,6 +140,7 @@
                                 class="w-full sm:w-auto"
                                 name={name}
                                 value={value}
+                                isLoading={$form.isLoading}
                             >
                                 {confirmLabel}
                             </Button>

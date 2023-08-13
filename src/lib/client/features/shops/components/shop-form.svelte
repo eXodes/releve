@@ -10,6 +10,7 @@
     import { countries, states } from "$features/countries/store";
     import { deliveryServices } from "$features/delivery-providers/store";
     import { Color } from "$client/enums/theme";
+    import { form } from "$client/stores/form";
     import { notification } from "$client/stores/notification";
     import type { ValidationError } from "$client/types/error";
     import type { MessageResponse } from "$client/types/response";
@@ -58,7 +59,6 @@
     };
 
     let result: SuiteRunResult;
-    let errors: { [key: string]: string[] } = {};
 
     const dispatch = createEventDispatcher<{
         success: void;
@@ -79,19 +79,22 @@
         }
 
         result = shopSuite(shop, detail.name);
-        errors = result.getErrors();
+        form.validatedErrors(result.getErrors());
     };
 
-    const handleSubmit: SubmitFunction<MessageResponse, ValidationError> =
-        () =>
-        async ({ result }) => {
+    const handleSubmit: SubmitFunction<MessageResponse, ValidationError> = () => {
+        form.submit();
+
+        return async ({ result }) => {
             if (result.type === "failure") {
                 if (result.data?.code === "ValidationError" && result.data?.errors) {
-                    errors = result.data?.errors;
+                    form.validatedErrors(result.data?.errors);
                 }
             }
 
             if (result.type === "error") {
+                form.submitError();
+
                 notification.send({
                     type: "error",
                     message: result.error.message,
@@ -99,13 +102,15 @@
             }
 
             if (result.type === "success") {
+                form.submitSuccess();
+
+                await applyAction(result);
+
                 if (result.data)
                     notification.send({
                         type: "success",
                         message: result.data.message,
                     });
-
-                await applyAction(result);
 
                 await invalidate("shops");
 
@@ -120,8 +125,15 @@
                 dispatch("success");
             }
         };
+    };
+
+    $: showStatusInput = $page.data?.session.user?.customClaims.isAdmin && !isPrivate;
+
+    $: disabled = result?.hasErrors() || !result?.isValid() || $form.isSuccess;
 
     onMount(() => {
+        form.reset();
+
         if (shopData) {
             states.loadStates(shopData.address.country);
 
@@ -139,16 +151,12 @@
             };
 
             result = shopSuite(shop);
-            errors = result.getErrors();
+            form.validatedErrors(result.getErrors());
             return;
         }
 
         states.loadStates(shop.country);
     });
-
-    $: showStatusInput = $page.data?.session.user?.customClaims.isAdmin && !isPrivate;
-
-    $: disabled = result?.hasErrors() || !result?.isValid();
 </script>
 
 <form action={actionUrl[actionType]} method="POST" use:enhance={handleSubmit} on:submit>
@@ -167,7 +175,7 @@
                     value={shop.name}
                     autocomplete="shop-name"
                     required
-                    errors={errors["name"]}
+                    errors={$form.errors["name"]}
                     on:input={handleChange}
                 />
             </div>
@@ -182,7 +190,7 @@
                         autocomplete="status"
                         required
                         disabled={isPrivate}
-                        errors={errors["status"]}
+                        errors={$form.errors["status"]}
                         on:input={handleChange}
                     >
                         <svelte:fragment>
@@ -208,7 +216,7 @@
                     value={shop.link}
                     autocomplete="shop-link"
                     required
-                    errors={errors["link"]}
+                    errors={$form.errors["link"]}
                     hint="URL doesn't require a protocol https:// or http://"
                     on:input={handleChange}
                 />
@@ -223,7 +231,7 @@
                     autocomplete="categories"
                     required
                     multiple
-                    errors={errors["categories"]}
+                    errors={$form.errors["categories"]}
                     on:input={handleChange}
                 >
                     {#each $categories as category}
@@ -241,7 +249,7 @@
                     autocomplete="delivery-providers"
                     required
                     multiple
-                    errors={errors["delivery-providers"]}
+                    errors={$form.errors["delivery-providers"]}
                     on:input={handleChange}
                 >
                     {#each $deliveryServices as deliveryService}
@@ -258,7 +266,7 @@
                     bind:value={shop.country}
                     autocomplete="country-name"
                     required
-                    errors={errors["country"]}
+                    errors={$form.errors["country"]}
                     on:input={handleChange}
                 >
                     {#each $countries as country}
@@ -275,7 +283,7 @@
                     value={shop.streetAddress}
                     autocomplete="street-address"
                     required
-                    errors={errors["street-address"]}
+                    errors={$form.errors["street-address"]}
                     on:input={handleChange}
                 />
             </div>
@@ -288,7 +296,7 @@
                     value={shop.city}
                     autocomplete="address-level2"
                     required
-                    errors={errors["city"]}
+                    errors={$form.errors["city"]}
                     on:input={handleChange}
                 />
             </div>
@@ -301,7 +309,7 @@
                     value={shop.state}
                     autocomplete="address-level1"
                     required
-                    errors={errors["state"]}
+                    errors={$form.errors["state"]}
                     on:input={handleChange}
                     disabled={$states.length === 0}
                 >
@@ -322,8 +330,9 @@
                     name="postal-code"
                     value={shop.postalCode}
                     autocomplete="postal-code"
+                    inputmode="numeric"
                     required
-                    errors={errors["postal-code"]}
+                    errors={$form.errors["postal-code"]}
                     on:input={handleChange}
                 />
             </div>
@@ -366,7 +375,14 @@
                     <Button on:click={() => dispatch("cancel")}>Cancel</Button>
                 {/if}
 
-                <Button type="submit" color={Color.PRIMARY} disabled={disabled}>Save</Button>
+                <Button
+                    type="submit"
+                    color={Color.PRIMARY}
+                    disabled={disabled}
+                    isLoading={$form.isLoading}
+                >
+                    Save
+                </Button>
             </div>
         </svelte:fragment>
     </ActionableCard>

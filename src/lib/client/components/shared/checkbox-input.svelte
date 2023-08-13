@@ -44,6 +44,7 @@
 
 <div class="flex items-center">
     <input
+        {...$$restProps}
         type="checkbox"
         id={id}
         name={name}
@@ -51,7 +52,6 @@
         class="h-4 w-4 rounded border-gray-300 text-rose-600 accent-rose-500 hover:bg-gray-50 focus:enabled:outline-none focus:enabled:ring-rose-500 disabled:bg-gray-100 disabled:checked:bg-gray-300"
         bind:checked={checked}
         on:input={handleInput}
-        {...$$restProps}
     />
     <label for={id} class="ml-2 block text-sm text-gray-900">
         {label}
