@@ -21,10 +21,6 @@
     import type { SuiteRunResult } from "vest";
 
     let result: SuiteRunResult;
-    let isSubmitting = false;
-    let errors: { [key: string]: string[] } = {};
-    let errorMessage: string | undefined = undefined;
-
     let user: UpdatePasswordPayload = {
         password: "",
         confirmPassword: "",
