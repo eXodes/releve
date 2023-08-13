@@ -62,7 +62,7 @@
 >
     <slot />
 
-    {#if isLoading}
+    {#if !$$restProps.disabled && isLoading}
         <span class="absolute inset-0 flex place-content-center place-items-center">
             <Spinner />
         </span>
