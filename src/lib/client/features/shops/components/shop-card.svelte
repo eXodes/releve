@@ -33,7 +33,7 @@
     const handleDeletePrivateShop = async () => {
         showPrivateShopDeleteConfirmation = false;
 
-        await invalidate("shops");
+        await invalidate("shops:my");
     };
 </script>
 
