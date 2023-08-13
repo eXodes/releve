@@ -211,7 +211,7 @@
                         </div>
 
                         {#if showRoleInput}
-                            <div class="w-1/3">
+                            <div class="w-2/3 lg:w-1/3">
                                 <SelectInput
                                     id="role"
                                     label="Role"
