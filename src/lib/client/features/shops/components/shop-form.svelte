@@ -154,7 +154,9 @@
 
     $: showStatusInput = $page.data?.session.user?.customClaims.isAdmin && !isPrivate;
 
-    $: disabled = result?.hasErrors() || !result?.isValid();
+    $: disabled = result?.hasErrors() || !result?.isValid() || $form.isSuccess;
+
+    onMount(() => form.reset());
 </script>
 
 <form action={actionUrl[actionType]} method="POST" use:enhance={handleSubmit} on:submit>
