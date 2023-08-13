@@ -102,7 +102,6 @@
             id="password"
             name="password"
             autocomplete="new-password"
-            enterkeyhint="next"
             minlength={8}
             required
             errors={errors["password"]}
@@ -117,7 +116,6 @@
             id="confirm-password"
             name="confirm-password"
             autocomplete="confirm-new-password"
-            enterkeyhint="send"
             minlength={8}
             required
             errors={errors["confirm-password"]}
