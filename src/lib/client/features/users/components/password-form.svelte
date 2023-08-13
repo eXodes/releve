@@ -127,7 +127,14 @@
         </div>
 
         <svelte:fragment slot="action">
-            <Button type="submit" color={Color.PRIMARY} disabled={disabled}>Save</Button>
+            <Button
+                type="submit"
+                color={Color.PRIMARY}
+                disabled={disabled}
+                isLoading={isSubmitting}
+            >
+                Save
+            </Button>
         </svelte:fragment>
     </ActionableCard>
 </form>
