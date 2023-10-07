@@ -22,17 +22,11 @@ interface SessionResponse extends MessageResponse {
 
 export const AuthService = {
     isEmailRegistered: (email: string) => {
-        return new Promise<string | void>((resolve, reject) => {
-            endpoint<{ available: boolean }, SignUpCheckPayload>("/sign-up/check", {
-                method: "POST",
-                data: { email },
-            })
-                .then(({ available }) => {
-                    return available
-                        ? resolve()
-                        : reject("The email address is already in use by another account.");
-                })
-                .catch(() => reject("The email address is already in use by another account."));
+        return endpoint<{ available: boolean }, SignUpCheckPayload>("/sign-up/check", {
+            method: "POST",
+            data: { email },
+        }).then(({ available }) => {
+            return available;
         });
     },
     checkActionCode: async (actionCode: string) => {
