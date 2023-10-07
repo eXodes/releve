@@ -23,9 +23,6 @@ export const updateAccountSchema = Joi.object<UpdateUserPayload>({
         "string.empty": "Email is required.",
         "string.email": "Email must be a valid email address.",
     }),
-    phoneNumber: Joi.string().optional().allow("").messages({
-        "string.base": "Phone number be a string.",
-    }),
     firstName: Joi.string().optional().allow("").messages({
         "string.base": "First name must be a string.",
     }),

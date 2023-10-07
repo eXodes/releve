@@ -1,10 +1,10 @@
 import validator from "validator";
 import { create, enforce, include, only, test } from "vest";
 
-export interface ResetPasswordPayload {
+export type ResetPasswordPayload = {
     password: string;
     confirmPassword: string;
-}
+};
 
 enforce.extend({
     isStrongPassword: validator.isStrongPassword,

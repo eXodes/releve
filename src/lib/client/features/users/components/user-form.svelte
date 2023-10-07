@@ -1,20 +1,17 @@
 <script lang="ts">
-    import { applyAction, enhance } from "$app/forms";
+    import { enhance } from "$app/forms";
     import { page } from "$app/stores";
+    import { createForm, type EnhanceHandlerOptions } from "$client/stores/form";
 
     import { Role } from "$features/users/enum";
     import type { UserData } from "$features/users/types";
     import {
         updateUserSuite,
         type UpdateUserPayload,
-        type UpdateUserResponse,
     } from "$features/users/validations/update-user";
     import { countries, states } from "$features/countries/store";
     import { Color } from "$client/enums/theme";
-    import { form } from "$client/stores/form";
     import { notification } from "$client/stores/notification";
-    import type { ValidationError } from "$client/types/error";
-    import { getFileData } from "$client/utils/data";
 
     import ActionableCard from "$client/components/shared/actionable-card.svelte";
     import Button from "$client/components/shared/button.svelte";
@@ -23,12 +20,10 @@
     import TextInput from "$client/components/shared/text-input.svelte";
     import TextareaInput from "$client/components/shared/textarea-input.svelte";
 
-    import type { SubmitFunction } from "@sveltejs/kit";
-    import { camelCase, startCase } from "lodash-es";
+    import { startCase } from "lodash-es";
     import { onMount } from "svelte";
     import { CheckCircle, Icon } from "svelte-hero-icons";
     import { fade } from "svelte/transition";
-    import type { SuiteRunResult } from "vest";
 
     export let userData: UserData;
     export let actionType: "users" | "settings";
@@ -38,114 +33,11 @@
         settings: "/settings?/account",
     };
 
-    let user: UpdateUserPayload = {
-        displayName: "",
-        role: undefined,
-        about: "",
-        userPhoto: undefined,
-        firstName: "",
-        lastName: "",
-        email: "",
-        phoneNumber: "",
-        streetAddress: "",
-        city: "",
-        state: "",
-        postalCode: "",
-        country: "",
-    };
+    let success: "profile" | "information" | null = null;
 
-    let userPhoto: string | undefined = userData.avatar.small.url;
-    let result: SuiteRunResult;
-
-    const handleChange = ({ detail }: CustomEvent<{ name: string; value: string | string[] }>) => {
-        user = {
-            ...user,
-            [camelCase(detail.name)]: detail.value,
-        };
-
-        if (detail.name === "country") {
-            user.state = "";
-            states.loadStates(detail.value as string);
-        }
-
-        result = updateUserSuite(user, detail.name);
-        form.validatedErrors(result.getErrors());
-    };
-
-    const handleFileChange = async (event: Event) => {
-        let input = event.target as HTMLInputElement;
-
-        user.userPhoto = input.files?.[0] ?? undefined;
-
-        user = {
-            ...user,
-            [camelCase(input.name)]: user.userPhoto,
-        };
-
-        result = updateUserSuite(user, input.name);
-        form.validatedErrors(result.getErrors());
-
-        if (user.userPhoto) {
-            userPhoto = (await getFileData(user.userPhoto)) as string;
-        }
-    };
-
-    const handleProfileSubmit: SubmitFunction<UpdateUserResponse, ValidationError> = () => {
-        form.submit();
-
-        return async ({ result }) => {
-            if (result.type === "failure") {
-                if (result.data?.code === "ValidationError" && result.data?.errors) {
-                    form.validatedErrors(result.data?.errors);
-                }
-            }
-
-            if (result.type === "error") {
-                form.submitError({ message: result.error.message });
-            }
-
-            if (result.type === "success") {
-                form.submitSuccess({ message: "profile" });
-
-                setTimeout(() => {
-                    form.reset();
-                }, 2000);
-
-                await applyAction(result);
-            }
-        };
-    };
-
-    const handleInformationSubmit: SubmitFunction<UpdateUserResponse, ValidationError> = () => {
-        form.submit();
-
-        return async ({ result }) => {
-            if (result.type === "failure") {
-                if (result.data?.code === "ValidationError" && result.data?.errors) {
-                    form.validatedErrors(result.data?.errors);
-                }
-            }
-
-            if (result.type === "error") {
-                form.submitError({ message: result.error.message });
-            }
-
-            if (result.type === "success") {
-                form.submitSuccess({ message: "information" });
-
-                setTimeout(() => {
-                    form.reset();
-                }, 2000);
-
-                await applyAction(result);
-            }
-        };
-    };
-
-    onMount(() => {
-        user = {
-            ...user,
-            displayName: userData.displayName ?? "",
+    const { form, change, errors, setValue, enhanceHandler } = createForm<UpdateUserPayload>({
+        initialValues: {
+            displayName: userData.displayName,
             role: userData.customClaims?.isAdmin ? Role.ADMIN : Role.USER,
             about: userData.about ?? "",
             firstName: userData.information?.firstName ?? "",
@@ -156,19 +48,68 @@
             state: userData.information?.address?.state ?? "",
             postalCode: userData.information?.address?.postalCode ?? "",
             country: userData.information?.address?.country ?? "Malaysia",
-        };
+        },
+        validationSuite: updateUserSuite,
+    });
 
-        states.loadStates(user.country);
+    const handleChangeCountry = async (
+        event: CustomEvent<{ name: string; value: string | string[] | boolean }>
+    ) => {
+        setValue("state", "");
+
+        await states.loadStates(event.detail.value as string);
+
+        change(event);
+    };
+
+    const handleFileChange = async (event: Event) => {
+        let input = event.target as HTMLInputElement;
+
+        const [file] = input.files ?? [];
+
+        if (file)
+            change({
+                ...event,
+                detail: {
+                    name: input.name,
+                    value: file,
+                },
+            });
+    };
+
+    const handlerOptions: EnhanceHandlerOptions = {
+        onError: ({ message }) => {
+            notification.send({
+                type: "error",
+                message: message,
+            });
+        },
+    };
+
+    onMount(() => {
+        states.loadStates($form.data.country);
     });
 
     $: showRoleInput = actionType === "users" && $page.data.session.user?.customClaims?.isAdmin;
 
+    $: userPhoto = (() => {
+        if ($form.data.userPhoto instanceof File) {
+            return URL.createObjectURL($form.data.userPhoto);
+        }
+
+        return $form.data.userPhoto;
+    })();
+
     $: (() => {
-        if ($form.isError && $form.message)
-            notification.send({
-                type: "error",
-                message: $form.message,
-            });
+        let timeout: ReturnType<typeof setTimeout>;
+
+        if (success) {
+            timeout = setTimeout(() => {
+                success = null;
+            }, 1000);
+        }
+
+        return () => clearTimeout(timeout);
     })();
 </script>
 
@@ -176,7 +117,12 @@
     <form
         action={actionUrl[actionType]}
         method="POST"
-        use:enhance={handleProfileSubmit}
+        use:enhance={enhanceHandler({
+            ...handlerOptions,
+            onSuccess: async () => {
+                success = "profile";
+            },
+        })}
         on:submit
         enctype="multipart/form-data"
     >
@@ -196,11 +142,11 @@
                                 id="display-name"
                                 label="Display name"
                                 name="display-name"
-                                value={user.displayName}
+                                value={$form.data.displayName}
                                 autocomplete="nickname"
                                 required
-                                errors={$form.errors["display-name"]}
-                                on:input={handleChange}
+                                errors={$errors["display-name"]}
+                                on:input={change}
                             />
                         </div>
 
@@ -210,19 +156,16 @@
                                     id="role"
                                     label="Role"
                                     name="role"
-                                    value={user.role}
+                                    value={$form.data.role}
                                     autocomplete="role"
                                     required
-                                    errors={$form.errors["role"]}
-                                    on:input={handleChange}
+                                    errors={$errors["role"]}
+                                    on:input={change}
                                 >
                                     <svelte:fragment>
-                                        <option value={Role.ADMIN}>
-                                            {startCase(Role.ADMIN)}
-                                        </option>
-                                        <option value={Role.USER}>
-                                            {startCase(Role.USER)}
-                                        </option>
+                                        {#each Object.values(Role) as role}
+                                            <option value={role}>{startCase(role)}</option>
+                                        {/each}
                                     </svelte:fragment>
                                 </SelectInput>
                             </div>
@@ -234,12 +177,12 @@
                             id="about"
                             label="About"
                             name="about"
-                            value={user.about}
+                            value={$form.data.about}
                             placeholder="Tell us about yourself"
                             maxlength={250}
                             hint="Brief description for your profile."
-                            errors={$form.errors["about"]}
-                            on:input={handleChange}
+                            errors={$errors["about"]}
+                            on:input={change}
                         />
                     </div>
                 </div>
@@ -254,7 +197,7 @@
                             >
                                 <Image
                                     src={userPhoto}
-                                    alt="{user.displayName} avatar"
+                                    alt="{$form.data.displayName} avatar"
                                     fallback="/images/avatar.png"
                                 />
                             </div>
@@ -285,7 +228,7 @@
             </div>
 
             <svelte:fragment slot="action">
-                {#if $form.message === "profile"}
+                {#if success === "profile"}
                     <span
                         class="flex items-center gap-0.5 text-xs text-green-600"
                         transition:fade={{ duration: 100 }}
@@ -305,7 +248,12 @@
     <form
         action={actionUrl[actionType]}
         method="POST"
-        use:enhance={handleInformationSubmit}
+        use:enhance={enhanceHandler({
+            ...handlerOptions,
+            onSuccess: async () => {
+                success = "information";
+            },
+        })}
         enctype="multipart/form-data"
     >
         <ActionableCard>
@@ -322,10 +270,10 @@
                         id="first-name"
                         label="First name"
                         name="first-name"
-                        value={user.firstName}
+                        value={$form.data.firstName}
                         autocomplete="given-name"
-                        errors={$form.errors["first-name"]}
-                        on:input={handleChange}
+                        errors={$errors["first-name"]}
+                        on:input={change}
                     />
                 </div>
 
@@ -334,10 +282,10 @@
                         id="last-name"
                         label="Last name"
                         name="last-name"
-                        value={user.lastName}
+                        value={$form.data.lastName}
                         autocomplete="family-name"
-                        errors={$form.errors["last-name"]}
-                        on:input={handleChange}
+                        errors={$errors["last-name"]}
+                        on:input={change}
                     />
                 </div>
 
@@ -347,7 +295,7 @@
                         id="email"
                         label="Email address"
                         name="email"
-                        value={user.email}
+                        value={$form.data.email}
                         autocomplete="email"
                         required
                         readonly
@@ -359,10 +307,10 @@
                         id="country"
                         label="Country"
                         name="country"
-                        value={user.country}
+                        value={$form.data.country}
                         autocomplete="country-name"
-                        errors={$form.errors["country"]}
-                        on:input={handleChange}
+                        errors={$errors["country"]}
+                        on:input={handleChangeCountry}
                     >
                         {#each $countries as country}
                             <option value={country.name}>{country.name}</option>
@@ -375,10 +323,10 @@
                         id="street-address"
                         label="Street address"
                         name="street-address"
-                        value={user.streetAddress}
+                        value={$form.data.streetAddress}
                         autocomplete="street-address"
-                        errors={$form.errors["street-address"]}
-                        on:input={handleChange}
+                        errors={$errors["street-address"]}
+                        on:input={change}
                     />
                 </div>
 
@@ -387,10 +335,10 @@
                         id="city"
                         label="City"
                         name="city"
-                        value={user.city}
+                        value={$form.data.city}
                         autocomplete="address-level2"
-                        errors={$form.errors["city"]}
-                        on:input={handleChange}
+                        errors={$errors["city"]}
+                        on:input={change}
                     />
                 </div>
 
@@ -399,14 +347,14 @@
                         id="state"
                         label="State / Province"
                         name="state"
-                        value={user.state}
+                        value={$form.data.state}
                         autocomplete="address-level1"
-                        errors={$form.errors["state"]}
-                        on:input={handleChange}
+                        errors={$errors["state"]}
+                        on:input={change}
                         disabled={$states.length === 0}
                     >
                         {#each $states as state}
-                            <option value={state.name} selected={user.state === state.name}>
+                            <option value={state.name} selected={$form.data.state === state.name}>
                                 {state.name}
                             </option>
                         {/each}
@@ -418,17 +366,17 @@
                         id="postal-code"
                         label="ZIP / Postal code"
                         name="postal-code"
-                        value={user.postalCode}
+                        value={$form.data.postalCode}
                         autocomplete="postal-code"
                         inputmode="numeric"
-                        errors={$form.errors["postal-code"]}
-                        on:input={handleChange}
+                        errors={$errors["postal-code"]}
+                        on:input={change}
                     />
                 </div>
             </div>
 
             <svelte:fragment slot="action">
-                {#if $form.message === "information"}
+                {#if success === "information"}
                     <span
                         class="flex items-center gap-0.5 text-xs text-green-600"
                         transition:fade={{ duration: 100 }}

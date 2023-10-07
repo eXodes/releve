@@ -82,7 +82,7 @@
         use:validate={{
             errors: errors,
             error: (values) => {
-                errors = values;
+                if (values) errors = [...values, ...(errors ?? [])];
             },
         }}
     />

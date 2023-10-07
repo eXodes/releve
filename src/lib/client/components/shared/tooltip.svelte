@@ -1,10 +1,30 @@
 <script lang="ts">
     import { Popover, PopoverButton, PopoverPanel, Transition } from "@rgossiaux/svelte-headlessui";
+    import { createPopperActions } from "svelte-popperjs";
+
+    const [popperRef, popperContent] = createPopperActions({
+        placement: "top",
+        modifiers: [
+            {
+                name: "offset",
+                options: {
+                    offset: [0, 12],
+                },
+            },
+            {
+                name: "preventOverflow",
+                options: {
+                    padding: 8,
+                },
+            },
+        ],
+    });
 </script>
 
 <Popover class="relative">
     <PopoverButton
         class="flex items-center rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500"
+        use={[popperRef]}
     >
         <slot name="button" />
     </PopoverButton>
@@ -18,7 +38,10 @@
         leaveFrom="transform scale-100 opacity-100"
         leaveTo="transform scale-95 opacity-0"
     >
-        <PopoverPanel class="rounded bg-stone-700 px-2.5 py-1.5 shadow-md shadow-gray-500/20">
+        <PopoverPanel
+            class="rounded bg-stone-700 px-2.5 py-1.5 shadow-md shadow-gray-500/20"
+            use={[popperContent]}
+        >
             <p class="min-w-[12rem] text-center text-xs text-white">
                 <slot name="content" />
             </p>
@@ -26,6 +49,7 @@
 
         <span
             class="absolute -bottom-2 left-1/2 z-10 -translate-x-1/2 border-x-8 border-t-8 border-x-transparent border-t-stone-700 drop-shadow-sm"
+            data-popper-arrow
         />
     </Transition>
 </Popover>

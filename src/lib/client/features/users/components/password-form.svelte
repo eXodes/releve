@@ -1,93 +1,61 @@
 <script lang="ts">
-    import { applyAction, enhance } from "$app/forms";
+    import { enhance } from "$app/forms";
     import { goto } from "$app/navigation";
 
     import updatePasswordSuite, {
         type UpdatePasswordPayload,
-        type UpdatePasswordResponse,
     } from "$features/users/validations/update-password";
     import { Color } from "$client/enums/theme";
-    import { form } from "$client/stores/form";
+    import { createForm, type EnhanceHandlerOptions } from "$client/stores/form";
     import { notification } from "$client/stores/notification";
-    import type { ValidationError } from "$client/types/error";
 
     import ActionableCard from "$client/components/shared/actionable-card.svelte";
     import Button from "$client/components/shared/button.svelte";
     import PasswordInput from "$client/components/shared/password-input.svelte";
 
-    import type { SubmitFunction } from "@sveltejs/kit";
     import { createEventDispatcher } from "svelte";
-    import { camelCase } from "lodash-es";
-    import type { SuiteRunResult } from "vest";
-
-    let result: SuiteRunResult;
-    let user: UpdatePasswordPayload = {
-        password: "",
-        confirmPassword: "",
-    };
 
     const dispatch = createEventDispatcher<{
         success: void;
     }>();
 
-    const handleChange = ({ detail }: CustomEvent<{ name: string; value: string }>) => {
-        user = {
-            ...user,
-            [camelCase(detail.name)]: detail.value,
-        };
-        result = updatePasswordSuite(user, detail.name);
-        form.validatedErrors(result.getErrors());
-    };
+    const { form, change, errors, enhanceHandler } = createForm<UpdatePasswordPayload>({
+        initialValues: {
+            password: "",
+            confirmPassword: "",
+        },
+        validationSuite: updatePasswordSuite,
+    });
 
-    const handleSubmit: SubmitFunction<UpdatePasswordResponse, ValidationError> = () => {
-        form.submit();
-
-        return async ({ result }) => {
-            let timeout: ReturnType<typeof setTimeout>;
-
-            if (result.type === "failure") {
-                if (result.data?.code === "ValidationError" && result.data?.errors) {
-                    form.validatedErrors(result.data?.errors);
-                }
-            }
-
-            if (result.type === "error") {
-                form.submitError({ message: result.error.message });
-            }
-
-            if (result.type === "success") {
-                form.submitSuccess();
-
-                await applyAction(result);
-
-                notification.send({
-                    type: "success",
-                    message: "Password updated successfully. Please sign in again.",
-                });
-
-                dispatch("success");
-
-                timeout = setTimeout(() => {
-                    goto("/sign-in");
-                }, 2000);
-            }
-
-            return () => clearTimeout(timeout);
-        };
-    };
-
-    $: disabled = result?.hasErrors() || !result?.isValid();
-
-    $: (() => {
-        if ($form.isError && $form.message)
+    const handlerOptions: EnhanceHandlerOptions = {
+        onError: ({ message }) => {
             notification.send({
                 type: "error",
-                message: $form.message,
+                message: message,
             });
-    })();
+        },
+        onSuccess: () => {
+            let timeout: ReturnType<typeof setTimeout>;
+
+            notification.send({
+                type: "success",
+                message: "Password updated successfully. Please sign in again.",
+            });
+
+            dispatch("success");
+
+            timeout = setTimeout(() => {
+                goto("/sign-in");
+            }, 2000);
+
+            return () => clearTimeout(timeout);
+        },
+    };
+
+    $: disabled = !$form.isValid || $form.isSuccess;
 </script>
 
-<form action="/settings?/password" method="POST" use:enhance={handleSubmit}>
+<form action="/settings?/password" method="POST" use:enhance={enhanceHandler(handlerOptions)}>
     <ActionableCard>
         <div>
             <h3 class="text-lg font-medium leading-6 text-gray-900">Update Password</h3>
@@ -105,8 +73,8 @@
                     name="password"
                     autocomplete="new-password"
                     required
-                    errors={$form.errors["password"]}
-                    on:input={handleChange}
+                    errors={$errors["password"]}
+                    on:input={change}
                 />
             </div>
 
@@ -118,8 +86,8 @@
                     name="confirm-password"
                     autocomplete="new-password"
                     required
-                    errors={$form.errors["confirm-password"]}
-                    on:input={handleChange}
+                    errors={$errors["confirm-password"]}
+                    on:input={change}
                 />
             </div>
         </div>

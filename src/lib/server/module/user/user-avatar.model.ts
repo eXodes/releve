@@ -1,3 +1,4 @@
+import { getFileFromUrl } from "$client/utils/data";
 import { MediaStorage } from "$module/common/services/media-storage";
 
 import { getMd5Hash } from "$client/utils/generator";
@@ -47,11 +48,16 @@ export class UserAvatar extends MediaStorage {
         };
     }
 
-    static getGravatarUrl(email: string): Media {
+    static async getGravatarUrl(uid: string): Promise<Media> {
+        const media = new UserAvatar(uid);
+
+        const file = await getFileFromUrl(UserAvatar.getMediumGravatar(uid).url, `${uid}.png`);
+        await media.addAvatar(file);
+
         return {
-            small: this.getSmallGravatar(email),
-            medium: this.getMediumGravatar(email),
-            large: this.getLargeGravatar(email),
+            small: this.getSmallGravatar(uid),
+            medium: this.getMediumGravatar(uid),
+            large: this.getLargeGravatar(uid),
         };
     }
 

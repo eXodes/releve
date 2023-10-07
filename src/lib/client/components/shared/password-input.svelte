@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { validate } from "$client/actions/form";
     import { classNames } from "$client/utils/style";
 
     import Hint from "$client/components/shared/hint-text.svelte";
@@ -7,6 +8,7 @@
     import type { HTMLInputAttributes } from "svelte/elements";
     import { Popover, PopoverButton, PopoverPanel, Transition } from "@rgossiaux/svelte-headlessui";
     import { ExclamationCircle, Eye, EyeSlash, Icon } from "svelte-hero-icons";
+    import { createPopperActions } from "svelte-popperjs";
 
     interface $$Props extends HTMLInputAttributes {
         type?: string;
@@ -32,6 +34,24 @@
 
     let classes = "";
     let showPassword = false;
+
+    const [popperRef, popperContent] = createPopperActions({
+        placement: "top",
+        modifiers: [
+            {
+                name: "offset",
+                options: {
+                    offset: [0, 12],
+                },
+            },
+            {
+                name: "preventOverflow",
+                options: {
+                    padding: 8,
+                },
+            },
+        ],
+    });
 
     const dispatch = createEventDispatcher<{
         input: {
@@ -79,6 +99,12 @@
                 ? "border-red-300 pr-10 text-red-900 focus:enabled:border-red-500 focus:enabled:ring-red-500"
                 : "border-gray-300 focus:enabled:border-rose-500 focus:enabled:ring-rose-500"
         )}
+        use:validate={{
+            errors: errors,
+            error: (values) => {
+                if (values) errors = [...values, ...(errors ?? [])];
+            },
+        }}
     />
 
     {#if $$slots.suffix}
@@ -93,30 +119,37 @@
         </span>
     {/if}
 
-    <button
-        type="button"
+    <span
         class={classNames(
-            "absolute inset-y-0 z-10 mr-1.5 flex items-center px-1.5 transition-all duration-75 ease-in-out",
+            "absolute inset-y-0 z-10 mr-3 flex items-center transition-all duration-75 ease-in-out",
             errors?.length ? "right-8" : "right-0"
         )}
-        on:click={() => (showPassword = !showPassword)}
     >
-        <Icon
-            src={showPassword ? Eye : EyeSlash}
-            solid
-            class="h-5 w-5 text-gray-500 hover:text-gray-600"
-        />
-    </button>
+        <button
+            type="button"
+            class={classNames("rounded-full focus:outline-none focus:ring-2 focus:ring-gray-600")}
+            on:click={() => (showPassword = !showPassword)}
+        >
+            <Icon
+                src={showPassword ? Eye : EyeSlash}
+                solid
+                class="h-5 w-5 text-gray-500 hover:text-gray-600"
+            />
+        </button>
+    </span>
 
     {#if errors?.length}
         <div
             class={classNames(
-                "absolute inset-y-0 right-0 z-10 mr-1.5 flex items-center",
+                "absolute inset-y-0 right-0 z-10 flex items-center pr-3",
                 !errors?.length && "invisible"
             )}
         >
-            <Popover class="relative flex h-full items-center">
-                <PopoverButton class="h-full flex-1 px-1.5">
+            <Popover class="relative">
+                <PopoverButton
+                    class="flex items-center rounded-full focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    use={[popperRef]}
+                >
                     <Icon
                         src={ExclamationCircle}
                         solid
@@ -126,7 +159,7 @@
                 </PopoverButton>
 
                 <Transition
-                    class="absolute bottom-8 left-1/2 z-10 inline-table w-full max-w-7xl origin-bottom -translate-x-1/2 "
+                    class="absolute bottom-8 left-1/2 z-10 inline-table w-full max-w-7xl origin-bottom -translate-x-1/2"
                     enter="transition duration-100 ease-out"
                     enterFrom="transform scale-95 opacity-0"
                     enterTo="transform scale-100 opacity-100"
@@ -136,12 +169,14 @@
                 >
                     <PopoverPanel
                         class="rounded bg-red-100 px-2.5 py-1.5 shadow-md shadow-red-500/20"
+                        use={[popperContent]}
                     >
                         <p class="min-w-[12rem] text-center text-xs text-red-700">{errors[0]}</p>
                     </PopoverPanel>
 
                     <span
-                        class="absolute -bottom-2 left-1/2 z-10 -translate-x-1/2 border-x-8 border-t-8 border-x-transparent border-t-red-100 drop-shadow-sm"
+                        class="absolute left-1/2 z-10 -translate-x-1/2 border-x-8 border-t-8 border-x-transparent border-t-red-100 drop-shadow-sm"
+                        data-popper-arrow
                     />
                 </Transition>
             </Popover>

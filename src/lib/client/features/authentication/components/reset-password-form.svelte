@@ -1,83 +1,67 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import { page } from "$app/stores";
+    import { createForm } from "$client/stores/form";
 
     import { handleAuthCatch } from "$features/authentication/errors";
     import { AuthService } from "$features/authentication/services";
     import resetPasswordSuite, {
         type ResetPasswordPayload,
     } from "$features/authentication/validations/reset-password";
-    import { form } from "$client/stores/form";
     import { Color } from "$client/enums/theme";
 
     import Alert from "$client/components/shared/alert.svelte";
     import Button from "$client/components/shared/button.svelte";
     import PasswordInput from "$client/components/shared/password-input.svelte";
 
-    import { camelCase } from "lodash-es";
     import { onMount } from "svelte";
-    import type { SuiteRunResult } from "vest";
 
     let formElement: HTMLFormElement;
-    let result: SuiteRunResult;
-
-    let user: ResetPasswordPayload = {
-        password: "",
-        confirmPassword: "",
-    };
 
     const actionCode = $page.url.searchParams.get("actionCode");
 
-    const resetForm = () => {
-        formElement.reset();
-        user = {
-            password: "",
-            confirmPassword: "",
-        };
-    };
-
-    const handleChange = ({ detail }: CustomEvent<{ name: string; value: string }>) => {
-        user = {
-            ...user,
-            [camelCase(detail.name)]: detail.value,
-        };
-        result = resetPasswordSuite(user, detail.name);
-        form.validatedErrors(result.getErrors());
-    };
+    const { form, errors, change, submit, submitError, submitSuccess } =
+        createForm<ResetPasswordPayload>({
+            initialValues: {
+                password: "",
+                confirmPassword: "",
+            },
+            validationSuite: resetPasswordSuite,
+        });
 
     const handleReset = async () => {
         let timeout: ReturnType<typeof setTimeout>;
 
-        form.submit();
-
         if (!actionCode) {
-            return form.submitError({
+            return submitError({
                 message:
                     "The action code is invalid. Please check the link in the email and try again.",
             });
         }
 
-        try {
-            const { message } = await AuthService.resetPassword(user.password, actionCode);
+        submit(async (form) => {
+            try {
+                const { message } = await AuthService.resetPassword(form.password, actionCode);
 
-            form.submitSuccess({ message });
-            resetForm();
+                submitSuccess({ message });
+                formElement.reset();
 
-            timeout = setTimeout(() => {
-                goto("/sign-in");
-            }, 5000);
-        } catch (error) {
-            const data = handleAuthCatch(error);
+                timeout = setTimeout(() => {
+                    goto("/sign-in");
+                }, 5000);
+            } catch (error) {
+                const data = handleAuthCatch(error);
 
-            form.submitError({ message: data.message });
-        }
+                submitError({ message: data.message });
+            }
+        });
 
         return () => clearTimeout(timeout);
     };
 
     onMount(() => {
         if (!actionCode) {
-            form.submitError({
+            submitError({
                 message:
                     "The action code is invalid. Please check the link in the email and try again.",
             });
@@ -86,11 +70,11 @@
 
         AuthService.checkActionCode(actionCode).catch((error) => {
             const data = handleAuthCatch(error);
-            form.submitError({ message: data.message });
+            submitError({ message: data.message });
         });
     });
 
-    $: disabled = result?.hasErrors() || !result?.isValid() || $form.isSuccess;
+    $: disabled = !$form.isValid || $form.isSuccess;
 </script>
 
 <form on:submit|preventDefault={handleReset} class="space-y-6" bind:this={formElement}>
@@ -103,8 +87,8 @@
             autocomplete="new-password"
             minlength={8}
             required
-            errors={$form.errors["password"]}
-            on:input={handleChange}
+            errors={$errors["password"]}
+            on:input={change}
         />
     </div>
 
@@ -117,8 +101,8 @@
             autocomplete="confirm-new-password"
             minlength={8}
             required
-            errors={$form.errors["confirm-password"]}
-            on:input={handleChange}
+            errors={$errors["confirm-password"]}
+            on:input={change}
         />
     </div>
 

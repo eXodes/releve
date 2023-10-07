@@ -12,7 +12,7 @@ export class StateCollection extends Collection<StateEntity, State> {
     }
 
     async getStates() {
-        const snapshot = await this.withConverter.get();
+        const snapshot = await this.withConverter.orderBy("name").get();
 
         return snapshot.docs.map((doc) => doc.data());
     }

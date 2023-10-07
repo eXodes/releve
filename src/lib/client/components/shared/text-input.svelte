@@ -8,6 +8,7 @@
     import { createEventDispatcher } from "svelte";
     import type { HTMLInputAttributes } from "svelte/elements";
     import { ExclamationCircle, Icon } from "svelte-hero-icons";
+    import { createPopperActions } from "svelte-popperjs";
 
     interface $$Props extends HTMLInputAttributes {
         type?: string;
@@ -33,6 +34,24 @@
     export { classes as class };
 
     let classes = "";
+
+    const [popperRef, popperContent] = createPopperActions({
+        placement: "top",
+        modifiers: [
+            {
+                name: "offset",
+                options: {
+                    offset: [0, 12],
+                },
+            },
+            {
+                name: "preventOverflow",
+                options: {
+                    padding: 8,
+                },
+            },
+        ],
+    });
 
     const dispatch = createEventDispatcher<{
         input: {
@@ -83,7 +102,7 @@
         use:validate={{
             errors: errors,
             error: (values) => {
-                errors = values;
+                if (values) errors = [...values, ...(errors ?? [])];
             },
         }}
     />
@@ -110,6 +129,7 @@
             <Popover class="relative">
                 <PopoverButton
                     class="flex items-center rounded-full focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    use={[popperRef]}
                 >
                     <Icon
                         src={ExclamationCircle}
@@ -130,12 +150,14 @@
                 >
                     <PopoverPanel
                         class="rounded bg-red-100 px-2.5 py-1.5 shadow-md shadow-red-500/20"
+                        use={[popperContent]}
                     >
                         <p class="min-w-[12rem] text-center text-xs text-red-700">{errors[0]}</p>
                     </PopoverPanel>
 
                     <span
-                        class="absolute -bottom-2 left-1/2 z-10 -translate-x-1/2 border-x-8 border-t-8 border-x-transparent border-t-red-100 drop-shadow-sm"
+                        class="absolute left-1/2 z-10 -translate-x-1/2 border-x-8 border-t-8 border-x-transparent border-t-red-100 drop-shadow-sm"
+                        data-popper-arrow
                     />
                 </Transition>
             </Popover>

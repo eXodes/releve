@@ -1,12 +1,11 @@
 <script lang="ts">
-    import { applyAction, enhance } from "$app/forms";
+    import { enhance } from "$app/forms";
     import { Color } from "$client/enums/theme";
 
     import Button from "$client/components/shared/button.svelte";
-    import { form } from "$client/stores/form";
+    import { createForm } from "$client/stores/form";
     import { notification } from "$client/stores/notification";
 
-    import type { SubmitFunction } from "@sveltejs/kit";
     import {
         Dialog,
         DialogOverlay,
@@ -32,35 +31,7 @@
         cancel: void;
     }>();
 
-    const handleSubmit: SubmitFunction = () => {
-        form.submit();
-
-        return async ({ result }) => {
-            if (result.type === "error") {
-                form.submitError({ message: result.error.message });
-
-                notification.send({
-                    type: "error",
-                    message: result.error.message,
-                });
-            }
-
-            if (result.type === "success") {
-                form.submitSuccess({ message: result.data?.message });
-
-                notification.send({
-                    type: "success",
-                    message: result.data?.message,
-                });
-
-                await applyAction(result);
-
-                dispatch("success");
-
-                open = false;
-            }
-        };
-    };
+    const { form, reset, enhanceHandler } = createForm();
 
     const handleCancel = () => {
         dispatch("cancel");
@@ -69,7 +40,7 @@
     };
 
     onMount(() => {
-        form.reset();
+        reset();
     });
 </script>
 
@@ -108,7 +79,29 @@
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-                <form action={action} method="POST" use:enhance={handleSubmit}>
+                <form
+                    action={action}
+                    method="POST"
+                    use:enhance={enhanceHandler({
+                        onError: ({ message }) => {
+                            notification.send({
+                                type: "error",
+                                message: message,
+                            });
+                        },
+                        onSuccess: ({ message }) => {
+                            open = false;
+
+                            if (message)
+                                notification.send({
+                                    type: "success",
+                                    message: message,
+                                });
+
+                            dispatch("success");
+                        },
+                    })}
+                >
                     <div class="sm:flex sm:items-start">
                         <div
                             class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"

@@ -27,14 +27,14 @@ export const signUpSuite = create(
     ({ displayName, email, password, confirmPassword }: SignUpPayload, field?: string) => {
         only(field);
         include("confirm-password").when(
-            (draft) => !!password && !!confirmPassword && !draft.hasErrors("password")
+            () => !!password && !!confirmPassword && !signUpSuite.hasErrors("password")
         );
 
         test("email", "Email is required.", () => {
             enforce(email).isNotBlank();
         });
 
-        test("email", "Email .", () => {
+        test("email", "Email must be a valid email.", () => {
             enforce(email).isEmail();
         });
 
@@ -44,7 +44,7 @@ export const signUpSuite = create(
                 test.memo(
                     "email",
                     async () => {
-                        return await AuthService.isEmailRegistered(email as string);
+                        await AuthService.isEmailRegistered(email as string);
                     },
                     [email]
                 );

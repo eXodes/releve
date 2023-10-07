@@ -12,7 +12,6 @@ export type UpdateUserPayload = {
     firstName: string;
     lastName: string;
     email: string;
-    phoneNumber: string;
     streetAddress: string;
     city: string;
     state: string;

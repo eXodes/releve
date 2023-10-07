@@ -2,11 +2,11 @@
     import { enhance } from "$app/forms";
     import { invalidate } from "$app/navigation";
     import { page } from "$app/stores";
+    import { createForm } from "$client/stores/form";
 
     import { handleAuthCatch } from "$features/authentication/errors";
     import { AuthService } from "$features/authentication/services";
     import signInSuite, { type SignInPayload } from "$features/authentication/validations/sign-in";
-    import { form } from "$client/stores/form";
     import { Color } from "$client/enums/theme";
     import type { MessageResponse } from "$client/types/response";
 
@@ -20,36 +20,27 @@
     import type { SubmitFunction } from "@sveltejs/kit";
     import { FirebaseError } from "firebase/app";
     import { AuthErrorCodes } from "firebase/auth";
-    import { camelCase } from "lodash-es";
 
     import { createEventDispatcher, onMount } from "svelte";
     import { Icon, QuestionMarkCircle } from "svelte-hero-icons";
-    import type { SuiteRunResult } from "vest";
 
     const dispatch = createEventDispatcher<{
         success: void;
     }>();
 
-    let result: SuiteRunResult;
     let disabledResendValidation = false;
 
     let failedUid: string | undefined = undefined;
 
-    let user: SignInPayload = {
-        email: "",
-        password: "",
-        rememberMe: false,
-    };
-
-    const handleChange = ({ detail }: CustomEvent<{ name: string; value: string }>) => {
-        user = {
-            ...user,
-            [camelCase(detail.name)]: detail.value,
-        };
-
-        result = signInSuite(user, detail.name);
-        form.validatedErrors(result.getErrors());
-    };
+    const { form, errors, change, submit, submitSuccess, submitError, reset } =
+        createForm<SignInPayload>({
+            initialValues: {
+                email: "",
+                password: "",
+                rememberMe: false,
+            },
+            validationSuite: signInSuite,
+        });
 
     const invalidateSession = () => {
         const timeout = setTimeout(() => invalidate("session"), 1000);
@@ -58,50 +49,50 @@
     };
 
     const handleSignIn = async () => {
-        form.submit();
+        submit(async (form) => {
+            try {
+                const data = await AuthService.signIn(form.email, form.password, form.rememberMe);
 
-        try {
-            const data = await AuthService.signIn(user.email, user.password, user.rememberMe);
+                submitSuccess({ message: data.message });
 
-            form.submitSuccess({ message: data.message });
+                invalidateSession();
 
-            invalidateSession();
+                dispatch("success");
+            } catch (error) {
+                const data = handleAuthCatch(error);
 
-            dispatch("success");
-        } catch (error) {
-            const data = handleAuthCatch(error);
+                submitError({ message: data.message });
 
-            form.submitError({ message: data.message });
-
-            if (
-                "code" in data &&
-                data.code === AuthErrorCodes.UNVERIFIED_EMAIL &&
-                typeof data.uid === "string"
-            ) {
-                failedUid = data.uid;
+                if (
+                    "code" in data &&
+                    data.code === AuthErrorCodes.UNVERIFIED_EMAIL &&
+                    typeof data.uid === "string"
+                ) {
+                    failedUid = data.uid;
+                }
             }
-        }
+        });
     };
 
     const validateEmail = async ({ actionCode, uid }: { actionCode: string; uid: string }) => {
         let timeout: ReturnType<typeof setTimeout>;
 
-        form.submit();
+        submit();
 
         try {
             await AuthService.verifyEmail(uid, actionCode);
 
-            form.submitSuccess({ message: "Email verified successfully. Please sign in." });
+            submitSuccess({ message: "Email verified successfully. Please sign in." });
 
             timeout = setTimeout(() => {
-                form.reset();
+                reset();
             }, 3000);
         } catch (error) {
             const data = handleAuthCatch(error);
 
-            if (error instanceof FirebaseError) {
-                form.submitError({ message: data?.message });
+            submitError({ message: data?.message });
 
+            if (error instanceof FirebaseError) {
                 if (
                     error.code === AuthErrorCodes.INVALID_OOB_CODE ||
                     error.code === AuthErrorCodes.EXPIRED_OOB_CODE
@@ -112,9 +103,7 @@
         }
 
         return () => {
-            if (timeout) {
-                clearTimeout(timeout);
-            }
+            clearTimeout(timeout);
         };
     };
 
@@ -123,13 +112,13 @@
 
         return ({ result }) => {
             if (result.type === "success") {
-                form.submitSuccess({ message: result.data?.message });
+                submitSuccess({ message: result.data?.message });
             }
         };
     };
 
     onMount(() => {
-        form.reset();
+        reset();
         const actionCode = $page.url.searchParams.get("actionCode");
         const uid = $page.url.searchParams.get("uid");
 
@@ -138,7 +127,7 @@
         }
     });
 
-    $: disabled = result?.hasErrors() || !result?.isValid() || $form.isSuccess;
+    $: disabled = !$form.isValid || $form.isSuccess;
 </script>
 
 <form on:submit|preventDefault={handleSignIn} class="space-y-6">
@@ -151,12 +140,12 @@
             autocomplete="email"
             inputmode="email"
             required
-            errors={$form.errors["email"]}
-            on:input={handleChange}
+            errors={$errors["email"]}
+            on:input={change}
         />
     </div>
 
-    <div class="space-y-1">
+    <div>
         <PasswordInput
             label="Password"
             id="password"
@@ -165,8 +154,8 @@
             autocomplete="current-password"
             minlength={8}
             required
-            errors={$form.errors["password"]}
-            on:input={handleChange}
+            errors={$errors["password"]}
+            on:input={change}
         />
     </div>
 
@@ -175,7 +164,7 @@
             label="Remember me"
             id="remember-me"
             name="remember-me"
-            bind:checked={user.rememberMe}
+            bind:checked={$form.data.rememberMe}
         />
 
         <Tooltip>

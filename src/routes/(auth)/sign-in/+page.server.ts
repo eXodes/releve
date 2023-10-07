@@ -45,13 +45,17 @@ export const actions: Actions = {
                 throw handleApiError(new Error("User ID or email is required."));
         }
 
+        if (user.data.emailVerified) {
+            throw handleApiError(new Error("Account is already verified."));
+        }
+
         await UserCollection.create({
             uid: user.data.uid,
             displayName: user.data.displayName,
             email: user.data.email,
             emailVerified: user.data.emailVerified,
             disabled: user.data.disabled,
-            avatar: UserAvatar.getGravatarUrl(user.data.email),
+            avatar: await UserAvatar.getGravatarUrl(uid),
             createdAt: user.data.createdAt,
             customClaims: {
                 isAdmin: user.isAdmin,
