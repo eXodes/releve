@@ -26,7 +26,9 @@ export const AuthService = {
             method: "POST",
             data: { email },
         }).then(({ available }) => {
-            return available;
+            if (!available) return Promise.reject("Email is already registered.");
+
+            return Promise.resolve();
         });
     },
     checkActionCode: async (actionCode: string) => {
