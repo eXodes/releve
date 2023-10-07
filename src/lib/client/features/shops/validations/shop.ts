@@ -45,8 +45,6 @@ const shopSuite = create(
 
         const skipStatus = isPrivate === "true" || role === Role.USER;
 
-        console.log("skipStatus", skipStatus, { isPrivate, role });
-
         optional({
             private: () => true,
             status: () => skipStatus,
