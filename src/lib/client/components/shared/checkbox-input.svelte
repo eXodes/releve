@@ -28,7 +28,7 @@
     const dispatch = createEventDispatcher<{
         input: {
             name: string;
-            value: boolean;
+            value: string;
         };
     }>();
 
@@ -37,7 +37,7 @@
 
         dispatch("input", {
             name: target.name,
-            value: target.checked,
+            value: target.checked ? target.value : "",
         });
     };
 </script>

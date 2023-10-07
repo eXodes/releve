@@ -1,19 +1,18 @@
 <script lang="ts">
-    import { applyAction, enhance } from "$app/forms";
+    import { enhance } from "$app/forms";
     import { invalidate } from "$app/navigation";
     import { page } from "$app/stores";
+    import { createForm, type EnhanceHandlerOptions } from "$client/stores/form";
 
     import { ShopStatus } from "$features/shops/enum";
     import type { ShopData } from "$features/shops/types";
     import shopSuite, { type ShopPayload } from "$features/shops/validations/shop";
     import { categories } from "$features/categories/store";
+    import { Role } from "$features/users/enum";
     import { countries, states } from "$features/countries/store";
     import { deliveryServices } from "$features/delivery-providers/store";
     import { Color } from "$client/enums/theme";
-    import { form } from "$client/stores/form";
     import { notification } from "$client/stores/notification";
-    import type { ValidationError } from "$client/types/error";
-    import type { MessageResponse } from "$client/types/response";
 
     import ActionableCard from "$client/components/shared/actionable-card.svelte";
     import Button from "$client/components/shared/button.svelte";
@@ -23,11 +22,9 @@
     import UrlInput from "$client/components/shared/url-input.svelte";
     import Tooltip from "$client/components/shared/tooltip.svelte";
 
-    import type { SubmitFunction } from "@sveltejs/kit";
     import { createEventDispatcher, onMount } from "svelte";
-    import { camelCase, startCase } from "lodash-es";
+    import { startCase } from "lodash-es";
     import { Icon, QuestionMarkCircle } from "svelte-hero-icons";
-    import type { SuiteRunResult } from "vest";
 
     const ActionType = {
         CREATE: "create",
@@ -37,7 +34,8 @@
 
     export let shopData: ShopData | undefined = undefined;
     export let actionType: (typeof ActionType)[keyof typeof ActionType];
-    export let isPrivate = actionType === "update-private";
+    export let isPrivate: ShopPayload["private"] =
+        actionType === "update-private" ? "true" : "false";
 
     let actionUrl = {
         [ActionType.CREATE]: "/shops?/create",
@@ -45,121 +43,85 @@
         [ActionType.UPDATE_PRIVATE]: `/my/shops/${shopData?.uid}?/update`,
     };
 
-    let shop: ShopPayload = {
-        name: "",
-        link: "",
-        categories: [],
-        deliveryProviders: [],
-        streetAddress: "",
-        city: "",
-        state: "",
-        postalCode: "",
-        country: "Malaysia",
-        status: ShopStatus.PENDING,
-    };
-
-    let result: SuiteRunResult;
+    const { form, change, errors, setValue, reset, enhanceHandler } = createForm<ShopPayload>({
+        initialValues: {
+            name: shopData?.name ?? "",
+            link: shopData?.link ?? "",
+            categories: shopData?.categories ?? [],
+            deliveryProviders: shopData?.deliveryProviders ?? [],
+            streetAddress: shopData?.address.street ?? "",
+            city: shopData?.address.city ?? "",
+            state: shopData?.address.state ?? "",
+            postalCode: shopData?.address.postalCode ?? "",
+            country: shopData?.address.country ?? "Malaysia",
+            status: shopData?.status,
+            private: isPrivate ?? "false",
+            role: $page.data.session.user?.customClaims.isAdmin ? Role.ADMIN : Role.USER,
+        },
+        validationSuite: shopSuite,
+    });
 
     const dispatch = createEventDispatcher<{
         success: void;
         cancel: void;
     }>();
 
-    const handleChange = async ({
-        detail,
-    }: CustomEvent<{ name: string; value: string | string[] | boolean }>) => {
-        shop = {
-            ...shop,
-            [camelCase(detail.name)]: detail.value,
-        };
+    const handleChangeCountry = async (
+        event: CustomEvent<{ name: string; value: string | string[] | boolean }>
+    ) => {
+        setValue("state", "");
 
-        if (detail.name === "country") {
-            shop.state = "";
-            await states.loadStates(detail.value as string);
-        }
+        await states.loadStates(event.detail.value as string);
 
-        result = shopSuite(shop, detail.name);
-        form.validatedErrors(result.getErrors());
+        change(event);
     };
 
-    const handleSubmit: SubmitFunction<MessageResponse, ValidationError> = () => {
-        form.submit();
-
-        return async ({ result }) => {
-            if (result.type === "failure") {
-                if (result.data?.code === "ValidationError" && result.data?.errors) {
-                    form.validatedErrors(result.data?.errors);
-                }
-            }
-
-            if (result.type === "error") {
-                form.submitError();
-
+    const handlerOptions: EnhanceHandlerOptions = {
+        onError: ({ message }) => {
+            notification.send({
+                type: "error",
+                message: message,
+            });
+        },
+        onSuccess: async ({ message }) => {
+            if (message)
                 notification.send({
-                    type: "error",
-                    message: result.error.message,
+                    type: "success",
+                    message: message,
                 });
+
+            await invalidate("shops");
+
+            if (isPrivate) {
+                await invalidate("shops:my");
             }
 
-            if (result.type === "success") {
-                form.submitSuccess();
-
-                await applyAction(result);
-
-                if (result.data)
-                    notification.send({
-                        type: "success",
-                        message: result.data.message,
-                    });
-
-                await invalidate("shops");
-
-                if (isPrivate) {
-                    await invalidate("shops:my");
-                }
-
-                if (shop.status === ShopStatus.APPROVED) {
-                    await invalidate("shops:approved");
-                }
-
-                dispatch("success");
+            if ($form.data.status === ShopStatus.APPROVED) {
+                await invalidate("shops:approved");
             }
-        };
+
+            dispatch("success");
+        },
     };
 
-    $: showStatusInput = $page.data?.session.user?.customClaims.isAdmin && !isPrivate;
+    $: showStatusInput =
+        $page.data?.session.user?.customClaims.isAdmin && $form.data.private !== "true";
 
-    $: disabled = result?.hasErrors() || !result?.isValid() || $form.isSuccess;
+    $: disabled = !$form.isValid || $form.isSuccess;
 
     onMount(() => {
-        form.reset();
+        reset();
 
-        if (shopData) {
-            states.loadStates(shopData.address.country);
-
-            shop = {
-                name: shopData.name,
-                link: shopData.link,
-                categories: shopData.categories,
-                deliveryProviders: shopData.deliveryProviders,
-                streetAddress: shopData.address.street,
-                city: shopData.address.city,
-                state: shopData.address.state,
-                postalCode: shopData.address.postalCode,
-                country: shopData.address.country,
-                status: shopData.status,
-            };
-
-            result = shopSuite(shop);
-            form.validatedErrors(result.getErrors());
-            return;
-        }
-
-        states.loadStates(shop.country);
+        states.loadStates($form.data.country);
     });
 </script>
 
-<form action={actionUrl[actionType]} method="POST" use:enhance={handleSubmit} on:submit>
+<form
+    action={actionUrl[actionType]}
+    method="POST"
+    use:enhance={enhanceHandler(handlerOptions)}
+    on:submit
+>
     <ActionableCard>
         <div>
             <h3 class="text-lg font-medium leading-6 text-gray-900">Shop Details</h3>
@@ -172,11 +134,11 @@
                     id="shop-name"
                     label="Name"
                     name="name"
-                    value={shop.name}
+                    value={$form.data.name}
                     autocomplete="shop-name"
                     required
-                    errors={$form.errors["name"]}
-                    on:input={handleChange}
+                    errors={$errors["name"]}
+                    on:input={change}
                 />
             </div>
 
@@ -186,24 +148,15 @@
                         id="status"
                         label="Status"
                         name="status"
-                        value={shop.status}
+                        value={$form.data.status}
                         autocomplete="status"
                         required
-                        disabled={isPrivate}
-                        errors={$form.errors["status"]}
-                        on:input={handleChange}
+                        errors={$errors["status"]}
+                        on:input={change}
                     >
-                        <svelte:fragment>
-                            <option value={ShopStatus.PENDING}>
-                                {startCase(ShopStatus.PENDING)}
-                            </option>
-                            <option value={ShopStatus.APPROVED}>
-                                {startCase(ShopStatus.APPROVED)}
-                            </option>
-                            <option value={ShopStatus.REJECTED}>
-                                {startCase(ShopStatus.REJECTED)}
-                            </option>
-                        </svelte:fragment>
+                        {#each Object.values(ShopStatus) as status}
+                            <option value={status}>{startCase(status)}</option>
+                        {/each}
                     </SelectInput>
                 {/if}
             </div>
@@ -213,12 +166,12 @@
                     id="shop-link"
                     label="Link"
                     name="link"
-                    value={shop.link}
+                    value={$form.data.link}
                     autocomplete="shop-link"
                     required
-                    errors={$form.errors["link"]}
+                    errors={$errors["link"]}
                     hint="URL doesn't require a protocol https:// or http://"
-                    on:input={handleChange}
+                    on:input={change}
                 />
             </div>
 
@@ -227,12 +180,12 @@
                     id="categories"
                     label="Categories"
                     name="categories[]"
-                    values={shop.categories}
+                    values={$form.data.categories}
                     autocomplete="categories"
                     required
                     multiple
-                    errors={$form.errors["categories"]}
-                    on:input={handleChange}
+                    errors={$errors["categories"]}
+                    on:input={change}
                 >
                     {#each $categories as category}
                         <option value={category.name}>{category.name}</option>
@@ -245,12 +198,12 @@
                     id="delivery-providers"
                     label="Delivery Services"
                     name="delivery-providers[]"
-                    values={shop.deliveryProviders}
+                    values={$form.data.deliveryProviders}
                     autocomplete="delivery-providers"
                     required
                     multiple
-                    errors={$form.errors["delivery-providers"]}
-                    on:input={handleChange}
+                    errors={$errors["delivery-providers"]}
+                    on:input={change}
                 >
                     {#each $deliveryServices as deliveryService}
                         <option value={deliveryService.name}>{deliveryService.name}</option>
@@ -263,11 +216,11 @@
                     id="country"
                     label="Country"
                     name="country"
-                    bind:value={shop.country}
+                    value={$form.data.country}
                     autocomplete="country-name"
                     required
-                    errors={$form.errors["country"]}
-                    on:input={handleChange}
+                    errors={$errors["country"]}
+                    on:input={handleChangeCountry}
                 >
                     {#each $countries as country}
                         <option value={country.name}>{country.name}</option>
@@ -280,11 +233,11 @@
                     id="street-address"
                     label="Street address"
                     name="street-address"
-                    value={shop.streetAddress}
+                    value={$form.data.streetAddress}
                     autocomplete="street-address"
                     required
-                    errors={$form.errors["street-address"]}
-                    on:input={handleChange}
+                    errors={$errors["street-address"]}
+                    on:input={change}
                 />
             </div>
 
@@ -293,11 +246,11 @@
                     id="city"
                     label="City"
                     name="city"
-                    value={shop.city}
+                    value={$form.data.city}
                     autocomplete="address-level2"
                     required
-                    errors={$form.errors["city"]}
-                    on:input={handleChange}
+                    errors={$errors["city"]}
+                    on:input={change}
                 />
             </div>
 
@@ -306,16 +259,16 @@
                     id="state"
                     label="State / Province"
                     name="state"
-                    value={shop.state}
+                    value={$form.data.state}
                     autocomplete="address-level1"
                     required
-                    errors={$form.errors["state"]}
-                    on:input={handleChange}
+                    errors={$errors["state"]}
+                    on:input={change}
                     disabled={$states.length === 0}
                 >
                     {#if $states}
                         {#each $states as state}
-                            <option value={state.name} selected={shop.state === state.name}>
+                            <option value={state.name} selected={$form.data.state === state.name}>
                                 {state.name}
                             </option>
                         {/each}
@@ -328,12 +281,12 @@
                     id="postal-code"
                     label="ZIP / Postal code"
                     name="postal-code"
-                    value={shop.postalCode}
+                    value={$form.data.postalCode}
                     autocomplete="postal-code"
                     inputmode="numeric"
                     required
-                    errors={$form.errors["postal-code"]}
-                    on:input={handleChange}
+                    errors={$errors["postal-code"]}
+                    on:input={change}
                 />
             </div>
 
@@ -344,8 +297,8 @@
                         id="private"
                         name="private"
                         value="true"
-                        checked={isPrivate}
-                        on:input={handleChange}
+                        checked={$form.data.private === "true"}
+                        on:input={change}
                     />
 
                     <Tooltip>

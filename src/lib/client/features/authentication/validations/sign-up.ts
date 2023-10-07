@@ -34,7 +34,7 @@ export const signUpSuite = create(
             enforce(email).isNotBlank();
         });
 
-        test("email", "Email .", () => {
+        test("email", "Email must be a valid email.", () => {
             enforce(email).isEmail();
         });
 

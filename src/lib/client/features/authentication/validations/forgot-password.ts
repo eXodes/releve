@@ -1,9 +1,9 @@
 import validator from "validator";
 import { create, enforce, only, test } from "vest";
 
-export interface ForgotPasswordPayload {
+export type ForgotPasswordPayload = {
     email: string;
-}
+};
 
 enforce.extend({
     isEmail: validator.isEmail,

@@ -1,75 +1,44 @@
 <script lang="ts">
     import { enhance } from "$app/forms";
+    import { createForm } from "$client/stores/form";
 
     import signUpSuite, { type SignUpPayload } from "$features/authentication/validations/sign-up";
-    import { form } from "$client/stores/form";
     import { Color } from "$client/enums/theme";
-    import type { ValidationError } from "$client/types/error";
 
     import Alert from "$client/components/shared/alert.svelte";
     import Button from "$client/components/shared/button.svelte";
     import PasswordInput from "$client/components/shared/password-input.svelte";
     import TextInput from "$client/components/shared/text-input.svelte";
 
-    import type { SubmitFunction } from "@sveltejs/kit";
     import { createEventDispatcher } from "svelte";
-    import { camelCase } from "lodash-es";
-    import type { SuiteRunResult } from "vest";
 
-    let result: SuiteRunResult;
-
-    let user: SignUpPayload = {
-        displayName: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-    };
+    const { form, change, errors, enhanceHandler } = createForm<SignUpPayload>({
+        initialValues: {
+            displayName: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+        },
+        validationSuite: signUpSuite,
+    });
 
     const dispatch = createEventDispatcher<{
         success: void;
     }>();
 
-    const handleChange = ({ detail }: CustomEvent<{ name: string; value: string }>) => {
-        user = {
-            ...user,
-            [camelCase(detail.name)]: detail.value,
-        };
-        result = signUpSuite(user, detail.name);
-
-        result.done((res) => {
-            result = res as SuiteRunResult;
-            form.validatedErrors(result.getErrors());
-        });
-    };
-
-    const handleSubmit: SubmitFunction<{ message: string }, ValidationError> = () => {
-        form.submit();
-
-        return async ({ result, update }) => {
-            if (result.type === "failure") {
-                if (result.data?.code === "ValidationError" && result.data?.errors) {
-                    form.validatedErrors(result.data?.errors);
-                }
-            }
-
-            if (result.type === "error") {
-                form.submitError({ message: result.error.message });
-            }
-
-            if (result.type === "success") {
-                form.submitSuccess({ message: result.data?.message });
-
-                await update();
-
-                dispatch("success");
-            }
-        };
-    };
-
-    $: disabled = result?.hasErrors() || !result?.isValid() || $form.isSuccess;
+    $: disabled = !$form.isValid || $form.isSuccess;
 </script>
 
-<form action="/sign-up" method="post" use:enhance={handleSubmit} class="space-y-6">
+<form
+    action="/sign-up"
+    method="post"
+    use:enhance={enhanceHandler({
+        onSuccess: () => {
+            dispatch("success");
+        },
+    })}
+    class="space-y-6"
+>
     <div>
         <TextInput
             label="Display name"
@@ -77,8 +46,8 @@
             name="display-name"
             autocomplete="name"
             required
-            errors={$form.errors["display-name"]}
-            on:input={handleChange}
+            errors={$errors["display-name"]}
+            on:input={change}
         />
     </div>
 
@@ -91,8 +60,8 @@
             autocomplete="email"
             inputmode="email"
             required
-            errors={$form.errors["email"]}
-            on:input={handleChange}
+            errors={$errors["email"]}
+            on:input={change}
         />
     </div>
 
@@ -104,8 +73,8 @@
             autocomplete="new-password"
             minlength={8}
             required
-            errors={$form.errors["password"]}
-            on:input={handleChange}
+            errors={$errors["password"]}
+            on:input={change}
         />
     </div>
 
@@ -117,8 +86,8 @@
             autocomplete="confirm-new-password"
             minlength={8}
             required
-            errors={$form.errors["confirm-password"]}
-            on:input={handleChange}
+            errors={$errors["confirm-password"]}
+            on:input={change}
         />
     </div>
 
