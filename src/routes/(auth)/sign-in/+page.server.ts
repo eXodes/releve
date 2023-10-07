@@ -51,7 +51,7 @@ export const actions: Actions = {
             email: user.data.email,
             emailVerified: user.data.emailVerified,
             disabled: user.data.disabled,
-            avatar: UserAvatar.getGravatarUrl(user.data.email),
+            avatar: await UserAvatar.getGravatarUrl(uid),
             createdAt: user.data.createdAt,
             customClaims: {
                 isAdmin: user.isAdmin,
