@@ -34,7 +34,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 kbd {
-    @apply rounded-sm bg-gray-50 px-1 pt-px text-xs font-medium text-gray-500;
+    @apply rounded-sm bg-gray-50 px-1 pt-px font-mono text-[0.7rem] font-semibold text-gray-500;
 }
 
 /*** Nprogress ***/
