@@ -1,6 +1,7 @@
 <script lang="ts">
     import { enhance } from "$app/forms";
     import { createForm } from "$client/stores/form";
+    import type { EnhanceHandlerOptions } from "$client/stores/form.js";
 
     import signUpSuite, { type SignUpPayload } from "$features/authentication/validations/sign-up";
     import { Color } from "$client/enums/theme";
@@ -26,17 +27,21 @@
         success: void;
     }>();
 
+    const handlerOptions: EnhanceHandlerOptions = {
+        onSuccess: ({ update }) => {
+            dispatch("success");
+
+            update();
+        },
+    };
+
     $: disabled = !$form.isValid || $form.isSuccess;
 </script>
 
 <form
     action="/sign-up"
     method="post"
-    use:enhance={enhanceHandler({
-        onSuccess: () => {
-            dispatch("success");
-        },
-    })}
+    use:enhance={enhanceHandler(handlerOptions)}
     class="space-y-6"
 >
     <div>
