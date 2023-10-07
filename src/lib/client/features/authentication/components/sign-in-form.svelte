@@ -90,9 +90,9 @@
         } catch (error) {
             const data = handleAuthCatch(error);
 
-            if (error instanceof FirebaseError) {
-                submitError({ message: data?.message });
+            submitError({ message: data?.message });
 
+            if (error instanceof FirebaseError) {
                 if (
                     error.code === AuthErrorCodes.INVALID_OOB_CODE ||
                     error.code === AuthErrorCodes.EXPIRED_OOB_CODE
