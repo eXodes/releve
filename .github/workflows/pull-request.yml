@@ -64,6 +64,8 @@ jobs:
 
       - name: Run test
         run: npm run firebase:emu:test
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
 
   deploy:
     name: Deploy
