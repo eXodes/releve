@@ -36,14 +36,14 @@ jobs:
       - name: Setup test .env
         run: cp .env.test .env
 
-      - name: Setup extensions .env
-        run: cat ${{ secrets.EXTENSIONS_EMAIL }} > extensions/firestore-send-email.env && cat ${{ secrets.EXTENSIONS_RESIZE }} > extensions/storage-resize-images.env
-
       - name: Setup Firebase
         uses: w9jds/setup-firebase@main
         with:
           tools-version: latest
           firebase_token: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Setup Firebase Extensions
+        run: firebase ext:export--force
 
       - name: Install Playwright
         run: npx playwright install --with-deps
