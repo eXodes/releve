@@ -63,7 +63,9 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run test
-        run: npm run firebase:emu:test
+        uses: w9jds/firebase-action@master
+        with:
+          args: emulators:exec --only=auth,firestore,storage,extensions \"npm run firebase:seed && npm run test --exit\"
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
