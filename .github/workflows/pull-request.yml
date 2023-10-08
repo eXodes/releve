@@ -56,7 +56,7 @@ jobs:
         uses: Langsdorf/env-replace@v1.0.0
         with:
           key: "SMTP_PASSWORD"
-          value: ${{ vars.MAILTRAP_PASSWORD }}
+          value: ${{ secrets.MAILTRAP_PASSWORD }}
           file: "./extensions/firestore-send-email.env"
 
       - name: Install Playwright
