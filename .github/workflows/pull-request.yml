@@ -65,6 +65,7 @@ jobs:
       - name: Run test
         run: npm run firebase:emu:test
         env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
 
   deploy:
