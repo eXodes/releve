@@ -43,7 +43,21 @@ jobs:
           firebase_token: ${{ secrets.FIREBASE_TOKEN }}
 
       - name: Setup Firebase Extensions
-        run: firebase ext:export--force
+        run: firebase ext:export --force
+
+      - name: Replace SMTP URI for Extensions
+        uses: Langsdorf/env-replace@v1.0.0
+        with:
+          key: "SMTP_CONNECTION_URI"
+          value: ${{ vars.MAILTRAP_URI }}
+          file: "./extensions/firestore-send-email.env"
+
+      - name: Replace SMTP Password for Extensions
+        uses: Langsdorf/env-replace@v1.0.0
+        with:
+          key: "SMTP_PASSWORD"
+          value: ${{ vars.MAILTRAP_PASSWORD }}
+          file: "./extensions/firestore-send-email.env"
 
       - name: Install Playwright
         run: npx playwright install --with-deps
