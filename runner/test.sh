@@ -2,9 +2,6 @@
 
 set -e
 
-echo "Installing Playwright"
-npx playwright install
-
 echo "Seed database"
 npm run firebase:seed
 

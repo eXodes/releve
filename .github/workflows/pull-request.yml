@@ -36,6 +36,9 @@ jobs:
       - name: Setup test .env
         run: cp .env.test .env
 
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
       - name: Setup Firebase
         uses: w9jds/setup-firebase@main
         with:
