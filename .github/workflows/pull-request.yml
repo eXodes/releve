@@ -19,7 +19,7 @@ jobs:
         run: cp .env.test .env
 
       - name: Install node dependencies
-        run: npm install && npm install -g firebase-tools
+        run: npm install
 
       - name: Run prepare
         run: npm run prepare
@@ -62,6 +62,10 @@ jobs:
           value: ${{ secrets.MAILTRAP_PASSWORD }}
           file: "./extensions/firestore-send-email.env"
 
+      - name: Setup Firebase
+        uses: w9jds/setup-firebase@main
+        with:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 #      - name: Run test
 #        uses: w9jds/firebase-action@master
 #        with:
@@ -72,7 +76,7 @@ jobs:
 #          FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
 
       - name: Run test
-        run: sudo npm run firebase:emu:test
+        run: sudo firebase emulators:exec --only=auth,firestore,storage,extensions ./runner/test.sh
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
