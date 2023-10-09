@@ -5,5 +5,5 @@ set -e
 echo "Seed database"
 npm run firebase:seed
 
-echo "Running tests"
-npm run test
+echo "Running e2e tests"
+npx playwright test
