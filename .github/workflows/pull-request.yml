@@ -19,7 +19,7 @@ jobs:
         run: cp .env.test .env
 
       - name: Install node dependencies
-        run: npm install
+        run: npm install && npm install -g firebase-tools
 
       - name: Run prepare
         run: npm run prepare
