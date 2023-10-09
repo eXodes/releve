@@ -65,7 +65,7 @@ jobs:
       - name: Run test
         uses: w9jds/firebase-action@master
         with:
-          args: emulators:exec --only=auth,firestore,storage,extensions ./runner/test.sh
+          args: emulators:exec --only=auth,firestore,storage,extensions 'sudo ./runner/test.sh'
           cache: 'firebase-emulators'
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
