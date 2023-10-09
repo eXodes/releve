@@ -36,8 +36,8 @@ jobs:
       - name: Setup test .env
         run: cp .env.test .env
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+#      - name: Install Playwright Browsers
+#        run: npx playwright install --with-deps
 
       - name: Setup Firebase
         uses: w9jds/setup-firebase@main
@@ -62,10 +62,18 @@ jobs:
           value: ${{ secrets.MAILTRAP_PASSWORD }}
           file: "./extensions/firestore-send-email.env"
 
+#      - name: Run test
+#        uses: w9jds/firebase-action@master
+#        with:
+#          args: emulators:exec --only=auth,firestore,storage,extensions 'sudo ./runner/test.sh'
+#          cache: 'firebase-emulators'
+#        env:
+#          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+#          FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
+
       - name: Run test
-        uses: w9jds/firebase-action@master
+        run: sudo npm run firebase:emu:test
         with:
-          args: emulators:exec --only=auth,firestore,storage,extensions 'sudo ./runner/test.sh'
           cache: 'firebase-emulators'
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
