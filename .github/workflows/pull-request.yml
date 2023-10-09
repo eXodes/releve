@@ -76,7 +76,7 @@ jobs:
 #          FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
 
       - name: Run test
-        run: sudo firebase emulators:exec --only=auth,firestore,storage,extensions ./runner/test.sh
+        run: firebase emulators:exec --only=auth,firestore,storage,extensions ./runner/test.sh
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
