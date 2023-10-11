@@ -60,10 +60,10 @@ export class SignUpPage {
     }
 
     async fillForm({ name, email, password }: { name: string; email: string; password: string }) {
-        await this.inputNameEl.type(name);
-        await this.inputEmailEl.type(email);
-        await this.inputPasswordEl.type(password);
-        await this.inputConfirmPasswordEl.type(password);
+        await this.inputNameEl.fill(name);
+        await this.inputEmailEl.fill(email);
+        await this.inputPasswordEl.fill(password);
+        await this.inputConfirmPasswordEl.fill(password);
 
         await expect(this.inputNameEl).toHaveValue(name);
         await expect(this.inputEmailEl).toHaveValue(email);

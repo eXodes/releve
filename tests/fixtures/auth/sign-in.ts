@@ -73,8 +73,8 @@ export class SignInPage {
         password: string;
         remember?: boolean;
     }) {
-        await this.inputEmailEl.type(email);
-        await this.inputPasswordEl.type(password);
+        await this.inputEmailEl.fill(email);
+        await this.inputPasswordEl.fill(password);
 
         if (remember) {
             await this.checkboxRememberEl.check();
