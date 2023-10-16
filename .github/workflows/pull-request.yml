@@ -47,9 +47,7 @@ jobs:
           file: "./extensions/firestore-send-email.env"
 
       - name: Replace SMTP password for Extensions
-        run: |
-          sed '4d' extensions/firestore-send-email.env
-          cat ${{ secrets.EXT_FIRESTORE_SEND_EMAIL_SECRET_LOCAL }} > extensions/firestore-send-email.secret.local
+        run: sed '4d' extensions/firestore-send-email.env && cat ${{ secrets.EXT_FIRESTORE_SEND_EMAIL_SECRET_LOCAL }} > extensions/firestore-send-email.secret.local
 
       - name: Setup Firebase
         uses: w9jds/setup-firebase@main
