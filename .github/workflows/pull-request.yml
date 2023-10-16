@@ -57,7 +57,6 @@ jobs:
       - name: Run test
         run: firebase emulators:exec --only=auth,firestore,storage,extensions runner/test.sh
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
 
       - name: Cache emulators
