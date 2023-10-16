@@ -38,9 +38,9 @@ jobs:
 
       - name: Setup Firebase Extensions env
         run: |
-          cat ${{ secrets.EXT_FIRESTORE_SEND_EMAIL_ENV }} > firestore-send-email.env
-          cat ${{ secrets.EXT_FIRESTORE_SEND_EMAIL_SECRET_LOCAL }} > extensions/firestore-send-email.secret.local
-          cat ${{ secrets.EXT_STORAGE_RESIZE_IMAGES_ENV }} > extensions/storage-resize-images.env
+          ${{ secrets.EXT_FIRESTORE_SEND_EMAIL_ENV }} > firestore-send-email.env
+          ${{ secrets.EXT_FIRESTORE_SEND_EMAIL_SECRET_LOCAL }} > extensions/firestore-send-email.secret.local
+          ${{ secrets.EXT_STORAGE_RESIZE_IMAGES_ENV }} > extensions/storage-resize-images.env
 
       - name: Setup Firebase
         uses: w9jds/setup-firebase@main
