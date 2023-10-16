@@ -36,11 +36,20 @@ jobs:
           tools-version: latest
           firebase_token: ${{ secrets.FIREBASE_TOKEN }}
 
-      - name: Setup Firebase Extensions env
+      - name: Setup Firebase Extensions
+        run: firebase ext:export --force
+
+      - name: Replace SMTP URI for Extensions
+        uses: Langsdorf/env-replace@v1.0.0
+        with:
+          key: "SMTP_CONNECTION_URI"
+          value: ${{ vars.MAILTRAP_URI }}
+          file: "./extensions/firestore-send-email.env"
+
+      - name: Replace SMTP password for Extensions
         run: |
-          "${{ secrets.EXT_FIRESTORE_SEND_EMAIL_ENV }}" > firestore-send-email.env
-          "${{ secrets.EXT_FIRESTORE_SEND_EMAIL_SECRET_LOCAL }}" > extensions/firestore-send-email.secret.local
-          "${{ secrets.EXT_STORAGE_RESIZE_IMAGES_ENV }}" > extensions/storage-resize-images.env
+          sed '4d' extensions/firestore-send-email.env
+          cat ${{ secrets.EXT_FIRESTORE_SEND_EMAIL_SECRET_LOCAL }} > extensions/firestore-send-email.secret.local
 
       - name: Setup Firebase
         uses: w9jds/setup-firebase@main
