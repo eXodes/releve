@@ -33,8 +33,7 @@ jobs:
       - name: Setup Firebase
         uses: w9jds/setup-firebase@main
         with:
-          tools-version: latest
-          firebase_token: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Setup Firebase Extensions
         run: firebase ext:export --force
@@ -48,11 +47,6 @@ jobs:
 
       - name: Replace SMTP password for Extensions
         run: sed '4d' extensions/firestore-send-email.env && SMTP_PASSWORD=${{ secrets.MAILTRAP_PASSWORD }} >> extensions/firestore-send-email.secret.local
-
-      - name: Setup Firebase
-        uses: w9jds/setup-firebase@main
-        with:
-          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Run test
         run: firebase emulators:exec --only=auth,firestore,storage,extensions runner/test.sh
