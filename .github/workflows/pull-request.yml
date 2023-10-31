@@ -45,8 +45,12 @@ jobs:
           value: ${{ vars.MAILTRAP_URI }}
           file: "./extensions/firestore-send-email.env"
 
-      - name: Replace SMTP password for Extensions
-        run: sed '4d' extensions/firestore-send-email.env && SMTP_PASSWORD=${{ secrets.MAILTRAP_PASSWORD }} >> extensions/firestore-send-email.secret.local
+      - name: Replace SMTP Password for Extensions
+        uses: Langsdorf/env-replace@v1.0.0
+        with:
+          key: "SMTP_PASSWORD"
+          value: ${{ secrets.MAILTRAP_PASSWORD }}
+          file: "./extensions/firestore-send-email.env"
 
       - name: Run test
         run: firebase emulators:exec --only=auth,firestore,storage,extensions runner/test.sh
