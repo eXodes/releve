@@ -33,7 +33,7 @@ jobs:
       - name: Setup Firebase
         uses: w9jds/setup-firebase@main
         with:
-          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
       - name: Setup Firebase Extensions
         run: firebase ext:export --force
