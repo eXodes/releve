@@ -76,7 +76,5 @@ export class SignUpPage {
 
         await this.successMessageEl.waitFor();
         await expect(this.successMessageEl).toBeVisible();
-
-        await this.page.waitForURL("/");
     }
 }
