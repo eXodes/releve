@@ -1,10 +1,12 @@
-import type { Page, Locator } from "@playwright/test";
-import { expect } from "../index";
+import { expect, type Locator, type Page } from "$tests/utils";
 
 export class SignUpPage {
     private readonly headingEl: Locator;
     private readonly linkSignInEl: Locator;
     private readonly linkForgotPasswordEl: Locator;
+
+    private readonly buttonValidationEl: Locator;
+    private readonly emailValidationMessageEl: Locator;
 
     private readonly inputNameEl: Locator;
     private readonly inputEmailEl: Locator;
@@ -18,6 +20,11 @@ export class SignUpPage {
         this.headingEl = page.getByRole("heading", { name: /Register a free account/ });
         this.linkSignInEl = page.getByRole("link", { name: /sign in to your account/ });
         this.linkForgotPasswordEl = page.getByRole("link", { name: /Forgot your password?/ });
+
+        this.buttonValidationEl = page.getByRole("button", { name: /Show validation error/ });
+        this.emailValidationMessageEl = page.locator("p", {
+            hasText: /Email is already registered./,
+        });
 
         this.inputNameEl = page.getByRole("textbox", { name: /Display name/ });
         this.inputEmailEl = page.getByRole("textbox", { name: /Email address/ });
@@ -69,6 +76,15 @@ export class SignUpPage {
         await expect(this.inputEmailEl).toHaveValue(email);
         await expect(this.inputPasswordEl).toHaveValue(password);
         await expect(this.inputConfirmPasswordEl).toHaveValue(password);
+    }
+
+    async showExistingEmailError() {
+        await this.buttonValidationEl.waitFor();
+        await expect(this.buttonValidationEl).toBeVisible();
+        await this.buttonValidationEl.click();
+
+        await this.emailValidationMessageEl.waitFor();
+        await expect(this.emailValidationMessageEl).toBeVisible();
     }
 
     async submitSuccess() {

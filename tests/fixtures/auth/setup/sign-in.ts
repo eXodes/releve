@@ -1,5 +1,4 @@
-import type { Page, Locator } from "@playwright/test";
-import { expect } from "../index";
+import { expect, type Locator, type Page } from "$tests/utils";
 
 export class SignInPage {
     private readonly headingEl: Locator;
@@ -15,6 +14,9 @@ export class SignInPage {
     private readonly unregisteredMessageEl: Locator;
     private readonly unverifiedMessageEl: Locator;
     private readonly invalidPasswordMessageEl: Locator;
+    private readonly invalidActionCodeMessageEl: Locator;
+
+    private readonly buttonVerificationEl: Locator;
 
     constructor(public readonly page: Page) {
         this.headingEl = page.getByRole("heading", { name: /Sign in to your account/ });
@@ -30,9 +32,18 @@ export class SignInPage {
         this.unregisteredMessageEl = page.locator("p", {
             hasText: /No registered user found with this email address./,
         });
-        this.unverifiedMessageEl = page.locator("p", { hasText: /Email not verified./ });
+        this.unverifiedMessageEl = page.locator("p", {
+            hasText: /Please verify your email address./,
+        });
         this.invalidPasswordMessageEl = page.locator("p", {
             hasText: /Sign in failed. Please check your email and password./,
+        });
+        this.invalidActionCodeMessageEl = page.locator("p", {
+            hasText: /The action code is invalid or already used. Please request a new one./,
+        });
+
+        this.buttonVerificationEl = page.locator("button", {
+            hasText: /Resend verification email/,
         });
     }
 
@@ -96,6 +107,15 @@ export class SignInPage {
         await expect(this.unregisteredMessageEl).toBeVisible();
     }
 
+    async submitUnverified() {
+        await this.buttonSignInEl.click();
+
+        await this.unverifiedMessageEl.waitFor();
+
+        await expect(this.unverifiedMessageEl).toBeVisible();
+        await expect(this.buttonVerificationEl).toBeVisible();
+    }
+
     async submitInvalidPassword() {
         await this.buttonSignInEl.click();
 
@@ -111,5 +131,12 @@ export class SignInPage {
         await expect(this.successMessageEl).toBeVisible();
 
         await this.page.waitForURL("/");
+    }
+
+    async showInvalidActionCode() {
+        await this.page.goto("/sign-in?uid=uid&actionCode=invalid-code");
+
+        await this.invalidActionCodeMessageEl.waitFor();
+        await expect(this.invalidActionCodeMessageEl).toBeVisible();
     }
 }

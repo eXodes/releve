@@ -1,12 +1,22 @@
 import { test as base } from "@playwright/test";
-import { SignInPage, SignUpPage } from "./auth";
+import { Mailtrap } from "$tests/fixtures/external";
+import { SignInPage, SignUpPage } from "$tests/fixtures/auth";
 
 type PageFixtures = {
+    mailtrap: Mailtrap;
     signInPage: SignInPage;
     signUpPage: SignUpPage;
 };
 
-export const test = base.extend<PageFixtures>({
+const test = base.extend<PageFixtures>({
+    mailtrap: async ({ page }, use) => {
+        const mailtrap = new Mailtrap(page);
+
+        await mailtrap.goto();
+        await mailtrap.loginToInbox();
+
+        await use(mailtrap);
+    },
     signInPage: async ({ page }, use) => {
         const signInPage = new SignInPage(page);
 
@@ -23,4 +33,5 @@ export const test = base.extend<PageFixtures>({
     },
 });
 
-export { expect } from "@playwright/test";
+export * from "@playwright/test";
+export { test };
