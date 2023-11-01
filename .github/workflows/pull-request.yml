@@ -42,14 +42,14 @@ jobs:
         uses: Langsdorf/env-replace@v1.0.0
         with:
           key: "SMTP_CONNECTION_URI"
-          value: ${{ vars.MAILTRAP_URI }}
+          value: ${{ vars.SMTP_URI }}
           file: "./extensions/firestore-send-email.env"
 
       - name: Replace SMTP Password for Extensions
         uses: Langsdorf/env-replace@v1.0.0
         with:
           key: "SMTP_PASSWORD"
-          value: ${{ secrets.MAILTRAP_PASSWORD }}
+          value: ${{ secrets.SMTP_PASSWORD }}
           file: "./extensions/firestore-send-email.env"
 
       - name: Run test
