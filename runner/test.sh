@@ -3,7 +3,7 @@
 set -e
 
 echo "Seed database"
-npm run firebase:seed
+npm run firebase:seed:e2e
 
 echo "Install Playwright"
 npx playwright install --with-deps
