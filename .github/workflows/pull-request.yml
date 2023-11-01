@@ -15,14 +15,11 @@ jobs:
           node-version: 18
           cache: 'npm'
 
-      - name: Copy env for test
+      - name: Setup test .env
         run: cp .env.test .env
 
       - name: Install node dependencies
-        run: npm install
-
-      - name: Run prepare
-        run: npm run prepare
+        run: npm ci
 
       - name: Run type-check
         run: npm run check
@@ -30,14 +27,42 @@ jobs:
       - name: Run linter
         run: npm run lint
 
-      - name: Run build test
+      - name: Run build
         run: npm run build
 
-#      - name: Install Playwright
-#        run: npx playwright install --with-deps
-#
-#      - name: Run test
-#        run: npm run test
+      - name: Setup Firebase
+        uses: w9jds/setup-firebase@main
+        with:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Setup Firebase Extensions
+        run: firebase ext:export --force
+
+      - name: Replace SMTP URI for Extensions
+        uses: Langsdorf/env-replace@v1.0.0
+        with:
+          key: "SMTP_CONNECTION_URI"
+          value: ${{ secrets.SMTP_URI }}
+          file: "./extensions/firestore-send-email.env"
+
+      - name: Replace SMTP Password for Extensions
+        uses: Langsdorf/env-replace@v1.0.0
+        with:
+          key: "SMTP_PASSWORD"
+          value: ${{ secrets.SMTP_PASSWORD }}
+          file: "./extensions/firestore-send-email.env"
+
+      - name: Run test
+        run: firebase emulators:exec --only=auth,firestore,storage,extensions runner/test.sh
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Cache emulators
+        uses: actions/cache@v3
+        with:
+          key: firebase-emulators
+          path: /github/home/.cache/firebase/emulators
 
   deploy:
     name: Deploy

@@ -75,7 +75,8 @@ export const actions: Actions = {
         const userAvatar = new UserAvatar(uid);
 
         if (payload.userPhoto?.size) {
-            avatar = await userAvatar.addAvatar(payload.userPhoto);
+            await userAvatar.addAvatar(payload.userPhoto);
+            avatar = await userAvatar.getAvatarUrl();
         }
 
         const customClaims = {

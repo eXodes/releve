@@ -45,10 +45,6 @@ export const actions: Actions = {
                 throw handleApiError(new Error("User ID or email is required."));
         }
 
-        if (user.data.emailVerified) {
-            throw handleApiError(new Error("Account is already verified."));
-        }
-
         await UserCollection.create({
             uid: user.data.uid,
             displayName: user.data.displayName,

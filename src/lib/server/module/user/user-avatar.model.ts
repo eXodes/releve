@@ -61,12 +61,10 @@ export class UserAvatar extends MediaStorage {
         };
     }
 
-    async addAvatar(file: File): Promise<Media> {
+    async addAvatar(file: File): Promise<void> {
         await super.uploadFile(this.path + this.uid, file, {
             public: true,
         });
-
-        return this.getAvatarUrl();
     }
 
     async getAvatarUrl(): Promise<Media> {

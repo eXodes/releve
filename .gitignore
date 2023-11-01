@@ -29,3 +29,6 @@ gha-creds-*.json
 
 # Sentry Auth Token
 .sentryclirc
+
+# Test
+test-results

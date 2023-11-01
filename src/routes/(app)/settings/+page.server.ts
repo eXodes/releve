@@ -82,7 +82,8 @@ export const actions: Actions = {
             const userAvatar = new UserAvatar(session.data.uid);
 
             if (payload.userPhoto?.size) {
-                avatar = await userAvatar.addAvatar(payload.userPhoto);
+                await userAvatar.addAvatar(payload.userPhoto);
+                avatar = await userAvatar.getAvatarUrl();
             }
 
             const user = await UserCollection.update({

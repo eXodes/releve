@@ -1,12 +1,16 @@
-import type { PlaywrightTestConfig } from "@playwright/test";
+import { defineConfig } from "@playwright/test";
+import dotenv from "dotenv";
 
-const config: PlaywrightTestConfig = {
+dotenv.config();
+
+const config = defineConfig({
+    fullyParallel: true,
     webServer: {
         command: "npm run build && npm run preview",
         port: 4173,
     },
     testDir: "tests",
     testMatch: /(.+\.)?(test|spec)\.[jt]s/,
-};
+});
 
 export default config;
