@@ -10,7 +10,7 @@
         "source": ".",
         "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
         "frameworksBackend": {
-            "region": "asia-east1",
+            "region": "asia-southeast1",
             "maxInstances": 1
         }
     },
