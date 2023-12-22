@@ -91,7 +91,7 @@ export const formEndpoint = async <ReturnType = void>(
 
     if (result.type === "error") throw new Error(result.error.message);
 
-    if (result.type === "redirect") throw redirect(303, result.location);
+    if (result.type === "redirect") redirect(303, result.location);
 
     return result.data as ReturnType;
 };

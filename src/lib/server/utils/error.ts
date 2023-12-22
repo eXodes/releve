@@ -3,9 +3,9 @@ import { AuthError } from "$module/common/errors/auth";
 import { FirebaseError } from "$module/common/errors/firebase";
 import { ValidationError } from "$module/common/errors/validation";
 
-import { error, fail } from "@sveltejs/kit";
+import { error, fail, type NumericRange } from "@sveltejs/kit";
 
-export const handleApiError = (err: unknown, status?: number) => {
+export const handleApiError = (err: unknown, status?: NumericRange<400, 599>) => {
     if (err instanceof ValidationError) {
         return fail(400, err.toJSON());
     }

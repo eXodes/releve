@@ -14,7 +14,7 @@ export const actions: Actions = {
     default: async ({ cookies, locals }) => {
         await locals.session?.revokeToken();
 
-        cookies.delete(SESSION_COOKIE);
+        cookies.delete(SESSION_COOKIE, { path: "/" });
 
         return {
             message: "Successfully logged out.",
