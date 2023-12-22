@@ -1,6 +1,6 @@
 import { resolve } from "path";
 
-import { vitePreprocess } from "@sveltejs/kit/vite";
+import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import adapter from "@sveltejs/adapter-auto";
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -15,6 +15,7 @@ const config = {
             $server: resolve("src/lib/server"),
             $module: resolve("src/lib/server/module"),
             $routes: resolve("src/routes"),
+            $tests: resolve("tests"),
         },
         env: {
             publicPrefix: "PUBLIC_",

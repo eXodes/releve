@@ -13,19 +13,10 @@
         "strictPropertyInitialization": false,
         "baseUrl": ".",
         "paths": {
-            "$lib": ["./src/lib"],
-            "$lib/*": ["./src/lib/*"],
-            "$client": ["./src/lib/client"],
-            "$client/*": ["./src/lib/client/*"],
-            "$features": ["./src/lib/client/features"],
-            "$features/*": ["./src/lib/client/features/*"],
-            "$server": ["./src/lib/server"],
             "$server/*": ["./src/lib/server/*"],
-            "$module": ["./src/lib/server/module"],
+            "$client/*": ["./src/lib/client/*"],
             "$module/*": ["./src/lib/server/module/*"],
-            "$routes": ["./src/routes"],
-            "$routes/*": ["./src/routes/*"],
-            "$tests/*": ["./tests/*"]
+            "$features/*": ["./src/lib/client/features/*"]
         },
         "types": ["vite-plugin-pwa/info", "vite-plugin-pwa/client"]
     },
