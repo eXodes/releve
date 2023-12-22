@@ -40,6 +40,7 @@
             displayName: userData.displayName,
             role: userData.customClaims?.isAdmin ? Role.ADMIN : Role.USER,
             about: userData.about ?? "",
+            userPhoto: userData.avatar.medium.url ?? "",
             firstName: userData.information?.firstName ?? "",
             lastName: userData.information?.lastName ?? "",
             email: userData.email ?? "",
@@ -93,6 +94,7 @@
     $: showRoleInput = actionType === "users" && $page.data.session.user?.customClaims?.isAdmin;
 
     $: userPhoto = (() => {
+        console.log("userPhoto", $form.data.userPhoto);
         if ($form.data.userPhoto instanceof File) {
             return URL.createObjectURL($form.data.userPhoto);
         }
