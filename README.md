@@ -26,14 +26,14 @@ npm run firebase:seed:faker
 
 Finally, start the SvelteKit dev server:
 
-```bash 
+```bash
 npm run dev
 ```
 
 #### URLs
 
-- Firebase Emulator UI: http://localhost:4000
-- SvelteKit: http://localhost:5173
+-   Firebase Emulator UI: http://localhost:4000
+-   SvelteKit: http://localhost:5173
 
 ## Building
 
