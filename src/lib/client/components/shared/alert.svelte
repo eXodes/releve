@@ -2,7 +2,7 @@
     import { Color } from "$client/enums/theme";
     import { classNames } from "$client/utils/style";
 
-    import { Transition } from "@rgossiaux/svelte-headlessui";
+    import transition from "svelte-transition-classes";
     import { CheckCircle, Icon, XCircle } from "svelte-hero-icons";
 
     export let show = false;
@@ -29,30 +29,37 @@
     };
 </script>
 
-<Transition
-    show={show}
-    enter="transition ease-out duration-200"
-    enterFrom="transform opacity-0 scale-95"
-    enterTo="transform opacity-100 scale-100"
-    leave="transition ease-in duration-75"
-    leaveFrom="transform opacity-100 scale-100"
-    leaveTo="transform opacity-0 scale-95"
->
-    <div class={classNames("rounded-md p-4", backgroundColor[color])}>
-        <div class="flex">
-            <div class="flex-shrink-0">
-                <Icon
-                    src={icon[color]}
-                    solid
-                    class={classNames("h-5 w-5", iconColor[color])}
-                    aria-hidden="true"
-                />
-            </div>
-            <div class="ml-3">
-                <p class={classNames("text-sm font-medium", textColor[color])}>
-                    <slot />
-                </p>
+{#if show}
+    <div
+        in:transition={{
+            duration: 200,
+            base: "transition ease-out duration-200",
+            from: "transform opacity-0 scale-95",
+            to: "transform opacity-100 scale-100",
+        }}
+        out:transition={{
+            duration: 75,
+            base: "transition ease-in duration-75",
+            from: "transform opacity-100 scale-100",
+            to: "transform opacity-0 scale-95",
+        }}
+    >
+        <div class={classNames("rounded-md p-4", backgroundColor[color])}>
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <Icon
+                        src={icon[color]}
+                        solid
+                        class={classNames("h-5 w-5", iconColor[color])}
+                        aria-hidden="true"
+                    />
+                </div>
+                <div class="ml-3">
+                    <p class={classNames("text-sm font-medium", textColor[color])}>
+                        <slot />
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-</Transition>
+{/if}

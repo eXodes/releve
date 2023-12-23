@@ -2,11 +2,11 @@
     import { enhance } from "$app/forms";
     import { invalidate } from "$app/navigation";
     import { page } from "$app/stores";
-    import { createForm } from "$client/stores/form";
 
     import { handleAuthCatch } from "$features/authentication/errors";
     import { AuthService } from "$features/authentication/services";
     import signInSuite, { type SignInPayload } from "$features/authentication/validations/sign-in";
+    import { createForm } from "$client/stores/form";
     import { Color } from "$client/enums/theme";
     import type { MessageResponse } from "$client/types/response";
 
@@ -187,32 +187,34 @@
         </Tooltip>
     </div>
 
-    <Alert show={$form.isSuccess} color={Color.SUCCESS}>
-        {$form.message}
-    </Alert>
+    <div>
+        <Alert show={$form.isSuccess} color={Color.SUCCESS}>
+            {$form.message}
+        </Alert>
 
-    <Alert show={$form.isError} color={Color.DANGER}>
-        {$form.message}
+        <Alert show={$form.isError} color={Color.DANGER}>
+            {$form.message}
 
-        {#if failedUid}
-            <form
-                action="?/resend-verification"
-                method="POST"
-                use:enhance={handleResendValidation}
-                class="mt-2"
-            >
-                <button
-                    type="submit"
-                    name="uid"
-                    value={failedUid}
-                    class="inline-flex items-center gap-0.5 font-medium text-rose-600 hover:text-rose-500 hover:underline hover:decoration-rose-500 hover:decoration-2 disabled:cursor-not-allowed disabled:text-rose-400 disabled:no-underline"
-                    disabled={disabledResendValidation}
+            {#if failedUid}
+                <form
+                    action="?/resend-verification"
+                    method="POST"
+                    use:enhance={handleResendValidation}
+                    class="mt-2"
                 >
-                    Resend verification email
-                </button>
-            </form>
-        {/if}
-    </Alert>
+                    <button
+                        type="submit"
+                        name="uid"
+                        value={failedUid}
+                        class="inline-flex items-center gap-0.5 font-medium text-rose-600 hover:text-rose-500 hover:underline hover:decoration-rose-500 hover:decoration-2 disabled:cursor-not-allowed disabled:text-rose-400 disabled:no-underline"
+                        disabled={disabledResendValidation}
+                    >
+                        Resend verification email
+                    </button>
+                </form>
+            {/if}
+        </Alert>
+    </div>
 
     <div>
         <Button

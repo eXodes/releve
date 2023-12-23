@@ -11,7 +11,6 @@
 </script>
 
 <script lang="ts">
-    import { Transition } from "@rgossiaux/svelte-headlessui";
     import { Icon, Megaphone, XMark, type IconSource } from "svelte-hero-icons";
 
     interface $$Props {
@@ -27,7 +26,7 @@
     let open = true;
 </script>
 
-<Transition show={open}>
+{#if open}
     <div class="fixed inset-x-0 bottom-0 z-50 pb-2 sm:pb-5">
         <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
             <div class="rounded-lg bg-rose-600 p-2 shadow-lg sm:p-3">
@@ -71,4 +70,4 @@
             </div>
         </div>
     </div>
-</Transition>
+{/if}

@@ -5,10 +5,13 @@
     import SignOutButton from "$features/authentication/components/sign-out-button.svelte";
     import UserMenu from "$features/users/components/user-menu.svelte";
 
-    import { Popover, PopoverButton, PopoverPanel, Transition } from "@rgossiaux/svelte-headlessui";
+    import transition from "svelte-transition-classes";
+    import { createPopover } from "svelte-headlessui";
     import { Icon, Bars3, XMark } from "svelte-hero-icons";
 
     const appName = PUBLIC_APP_NAME;
+
+    const popover = createPopover();
 
     $: navigation = [
         { href: "/my/shops", name: "My Shops", show: $page.data.session.authenticated },
@@ -17,7 +20,7 @@
     ];
 </script>
 
-<Popover as="header" class="my-6">
+<header class="my-6">
     <div class="mx-auto max-w-7xl px-4 sm:px-8">
         <nav class="relative flex items-center justify-between sm:h-10" aria-label="Global">
             <div class="flex flex-1 items-center md:absolute md:inset-y-0 md:left-0">
@@ -41,12 +44,13 @@
                             <slot name="action-mobile" />
                         {/if}
 
-                        <PopoverButton
+                        <button
                             class="inline-flex items-center justify-center rounded-md bg-gray-50 p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-rose-500"
+                            use:popover.button
                         >
                             <span class="sr-only">Open main menu</span>
                             <Icon src={Bars3} class="h-6 w-6" aria-hidden="true" />
-                        </PopoverButton>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -80,17 +84,22 @@
         </nav>
     </div>
 
-    <Transition
-        enter="duration-150 ease-out"
-        enterFrom="opacity-0 scale-95"
-        enterTo="opacity-100 scale-100"
-        leave="duration-100 ease-in"
-        leaveFrom="opacity-100 scale-100"
-        leaveTo="opacity-0 scale-95"
-    >
-        <PopoverPanel
+    {#if $popover.expanded}
+        <div
             class="absolute inset-x-0 top-0 z-10 origin-top-right transform p-2 transition md:hidden"
-            focus
+            in:transition={{
+                duration: 150,
+                base: "ease-out duration-150",
+                from: "opacity-0 scale-95",
+                to: "opacity-100 scale-100",
+            }}
+            out:transition={{
+                duration: 100,
+                base: "ease-in duration-100",
+                from: "opacity-100 scale-100",
+                to: "opacity-0 scale-95",
+            }}
+            use:popover.panel
         >
             <div
                 class="overflow-hidden rounded-lg bg-white shadow-md ring-1 ring-black ring-opacity-5"
@@ -104,12 +113,13 @@
                         />
                     </div>
                     <div class="-mr-2">
-                        <PopoverButton
+                        <button
                             class="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-rose-500"
+                            use:popover.button
                         >
                             <span class="sr-only">Close main menu</span>
                             <Icon src={XMark} class="h-6 w-6" aria-hidden="true" />
-                        </PopoverButton>
+                        </button>
                     </div>
                 </div>
                 <div class="space-y-1 px-2 pb-3 pt-2">
@@ -142,6 +152,6 @@
                     </a>
                 {/if}
             </div>
-        </PopoverPanel>
-    </Transition>
-</Popover>
+        </div>
+    {/if}
+</header>

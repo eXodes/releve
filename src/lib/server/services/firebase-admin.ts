@@ -16,9 +16,11 @@ if (!admin.apps.length) {
 
     app = defaultApp ?? initializeApp();
 
-    getFirestore(app).settings({
-        ignoreUndefinedProperties: true,
-    });
+    if (!defaultApp) {
+        getFirestore(app).settings({
+            ignoreUndefinedProperties: true,
+        });
+    }
 }
 
 export default app;

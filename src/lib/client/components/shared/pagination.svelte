@@ -1,5 +1,6 @@
 <script lang="ts">
     import { page } from "$app/stores";
+
     import type { PaginationMeta } from "$client/types/meta";
     import { classNames } from "$client/utils/style";
 

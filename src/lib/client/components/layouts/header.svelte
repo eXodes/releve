@@ -6,17 +6,13 @@
     import { Color, Size } from "$client/enums/theme";
     import { classNames } from "$client/utils/style";
 
-    import { createEventDispatcher } from "svelte";
-    import {
-        Dialog,
-        TransitionChild,
-        TransitionRoot,
-        DialogOverlay,
-    } from "@rgossiaux/svelte-headlessui";
-    import { Bars3, Icon, PlusSmall, XMark } from "svelte-hero-icons";
-
     import Button from "$client/components/shared/button.svelte";
     import UserMenu from "$features/users/components/user-menu.svelte";
+
+    import { createEventDispatcher } from "svelte";
+    import transition from "svelte-transition-classes";
+    import { createDialog } from "svelte-headlessui";
+    import { Bars3, Icon, PlusSmall, XMark } from "svelte-hero-icons";
 
     const appName = PUBLIC_APP_NAME;
 
@@ -27,18 +23,14 @@
         active: boolean;
     }
 
-    let showMobileNav = false;
-
-    const handleToggleMobileNav = () => {
-        showMobileNav = !showMobileNav;
-    };
-
     const dispatch = createEventDispatcher<{
         addShop: void;
     }>();
 
+    const dialog = createDialog({ label: "Navigation menu" });
+
     const handleNavigate = (href: string) => {
-        showMobileNav = false;
+        dialog.close();
 
         goto(href, { replaceState: true });
     };
@@ -77,7 +69,7 @@
             <div class="flex h-16 items-center justify-between gap-6">
                 <!-- Logo (lg+) -->
                 <div class="hidden lg:flex lg:items-center">
-                    <a href="/" class="inline-flex items-center gap-1">
+                    <a href="/" class="inline-flex items-center gap-1 outline-none">
                         <img class="h-10 w-auto" src="/workflow-mark.svg" alt="{appName} logo" />
                         <span class="sr-only font-semibold text-rose-700 md:not-sr-only">
                             {appName}
@@ -95,8 +87,10 @@
                                     <a
                                         href={item.href}
                                         class={classNames(
-                                            "flex items-center self-center border-b-2 py-2 font-medium text-gray-700 hover:text-gray-800",
-                                            item.active ? "border-rose-600" : "border-transparent"
+                                            "flex items-center self-center border-b-2 py-2 font-medium text-gray-700 outline-none hover:text-gray-800 focus:border-rose-300",
+                                            item.active
+                                                ? "border-rose-600 focus:border-rose-600"
+                                                : "border-transparent"
                                         )}
                                     >
                                         {item.name}
@@ -132,7 +126,7 @@
                         <button
                             type="button"
                             class="-ml-2 rounded-md bg-white p-2 text-gray-400"
-                            on:click={handleToggleMobileNav}
+                            on:click={dialog.open}
                         >
                             <Icon src={Bars3} class="h-6 w-6" aria-hidden="true" />
                             <span class="sr-only">Open menu</span>
@@ -210,41 +204,48 @@
 </header>
 
 <!-- Mobile nav (lg-) -->
-<TransitionRoot show={showMobileNav}>
-    <Dialog
-        as="div"
-        class="fixed inset-0 z-40 flex lg:hidden"
-        open={showMobileNav}
-        on:close={handleToggleMobileNav}
-    >
-        <TransitionChild
-            enter="transition-opacity ease-linear duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="transition-opacity ease-linear duration-300"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
+{#if $dialog.expanded}
+    <div class="fixed inset-0 z-40 flex lg:hidden">
+        <div
+            in:transition={{
+                duration: 300,
+                base: "transition-opacity ease-linear duration-300",
+                from: "opacity-0",
+                to: "opacity-100",
+            }}
+            out:transition={{
+                duration: 300,
+                base: "transition-opacity ease-linear duration-300",
+                from: "opacity-100",
+                to: "opacity-0",
+            }}
         >
-            <DialogOverlay class="fixed inset-0 bg-black bg-opacity-25" />
-        </TransitionChild>
+            <div class="fixed inset-0 bg-black bg-opacity-25" />
+        </div>
 
-        <TransitionChild
-            enter="transition ease-in-out duration-300 transform"
-            enterFrom="-translate-x-full"
-            enterTo="translate-x-0"
-            leave="transition ease-in-out duration-300 transform"
-            leaveFrom="translate-x-0"
-            leaveTo="-translate-x-full"
-            class="w-full"
+        <div
+            in:transition={{
+                duration: 300,
+                base: "transition ease-in-out duration-300 transform",
+                from: "-translate-x-full",
+                to: "translate-x-0",
+            }}
+            out:transition={{
+                duration: 300,
+                base: "transition-opacity ease-linear duration-300",
+                from: "translate-x-0",
+                to: "-translate-x-full",
+            }}
         >
             <div
                 class="relative flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white pb-12 shadow-xl"
+                use:dialog.modal
             >
                 <div class="flex px-4 pb-2 pt-5">
                     <button
                         type="button"
                         class="-m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
-                        on:click={handleToggleMobileNav}
+                        on:click={dialog.close}
                     >
                         <span class="sr-only">Close menu</span>
                         <Icon src={XMark} class="h-6 w-6" aria-hidden="true" />
@@ -280,6 +281,6 @@
                     </div>
                 {/if}
             </div>
-        </TransitionChild>
-    </Dialog>
-</TransitionRoot>
+        </div>
+    </div>
+{/if}
