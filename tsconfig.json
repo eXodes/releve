@@ -16,7 +16,9 @@
             "$server/*": ["./src/lib/server/*"],
             "$client/*": ["./src/lib/client/*"],
             "$module/*": ["./src/lib/server/module/*"],
-            "$features/*": ["./src/lib/client/features/*"]
+            "$features/*": ["./src/lib/client/features/*"],
+            "$routes/*": ["./src/routes/*"],
+            "$tests/*": ["./tests/*"]
         },
         "types": ["vite-plugin-pwa/info", "vite-plugin-pwa/client"]
     },
