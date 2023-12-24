@@ -34,6 +34,7 @@ const verifyAppCheck = async (event: RequestEvent) => {
 
         return response.token;
     } catch (err) {
+        console.error(err);
         return null;
     }
 };
