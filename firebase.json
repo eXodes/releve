@@ -11,7 +11,8 @@
         "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
         "frameworksBackend": {
             "region": "asia-southeast1",
-            "maxInstances": 1
+            "maxInstances": 1,
+            "enforceAppCheck": true
         }
     },
     "remoteconfig": {
