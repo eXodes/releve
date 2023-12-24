@@ -7,8 +7,8 @@ import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 import type { LayoutLoad } from "./$types";
 
-export const load: LayoutLoad = async ({ data, setHeaders }) => {
-    if (env.PUBLIC_RECAPTCHA_SITE_KEY && browser) {
+export const load: LayoutLoad = async ({ data }) => {
+    if (browser && env.PUBLIC_RECAPTCHA_SITE_KEY) {
         initializeAppCheck(app, {
             provider: new ReCaptchaV3Provider(env.PUBLIC_RECAPTCHA_SITE_KEY),
             isTokenAutoRefreshEnabled: true,
