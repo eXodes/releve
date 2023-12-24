@@ -21,6 +21,9 @@ jobs:
       - name: Install node dependencies
         run: npm ci
 
+      - name: Run Sveltekit sync
+        run: npm run sync
+
       - name: Run type-check
         run: npm run check
 
@@ -90,8 +93,8 @@ jobs:
       - name: Install node dependencies
         run: npm ci
 
-      - name: Run prepare
-        run: npm run prepare
+      - name: Run Sveltekit sync
+        run: npm run sync
 
       - name: Make .env file for dynamic env
         uses: SpicyPizza/create-envfile@v2.0
