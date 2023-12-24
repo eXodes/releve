@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { firebaseEmulator } from "$client/config/firebase";
 
 import { env } from "$env/dynamic/public";
 import { PUBLIC_APP_ENV } from "$env/static/public";
@@ -43,7 +44,7 @@ export const handle = sequence(Sentry.sentryHandle(), async ({ event, resolve })
     if (isJSON) {
         const token = await verifyAppCheck(event);
 
-        if (!token) {
+        if (!firebaseEmulator && !token) {
             return new Response(
                 JSON.stringify({
                     message: "App Check token is not valid.",
