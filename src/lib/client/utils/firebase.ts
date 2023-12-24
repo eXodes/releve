@@ -9,10 +9,11 @@ import { connectAuthEmulator, getAuth, inMemoryPersistence, setPersistence } fro
 
 const app = initializeApp(firebaseConfig);
 
-initializeAppCheck(app, {
-    provider: new ReCaptchaV3Provider(env.PUBLIC_RECAPTCHA_SITE_KEY),
-    isTokenAutoRefreshEnabled: true,
-});
+if (!firebaseEmulator)
+    initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider(env.PUBLIC_RECAPTCHA_SITE_KEY),
+        isTokenAutoRefreshEnabled: true,
+    });
 
 const auth = getAuth(app);
 
