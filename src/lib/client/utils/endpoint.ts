@@ -2,6 +2,7 @@ import { dev } from "$app/environment";
 import { deserialize } from "$app/forms";
 
 import type { MetaQuery } from "$client/types/meta";
+import { getAppCheckToken } from "$client/utils/app-check";
 
 import { redirect } from "@sveltejs/kit";
 
@@ -51,11 +52,14 @@ export const endpoint = async <ReturnType = void, DataType = undefined>(
 ): Promise<ReturnType> => {
     const fetcher = options?.fetch ?? fetch;
 
+    const token = await getAppCheckToken();
+
     const response = await fetcher(resource, {
         method: options?.method ?? "GET",
         headers: {
             "Content-Type": "application/json",
             "Accept": "application/json",
+            "X-Firebase-AppCheck": token ?? "",
             ...options?.headers,
         },
         body: options?.data ? JSON.stringify(options?.data) : options?.body,
@@ -76,10 +80,13 @@ export const formEndpoint = async <ReturnType = void>(
 ): Promise<ReturnType> => {
     const fetcher = options?.fetch ?? fetch;
 
+    const token = await getAppCheckToken();
+
     const response = await fetcher(resource, {
         method: options?.method ?? "GET",
         headers: {
-            Accept: "application/json",
+            "Accept": "application/json",
+            "X-Firebase-AppCheck": token ?? "",
             ...options?.headers,
         },
         body: options?.body,
