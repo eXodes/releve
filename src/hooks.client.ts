@@ -3,6 +3,7 @@ import { PUBLIC_APP_ENV } from "$env/static/public";
 
 import * as Sentry from "@sentry/sveltekit";
 import { handleErrorWithSentry, Replay } from "@sentry/sveltekit";
+import type { HandleClientError } from "@sveltejs/kit";
 
 Sentry.init({
     environment: PUBLIC_APP_ENV,
@@ -13,4 +14,4 @@ Sentry.init({
     integrations: [new Replay()],
 });
 
-export const handleError = handleErrorWithSentry();
+export const handleError = handleErrorWithSentry() satisfies HandleClientError;
