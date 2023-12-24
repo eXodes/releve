@@ -9,11 +9,7 @@ export const getISODatetime = (value: string | Date) => {
 export const getFullDatetime = (value: string | Date) => {
     const date = value instanceof Date ? value : new Date(value);
 
-    return format(date, "yyyy-MM-dd HH:mm:ss", {
-        locale: {
-            code: navigator.language,
-        },
-    });
+    return format(date, "yyyy-MM-dd HH:mm:ss");
 };
 
 export const getLocaleDatetime = (value: string | Date) => {

@@ -2,7 +2,7 @@
     import { notification } from "$client/stores/notification";
     import { classNames } from "$client/utils/style";
 
-    import { Transition } from "@rgossiaux/svelte-headlessui";
+    import transition from "svelte-transition-classes";
     import { CheckCircle, Icon, XMark, XCircle } from "svelte-hero-icons";
 
     const icon = {
@@ -21,20 +21,23 @@
     class="pointer-events-none fixed inset-0 z-50 flex items-end px-4 py-6 sm:items-start sm:p-6"
 >
     <div class="flex w-full flex-col items-center space-y-4 sm:items-end">
-        <!-- {/* Notification panel, dynamically insert this into the live region when it needs to be displayed */} -->
-        {#each $notification as item (item.id)}
-            <Transition
-                show={!!item.id}
-                class="flex w-full justify-end"
-                enter="transform ease-out duration-300 transition"
-                enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
-                enterTo="translate-y-0 opacity-100 sm:translate-x-0"
-                leave="transition ease-in duration-500"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-            >
+        {#if $notification.length}
+            <!-- {/* Notification panel, dynamically insert this into the live region when it needs to be displayed */} -->
+            {#each $notification as item (item.id)}
                 <div
-                    class="pointer-events-auto w-full overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 sm:max-w-sm"
+                    class="pointer-events-auto flex w-full flex-col justify-end overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 sm:max-w-sm"
+                    in:transition={{
+                        duration: 300,
+                        base: "transition transform ease-out duration-300",
+                        from: "translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2",
+                        to: "translate-y-0 opacity-100 sm:translate-x-0",
+                    }}
+                    out:transition={{
+                        duration: 500,
+                        base: "transition transform ease-in duration-500",
+                        from: "opacity-100",
+                        to: "opacity-0",
+                    }}
                 >
                     <div class="p-4">
                         <div class="flex items-start">
@@ -49,7 +52,9 @@
                             {/if}
                             <div class="ml-3 w-0 flex-1 pt-0.5">
                                 {#if item.title}
-                                    <p class="text-sm font-medium text-gray-900">{item.title}</p>
+                                    <p class="text-sm font-medium text-gray-900">
+                                        {item.title}
+                                    </p>
                                 {/if}
 
                                 <p
@@ -73,7 +78,7 @@
                         </div>
                     </div>
                 </div>
-            </Transition>
-        {/each}
+            {/each}
+        {/if}
     </div>
 </div>

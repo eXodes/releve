@@ -6,14 +6,34 @@ This is a project that uses SvelteKit as the frontend framework and Firebase as 
 
 ## Developing
 
-Once you've cloned the project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Once you've cloned the project and installed dependencies with `npm install` (or `pnpm install` or `yarn`).
+
+Start the Firebase services emulator:
+
+```bash
+npm run firebase:emu:backend
+```
+
+Then seed the database:
+
+```bash
+# required for primary seed data
+npm run firebase:seed
+
+# or seed the database with fake data
+npm run firebase:seed:faker
+```
+
+Finally, start the SvelteKit dev server:
 
 ```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
+
+#### URLs
+
+-   Firebase Emulator UI: http://localhost:4000
+-   SvelteKit: http://localhost:5173
 
 ## Building
 

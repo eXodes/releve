@@ -8,7 +8,7 @@
     import PasswordForm from "$features/users/components/password-form.svelte";
     import UserForm from "$features/users/components/user-form.svelte";
 
-    import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@rgossiaux/svelte-headlessui";
+    import { createTabs } from "svelte-headlessui";
     import { Icon, Key, UserCircle } from "svelte-hero-icons";
 
     import type { PageData } from "./$types";
@@ -22,7 +22,10 @@
         { name: "Password", href: "#password", icon: Key },
     ];
 
-    let defaultTabIndex = sideNavigation.findIndex((item) => item.href === hash);
+    const defaultSelectedTab = sideNavigation.find((item) => item.href === hash)?.name ?? "Account";
+
+    const tabs = createTabs({ selected: defaultSelectedTab, orientation: "vertical" });
+    const keys = sideNavigation.map((item) => item.name);
 </script>
 
 <svelte:head>
@@ -30,29 +33,26 @@
 </svelte:head>
 
 <Container>
-    <TabGroup vertical defaultIndex={defaultTabIndex} class="lg:grid lg:grid-cols-12 lg:gap-x-5">
-        <TabList
-            as="aside"
-            class="px-2 py-6 sm:px-6 lg:col-span-3 lg:px-0 lg:py-0"
-            let:selectedIndex
-        >
-            <nav class="space-y-1">
-                {#each sideNavigation as item, itemIdx (item.name)}
-                    <Tab
-                        as="a"
+    <div class="lg:grid lg:grid-cols-12 lg:gap-x-5">
+        <aside class="px-2 py-6 sm:px-6 lg:col-span-3 lg:px-0 lg:py-0">
+            <nav class="space-y-1" use:tabs.list>
+                {#each sideNavigation as item (item.name)}
+                    {@const selected = $tabs.selected === item.name}
+
+                    <a
                         href={item.href}
                         class={classNames(
-                            selectedIndex === itemIdx
+                            selected
                                 ? "bg-rose-50 text-rose-700 hover:bg-rose-50/50 hover:text-rose-700"
                                 : "text-gray-900 hover:bg-gray-50 hover:text-gray-900",
-                            "group flex items-center rounded-md px-3 py-2 text-sm font-medium"
+                            "group flex items-center rounded-md px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
                         )}
-                        aria-current={selectedIndex === itemIdx ? "page" : undefined}
+                        use:tabs.tab={{ value: item.name }}
                     >
                         <Icon
                             src={item.icon}
                             class={classNames(
-                                selectedIndex === itemIdx
+                                selected
                                     ? "text-rose-500 group-hover:text-rose-500"
                                     : "text-gray-400 group-hover:text-gray-500",
                                 "-ml-1 mr-3 h-6 w-6 flex-shrink-0"
@@ -60,23 +60,32 @@
                             aria-hidden="true"
                         />
                         <span class="truncate">{item.name}</span>
-                    </Tab>
+                    </a>
                 {/each}
             </nav>
-        </TabList>
+        </aside>
 
-        <TabPanels class="mb-12 sm:px-6 lg:col-span-9 lg:px-0">
-            <TabPanel>
-                <UserForm
-                    actionType="settings"
-                    userData={data.user}
-                    on:submit={() => invalidate("settings")}
-                />
-            </TabPanel>
+        <div class="mb-12 sm:px-6 lg:col-span-9 lg:px-0">
+            {#each keys as key}
+                {@const selected = $tabs.selected === key}
 
-            <TabPanel>
-                <PasswordForm on:submit={() => invalidate("settings")} />
-            </TabPanel>
-        </TabPanels>
-    </TabGroup>
+                <div
+                    class={classNames("rounded outline-none", !selected && "hidden")}
+                    use:tabs.panel
+                >
+                    {#if $tabs.selected === "Account"}
+                        <UserForm
+                            actionType="settings"
+                            userData={data.user}
+                            on:submit={() => invalidate("settings")}
+                        />
+                    {/if}
+
+                    {#if $tabs.selected === "Password"}
+                        <PasswordForm on:submit={() => invalidate("settings")} />
+                    {/if}
+                </div>
+            {/each}
+        </div>
+    </div>
 </Container>

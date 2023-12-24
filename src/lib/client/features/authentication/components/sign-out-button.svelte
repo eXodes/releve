@@ -8,8 +8,10 @@
 
     import type { SubmitFunction } from "@sveltejs/kit";
     import { createEventDispatcher } from "svelte";
+    import type { Action } from "svelte/action";
 
     export { classes as class };
+    export let action: Action = () => void {};
 
     let classes = "";
 
@@ -48,5 +50,5 @@
 </script>
 
 <form action="/sign-out" method="post" use:enhance={handleSubmit}>
-    <button type="submit" class={classes}>Sign Out</button>
+    <button type="submit" class={classes} use:action>Sign Out</button>
 </form>

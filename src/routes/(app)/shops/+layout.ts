@@ -8,6 +8,6 @@ export const load: LayoutLoad = async ({ parent }) => {
     const isAdmin = session.user?.customClaims.isAdmin;
 
     if (!isAdmin) {
-        throw redirect(303, "/");
+        redirect(303, "/");
     }
 };

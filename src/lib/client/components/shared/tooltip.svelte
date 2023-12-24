@@ -1,6 +1,15 @@
 <script lang="ts">
-    import { Popover, PopoverButton, PopoverPanel, Transition } from "@rgossiaux/svelte-headlessui";
+    import { classNames } from "$client/utils/style";
+
+    import { createPopover } from "svelte-headlessui";
+    import transition from "svelte-transition-classes";
     import { createPopperActions } from "svelte-popperjs";
+
+    type Variant = "default" | "error";
+
+    export let variant: Variant = "default";
+
+    const popover = createPopover();
 
     const [popperRef, popperContent] = createPopperActions({
         placement: "top",
@@ -19,37 +28,75 @@
             },
         ],
     });
+
+    const buttonClass = {
+        default: "focus:ring-gray-500",
+        error: "focus:ring-red-500",
+    }[variant];
+
+    const backgroundClass = {
+        default: "bg-stone-700 shadow-gray-500/20",
+        error: "bg-red-100 shadow-red-500/20",
+    }[variant];
+
+    const contentClass = {
+        default: "text-white",
+        error: "text-red-700",
+    }[variant];
+
+    const arrowClass = {
+        default: "border-t-stone-700",
+        error: "border-t-red-100",
+    }[variant];
 </script>
 
-<Popover class="relative">
-    <PopoverButton
-        class="flex items-center rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500"
-        use={[popperRef]}
+<div class="relative" use:popperRef>
+    <button
+        class={classNames(
+            "flex items-center rounded-full focus:outline-none focus:ring-2",
+            buttonClass
+        )}
+        use:popover.button
     >
         <slot name="button" />
-    </PopoverButton>
+    </button>
 
-    <Transition
-        class="absolute bottom-8 left-1/2 z-10 inline-table w-full max-w-7xl origin-bottom -translate-x-1/2 "
-        enter="transition duration-100 ease-out"
-        enterFrom="transform scale-95 opacity-0"
-        enterTo="transform scale-100 opacity-100"
-        leave="transition duration-75 ease-out"
-        leaveFrom="transform scale-100 opacity-100"
-        leaveTo="transform scale-95 opacity-0"
-    >
-        <PopoverPanel
-            class="rounded bg-stone-700 px-2.5 py-1.5 shadow-md shadow-gray-500/20"
-            use={[popperContent]}
+    {#if $popover.expanded}
+        <div
+            in:transition={{
+                duration: 100,
+                base: "transition duration-100 ease-out",
+                from: "transform scale-95 opacity-0",
+                to: "transform scale-100 opacity-100",
+            }}
+            out:transition={{
+                duration: 75,
+                base: "transition duration-75 ease-out",
+                from: "transform scale-100 opacity-100",
+                to: "transform scale-95 opacity-0",
+            }}
         >
-            <p class="min-w-[12rem] text-center text-xs text-white">
-                <slot name="content" />
-            </p>
-        </PopoverPanel>
+            <div
+                class="absolute bottom-8 left-1/2 z-10 inline-table w-full max-w-7xl origin-bottom -translate-x-1/2"
+                use:popperContent
+            >
+                <div
+                    class={classNames("rounded px-2.5 py-1.5 shadow-md", backgroundClass)}
+                    use:popover.panel
+                >
+                    <p class={classNames("min-w-[12rem] text-center text-xs", contentClass)}>
+                        <slot name="content" />
+                    </p>
+                </div>
 
-        <span
-            class="absolute -bottom-2 left-1/2 z-10 -translate-x-1/2 border-x-8 border-t-8 border-x-transparent border-t-stone-700 drop-shadow-sm"
-            data-popper-arrow
-        />
-    </Transition>
-</Popover>
+                <span
+                    class={classNames(
+                        "absolute -bottom-2 left-1/2 z-10 -translate-x-1/2 border-x-8 border-t-8 border-x-transparent drop-shadow-sm",
+                        arrowClass
+                    )}
+                    data-popper-arrow
+                />
+            </div>
+        </div>
+    {/if}
+</div>

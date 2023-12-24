@@ -3,12 +3,11 @@
     import { classNames } from "$client/utils/style";
 
     import Hint from "$client/components/shared/hint-text.svelte";
+    import Tooltip from "$client/components/shared/tooltip.svelte";
 
-    import { Popover, PopoverButton, PopoverPanel, Transition } from "@rgossiaux/svelte-headlessui";
     import { createEventDispatcher } from "svelte";
     import type { HTMLInputAttributes } from "svelte/elements";
     import { ExclamationCircle, Icon } from "svelte-hero-icons";
-    import { createPopperActions } from "svelte-popperjs";
 
     interface $$Props extends HTMLInputAttributes {
         type?: string;
@@ -34,24 +33,6 @@
     export { classes as class };
 
     let classes = "";
-
-    const [popperRef, popperContent] = createPopperActions({
-        placement: "top",
-        modifiers: [
-            {
-                name: "offset",
-                options: {
-                    offset: [0, 12],
-                },
-            },
-            {
-                name: "preventOverflow",
-                options: {
-                    padding: 8,
-                },
-            },
-        ],
-    });
 
     const dispatch = createEventDispatcher<{
         input: {
@@ -120,47 +101,21 @@
     {/if}
 
     {#if errors?.length}
-        <div
-            class={classNames(
-                "absolute inset-y-0 right-0 z-10 flex items-center pr-3",
-                !errors?.length && "invisible"
-            )}
-        >
-            <Popover class="relative">
-                <PopoverButton
-                    class="flex items-center rounded-full focus:outline-none focus:ring-2 focus:ring-rose-500"
-                    use={[popperRef]}
-                >
+        <div class="absolute inset-y-0 right-0 z-10 flex items-center pr-3">
+            <Tooltip variant="error">
+                <svelte:fragment slot="button">
+                    <span class="sr-only">Show validation error</span>
                     <Icon
                         src={ExclamationCircle}
                         solid
                         class="h-5 w-5 text-red-500 hover:text-red-600"
                     />
-                    <span class="sr-only">Show validation error</span>
-                </PopoverButton>
+                </svelte:fragment>
 
-                <Transition
-                    class="absolute bottom-8 left-1/2 z-10 inline-table w-full max-w-7xl origin-bottom -translate-x-1/2 "
-                    enter="transition duration-100 ease-out"
-                    enterFrom="transform scale-95 opacity-0"
-                    enterTo="transform scale-100 opacity-100"
-                    leave="transition duration-75 ease-out"
-                    leaveFrom="transform scale-100 opacity-100"
-                    leaveTo="transform scale-95 opacity-0"
-                >
-                    <PopoverPanel
-                        class="rounded bg-red-100 px-2.5 py-1.5 shadow-md shadow-red-500/20"
-                        use={[popperContent]}
-                    >
-                        <p class="min-w-[12rem] text-center text-xs text-red-700">{errors[0]}</p>
-                    </PopoverPanel>
-
-                    <span
-                        class="absolute left-1/2 z-10 -translate-x-1/2 border-x-8 border-t-8 border-x-transparent border-t-red-100 drop-shadow-sm"
-                        data-popper-arrow
-                    />
-                </Transition>
-            </Popover>
+                <svelte:fragment slot="content">
+                    {errors[0]}
+                </svelte:fragment>
+            </Tooltip>
         </div>
     {/if}
 </div>

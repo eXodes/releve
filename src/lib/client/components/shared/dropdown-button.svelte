@@ -18,21 +18,18 @@
 <script lang="ts">
     import { classNames } from "$client/utils/style";
 
-    import {
-        Menu,
-        MenuButton,
-        MenuItem,
-        MenuItems,
-        Transition,
-    } from "@rgossiaux/svelte-headlessui";
+    import transition from "svelte-transition-classes";
+    import { createMenu } from "svelte-headlessui";
     import { ChevronDown, Icon } from "svelte-hero-icons";
 
     export let buttons: DropdownButtonsProps;
 
     const [firstButton, ...otherButtons] = buttons;
+
+    const menu = createMenu({ label: "Open options" });
 </script>
 
-<span class="relative inline-flex rounded-md shadow-sm">
+<div class="relative inline-flex rounded-md shadow-sm">
     {#if firstButton.href}
         <a
             href={firstButton.href}
@@ -51,28 +48,37 @@
             {firstButton.label}
         </button>
     {/if}
-    <Menu as="span" class="relative -ml-px block">
-        <MenuButton
+    <div class="relative -ml-px block">
+        <button
             class="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-10 focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500"
+            use:menu.button
         >
-            <span class="sr-only">Open options</span>
             <Icon src={ChevronDown} class="h-5 w-5" aria-hidden="true" />
-        </MenuButton>
-        <Transition
-            class="relative z-10"
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
-        >
-            <MenuItems
-                class="absolute right-0 -mr-1 mt-2 w-32 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+        </button>
+
+        {#if $menu.expanded}
+            <div
+                class="relative z-10"
+                in:transition={{
+                    duration: 100,
+                    base: "transition ease-out duration-100",
+                    from: "transform opacity-0 scale-95",
+                    to: "transform opacity-100 scale-100",
+                }}
+                out:transition={{
+                    duration: 75,
+                    base: "transition ease-in duration-75",
+                    from: "transform opacity-100 scale-100",
+                    to: "transform opacity-0 scale-95",
+                }}
             >
-                <div class="py-1">
-                    {#each otherButtons as item, itemIdx (item.label)}
-                        <MenuItem let:active>
+                <ul
+                    class="absolute right-0 -mr-1 mt-2 w-32 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    use:menu.items
+                >
+                    {#each otherButtons as item (item.label)}
+                        {@const active = $menu.active === item.label}
+                        <li use:menu.item>
                             {#if item.href}
                                 <a
                                     href={item.href}
@@ -99,10 +105,10 @@
                                     {item.label}
                                 </button>
                             {/if}
-                        </MenuItem>
+                        </li>
                     {/each}
-                </div>
-            </MenuItems>
-        </Transition>
-    </Menu>
-</span>
+                </ul>
+            </div>
+        {/if}
+    </div>
+</div>

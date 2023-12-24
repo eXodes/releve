@@ -97,7 +97,7 @@
             return URL.createObjectURL($form.data.userPhoto);
         }
 
-        return $form.data.userPhoto;
+        return $form.data.userPhoto ?? userData.avatar.medium.url;
     })();
 
     $: (() => {
