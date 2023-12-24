@@ -61,6 +61,11 @@ export const handleAuthCatch = (
                 return {
                     message: "The action code has expired. Please request a new one.",
                 };
+            // Not available in the current Firebase SDK
+            case "auth/firebase-app-check-token-is-invalid.":
+                return {
+                    message: "The provided Firebase App Check token is invalid.",
+                };
             default:
                 return {
                     message: "An unknown Firebase error occurred.",
