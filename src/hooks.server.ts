@@ -26,6 +26,8 @@ Sentry.init({
 const handleAppCheck = async (event: RequestEvent) => {
     const appCheckToken = event.request.headers.get("X-Firebase-AppCheck");
 
+    console.info("X-Firebase-AppCheck", appCheckToken);
+
     if (!appCheckToken) {
         return new Response(
             JSON.stringify({
