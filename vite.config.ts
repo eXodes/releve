@@ -21,7 +21,9 @@ const config = defineConfig(({ mode }) => {
                 autoUploadSourceMaps: env.SENTRY_RELEASE !== undefined,
             }),
             sveltekit(),
-            SvelteKitPWA(),
+            SvelteKitPWA({
+                registerType: "autoUpdate",
+            }),
         ],
     };
 });
