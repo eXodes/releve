@@ -4,7 +4,7 @@ import { firebaseEmulator } from "$client/config/firebase";
 import { env } from "$env/dynamic/public";
 import { PUBLIC_APP_ENV } from "$env/static/public";
 
-import "$server/services/firebase-admin";
+import app from "$server/services/firebase-admin";
 import { getCookieValue, SESSION_COOKIE } from "$server/utils/cookie";
 import { AuthService } from "$module/auth/auth.service";
 
@@ -30,7 +30,7 @@ const verifyAppCheck = async (event: RequestEvent) => {
     }
 
     try {
-        const response = await getAppCheck().verifyToken(appCheckToken);
+        const response = await getAppCheck(app).verifyToken(appCheckToken);
 
         return response.token;
     } catch (err) {
