@@ -7,11 +7,13 @@
     import { Icon, XMark } from "svelte-hero-icons";
 
     interface $$Props {
+        title: string;
         open?: boolean;
         padding?: boolean;
         static?: boolean;
     }
 
+    export let title: string;
     export let open = false;
     export let padding = false;
 
@@ -21,7 +23,7 @@
         close: false;
     }>();
 
-    const dialog = createDialog();
+    const dialog = createDialog({ label: title });
 
     const handleClose = () => {
         dialog.close();

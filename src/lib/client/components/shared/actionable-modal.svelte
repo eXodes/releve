@@ -25,7 +25,7 @@
         cancel: void;
     }>();
 
-    const dialog = createDialog();
+    const dialog = createDialog({ label: title });
 
     const { form, reset, enhanceHandler } = createForm();
 
