@@ -226,6 +226,8 @@ export class AdminLayoutPage {
     }
 
     async saveNewShopForm() {
+        await this.modalAddShopEl.waitFor();
+
         await expect(this.modalAddShopButtonSaveEl).toBeEnabled();
         await this.modalAddShopButtonSaveEl.click();
 
