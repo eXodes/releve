@@ -17,15 +17,17 @@ test("should be able to navigate to Users Management", async ({ adminLayoutPage 
 });
 
 test("should be able to view settings", async ({ adminLayoutPage }) => {
-    await adminLayoutPage.viewSettings();
+    await adminLayoutPage.viewUserSettings();
 });
 
 test("should be able to close new shop modal", async ({ adminLayoutPage }) => {
-    await adminLayoutPage.cancelAddNewShop();
+    await adminLayoutPage.openNewShopModal();
+    await adminLayoutPage.closeNewShopModal();
 });
 
 test("should be able to add new shop", async ({ adminLayoutPage }) => {
-    await adminLayoutPage.addNewShop({
+    await adminLayoutPage.openNewShopModal();
+    await adminLayoutPage.fillNewShopForm({
         name: "Shop 1",
         link: "shop.one",
         categories: ["Apparel", "Automotive"],
@@ -38,4 +40,9 @@ test("should be able to add new shop", async ({ adminLayoutPage }) => {
         status: "Approved",
         private: false,
     });
+    await adminLayoutPage.saveNewShopForm();
+});
+
+test("should be able to add new shop", async ({ adminLayoutPage }) => {
+    await adminLayoutPage.signOut();
 });

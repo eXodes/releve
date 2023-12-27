@@ -11,6 +11,7 @@ export class AdminLayoutPage {
     private readonly buttonUserMenuEl: Locator;
     private readonly menuSettingsEl: Locator;
     private readonly menuSignOutEl: Locator;
+    private readonly toastSignOutSuccessEl: Locator;
 
     private readonly buttonAddShopModalEl: Locator;
     private readonly modalAddShopEl: Locator;
@@ -29,7 +30,7 @@ export class AdminLayoutPage {
     private readonly modalAddShopInputPostcodeEl: Locator;
     private readonly modalAddShopInputPrivateEl: Locator;
     private readonly modalAddShopButtonSaveEl: Locator;
-    private readonly toastSuccessSaveEl: Locator;
+    private readonly toastAddShopSuccessEl: Locator;
 
     constructor(public readonly page: Page) {
         this.navHomeEl = page.getByRole("link", { name: /Home/ });
@@ -40,6 +41,7 @@ export class AdminLayoutPage {
         this.buttonUserMenuEl = page.getByRole("button", { name: /Open user menu/ });
         this.menuSettingsEl = page.getByRole("menuitem", { name: /Settings/ });
         this.menuSignOutEl = page.getByRole("menuitem", { name: /Sign Out/ });
+        this.toastSignOutSuccessEl = page.getByText(/Successfully logged out./);
 
         this.buttonAddShopModalEl = page.getByRole("button", { name: /Add shop/ });
         this.modalAddShopEl = page.getByRole("dialog", { name: /New Shop Form Modal/ });
@@ -81,7 +83,7 @@ export class AdminLayoutPage {
             name: /Make it private/,
         });
         this.modalAddShopButtonSaveEl = this.modalAddShopEl.getByRole("button", { name: /Save/ });
-        this.toastSuccessSaveEl = page.getByText(/Shop added successfully./);
+        this.toastAddShopSuccessEl = page.getByText(/Shop added successfully./);
     }
 
     async navigateToHome() {
@@ -112,7 +114,7 @@ export class AdminLayoutPage {
         await this.page.waitForURL("/users");
     }
 
-    async viewSettings() {
+    async viewUserSettings() {
         await this.buttonUserMenuEl.waitFor();
         await this.buttonUserMenuEl.click();
 
@@ -128,27 +130,12 @@ export class AdminLayoutPage {
 
         await this.menuSignOutEl.waitFor();
         await this.menuSignOutEl.click();
+
+        await this.toastSignOutSuccessEl.waitFor();
+        await expect(this.toastSignOutSuccessEl).toBeVisible();
     }
 
-    async cancelAddNewShop() {
-        await this.buttonAddShopModalEl.waitFor();
-        await this.buttonAddShopModalEl.click();
-
-        await this.modalAddShopEl.waitFor();
-        await expect(this.modalAddShopEl).toBeVisible();
-
-        await this.modalAddShopButtonCloseEl.waitFor();
-        await this.modalAddShopButtonCloseEl.click();
-
-        await expect(this.modalAddShopHeadingEl).not.toBeVisible();
-    }
-
-    async addNewShop(
-        shop: Omit<ShopPayload, "status" | "role" | "private"> & {
-            status: string;
-            private: boolean;
-        }
-    ) {
+    async openNewShopModal() {
         await this.buttonAddShopModalEl.waitFor();
         await this.buttonAddShopModalEl.click();
 
@@ -163,13 +150,30 @@ export class AdminLayoutPage {
 
         await this.modalAddShopButtonSaveEl.waitFor();
         await expect(this.modalAddShopButtonSaveEl).not.toBeEnabled();
+    }
 
+    async closeNewShopModal() {
+        await this.modalAddShopButtonCloseEl.waitFor();
+        await this.modalAddShopButtonCloseEl.click();
+
+        await expect(this.modalAddShopHeadingEl).not.toBeVisible();
+    }
+
+    async fillNewShopForm(
+        shop: Omit<ShopPayload, "status" | "role" | "private"> & {
+            status: string;
+            private: boolean;
+        }
+    ) {
         await this.modalAddShopInputNameEl.waitFor();
         await this.modalAddShopInputNameEl.fill(shop.name);
 
         await this.modalAddShopDropdownStatusEl.waitFor();
-        await this.modalAddShopDropdownStatusEl.click();
-        await this.modalAddShopEl.getByRole("option", { name: shop.status }).click();
+        await this.modalAddShopDropdownStatusEl.click().then(async () => {
+            await this.modalAddShopEl
+                .getByRole("option", { name: shop.status, exact: true })
+                .click();
+        });
 
         await this.modalAddShopInputLinkEl.waitFor();
         await this.modalAddShopInputLinkEl.fill(shop.link);
@@ -177,25 +181,27 @@ export class AdminLayoutPage {
         await this.modalAddShopDropdownCategoriesEl.waitFor();
         await this.modalAddShopDropdownCategoriesEl.click().then(async () => {
             for (const category of shop.categories) {
-                await this.modalAddShopEl.getByRole("option", { name: category }).waitFor();
-                await this.modalAddShopEl.getByRole("option", { name: category }).click();
+                await this.modalAddShopEl
+                    .getByRole("option", { name: category, exact: true })
+                    .click();
             }
         });
 
         await this.modalAddShopDropdownDeliveryServicesEl.waitFor();
         await this.modalAddShopDropdownDeliveryServicesEl.click().then(async () => {
             for (const deliveryProvider of shop.deliveryProviders) {
-                await this.modalAddShopEl.getByRole("option", { name: deliveryProvider }).waitFor();
-                await this.modalAddShopEl.getByRole("option", { name: deliveryProvider }).click();
+                await this.modalAddShopEl
+                    .getByRole("option", { name: deliveryProvider, exact: true })
+                    .click();
             }
         });
 
         await this.modalAddShopDropdownCountryEl.waitFor();
-        await this.modalAddShopDropdownCountryEl.click();
-        await this.modalAddShopEl
-            .getByRole("option", { name: shop.country, exact: true })
-            .waitFor();
-        await this.modalAddShopEl.getByRole("option", { name: shop.country, exact: true }).click();
+        await this.modalAddShopDropdownCountryEl.click().then(async () => {
+            await this.modalAddShopEl
+                .getByRole("option", { name: shop.country, exact: true })
+                .click();
+        });
 
         await this.modalAddShopInputStreetAddressEl.waitFor();
         await this.modalAddShopInputStreetAddressEl.fill(shop.streetAddress);
@@ -204,9 +210,11 @@ export class AdminLayoutPage {
         await this.modalAddShopInputCityEl.fill(shop.city);
 
         await this.modalAddShopDropdownStateEl.waitFor();
-        await this.modalAddShopDropdownStateEl.click();
-        await this.modalAddShopEl.getByRole("option", { name: shop.state }).waitFor();
-        await this.modalAddShopEl.getByRole("option", { name: shop.state }).click();
+        await this.modalAddShopDropdownStateEl.click().then(async () => {
+            await this.modalAddShopEl
+                .getByRole("option", { name: shop.state, exact: true })
+                .click();
+        });
 
         await this.modalAddShopInputPostcodeEl.waitFor();
         await this.modalAddShopInputPostcodeEl.fill(shop.postalCode);
@@ -215,13 +223,15 @@ export class AdminLayoutPage {
             await this.modalAddShopInputPrivateEl.waitFor();
             await this.modalAddShopInputPrivateEl.check();
         }
+    }
 
+    async saveNewShopForm() {
         await expect(this.modalAddShopButtonSaveEl).toBeEnabled();
         await this.modalAddShopButtonSaveEl.click();
 
         await expect(this.modalAddShopEl).not.toBeVisible();
 
-        await this.toastSuccessSaveEl.waitFor();
-        await expect(this.toastSuccessSaveEl).toBeVisible();
+        await this.toastAddShopSuccessEl.waitFor();
+        await expect(this.toastAddShopSuccessEl).toBeVisible();
     }
 }
