@@ -56,7 +56,7 @@
         const target = e.target as HTMLInputElement;
         selectedShops = target.checked
             ? [...selectedShops, shop]
-            : selectedShops.filter((p) => p !== shop);
+            : selectedShops.filter((selectedShop) => selectedShop !== shop);
     };
 
     const handleUpdate = () => {
