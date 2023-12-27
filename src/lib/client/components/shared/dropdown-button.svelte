@@ -1,21 +1,27 @@
 <script context="module" lang="ts">
-    interface ButtonProps {
+    interface BaseProps {
         label: string;
-        href?: undefined;
-        onClick: () => void;
+        href?: string;
+        onClick?: () => void;
         disabled?: boolean;
     }
 
-    interface LinkProps {
+    interface ButtonProps extends BaseProps {
+        label: string;
+        onClick: () => void;
+    }
+
+    interface LinkProps extends BaseProps {
         label: string;
         href: string;
-        onClick?: undefined;
     }
 
     export type DropdownButtonsProps = (ButtonProps | LinkProps)[];
 </script>
 
 <script lang="ts">
+    import { goto } from "$app/navigation";
+
     import { classNames } from "$client/utils/style";
 
     import transition from "svelte-transition-classes";
@@ -27,6 +33,19 @@
     const [firstButton, ...otherButtons] = buttons;
 
     const menu = createMenu({ label: "Open options" });
+
+    const handleSelect = (e: Event) => {
+        const detail = (e as CustomEvent<{ selected: string }>).detail;
+
+        const selected = otherButtons.find((item) => item.label === detail.selected);
+
+        if (selected)
+            if (selected.href) {
+                goto(selected.href);
+            } else if (selected.onClick && !selected.disabled) {
+                selected.onClick();
+            }
+    };
 </script>
 
 <div class="relative inline-flex rounded-md shadow-sm">
@@ -52,6 +71,7 @@
         <button
             class="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-10 focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500"
             use:menu.button
+            on:select={handleSelect}
         >
             <Icon src={ChevronDown} class="h-5 w-5" aria-hidden="true" />
         </button>
@@ -90,6 +110,7 @@
                                     {item.label}
                                 </a>
                             {/if}
+
                             {#if item.onClick}
                                 <button
                                     class={classNames(
@@ -99,7 +120,6 @@
                                         "block w-full px-4 py-2 text-left text-sm text-gray-400",
                                         item.disabled && "cursor-not-allowed"
                                     )}
-                                    on:click={item.onClick}
                                     disabled={item.disabled}
                                 >
                                     {item.label}

@@ -52,6 +52,11 @@
 
     const listbox = createListbox({
         label,
+        selected: multiple
+            ? options.filter((option) => defaultValue?.includes(option.value))
+            : options.find((option) => {
+                  return option.value === defaultValue;
+              }),
     });
 
     const handleInput = (event: Event) => {
