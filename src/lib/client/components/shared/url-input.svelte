@@ -94,7 +94,7 @@
     {/if}
 
     {#if errors?.length}
-        <div class="absolute inset-y-0 right-0 z-10 flex items-center pr-3">
+        <div class="absolute inset-y-0 right-0 z-[1] flex items-center pr-3">
             <Tooltip variant="error">
                 <svelte:fragment slot="button">
                     <span class="sr-only">Show validation error</span>
