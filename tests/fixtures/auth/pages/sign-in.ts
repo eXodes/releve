@@ -148,4 +148,13 @@ export class SignInPage {
 
         await this.submitSuccess();
     }
+
+    async signInAsUser() {
+        await this.fillForm({
+            email: "normal-user@test.io",
+            password: "t3st-Password",
+        });
+
+        await this.submitSuccess();
+    }
 }
