@@ -35,7 +35,7 @@
         dispatch("cancel");
     };
 
-    $: open && dialog.open();
+    $: open ? dialog.open() : dialog.close();
 
     onMount(() => {
         reset();

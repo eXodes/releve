@@ -29,7 +29,7 @@
         dispatch("close", (open = false));
     };
 
-    $: open && dialog.open();
+    $: open ? dialog.open() : dialog.close();
 </script>
 
 {#if $dialog.expanded}
@@ -63,7 +63,7 @@
 
             <div
                 class={classNames(
-                    "relative mt-20 inline-block w-full transform overflow-hidden rounded-t-lg bg-white text-left align-middle shadow-xl transition-all sm:max-h-[80vh] sm:w-full sm:max-w-3xl md:mt-auto md:rounded-lg xl:max-w-5xl",
+                    "relative mt-20 inline-block w-full transform overflow-y-auto rounded-t-lg bg-white text-left align-middle shadow-xl transition-all sm:max-h-[80vh] sm:w-full sm:max-w-3xl md:mt-auto md:rounded-lg xl:max-w-5xl",
                     padding && "px-4 pb-4 pt-5 sm:p-6"
                 )}
                 in:transition={{
