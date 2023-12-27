@@ -48,7 +48,7 @@ export const handle = sequence(Sentry.sentryHandle(), async ({ event, resolve })
         if (!firebaseEmulator && !token) {
             return new Response(
                 JSON.stringify({
-                    message: "App Check token is not valid.",
+                    error: "App Check token is not valid.",
                 }),
                 {
                     status: 403,
