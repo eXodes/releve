@@ -226,14 +226,12 @@ export class AdminLayoutPage {
     }
 
     async saveNewShopForm() {
-        await this.modalAddShopEl.waitFor();
-
         await expect(this.modalAddShopButtonSaveEl).toBeEnabled();
         await this.modalAddShopButtonSaveEl.click();
 
-        await expect(this.modalAddShopEl).not.toBeVisible();
-
         await this.toastAddShopSuccessEl.waitFor();
         await expect(this.toastAddShopSuccessEl).toBeVisible();
+
+        await expect(this.modalAddShopEl).not.toBeVisible();
     }
 }
