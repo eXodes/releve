@@ -142,10 +142,8 @@ export class SignInPage {
 
     async signInAsAdmin() {
         await this.fillForm({
-            email: "releve@exodes.net",
-            password: "Passw0rd",
-            // email: "admin-user@test.io",
-            // password: "t3st-Password",
+            email: "admin-user@test.io",
+            password: "t3st-Password",
         });
 
         await this.submitSuccess();
