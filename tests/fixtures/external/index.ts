@@ -1,1 +1,1 @@
-export * from "./setup/mailtrap";
+export * from "./pages/mailtrap";
