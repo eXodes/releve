@@ -144,7 +144,12 @@
     </p>
 </ActionableModal>
 
-<Modal open={showUpdateShop} padding={false} on:close={handleCancelUpdate}>
+<Modal
+    title="Update Shop Form Modal"
+    open={showUpdateShop}
+    padding={false}
+    on:close={handleCancelUpdate}
+>
     <ShopForm
         shopData={selectedShop}
         actionType="update-public"
