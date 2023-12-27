@@ -43,6 +43,6 @@ test("should be able to add new shop", async ({ adminLayoutPage }) => {
     await adminLayoutPage.saveNewShopForm();
 });
 
-test("should be able to add new shop", async ({ adminLayoutPage }) => {
+test("should be able to sign out", async ({ adminLayoutPage }) => {
     await adminLayoutPage.signOut();
 });
