@@ -16,14 +16,15 @@
     import ActionableCard from "$client/components/shared/actionable-card.svelte";
     import Button from "$client/components/shared/button.svelte";
     import Image from "$client/components/shared/image.svelte";
-    import SelectInput from "$client/components/shared/select-input.svelte";
     import TextInput from "$client/components/shared/text-input.svelte";
     import TextareaInput from "$client/components/shared/textarea-input.svelte";
+    import ListboxInput from "$client/components/shared/listbox-input.svelte";
 
-    import { startCase } from "lodash-es";
     import { onMount } from "svelte";
     import { CheckCircle, Icon } from "svelte-hero-icons";
+    import type { FormEventHandler } from "svelte/elements";
     import { fade } from "svelte/transition";
+    import { startCase } from "lodash-es";
 
     export let userData: UserData;
     export let actionType: "users" | "settings";
@@ -47,7 +48,7 @@
             city: userData.information?.address?.city ?? "",
             state: userData.information?.address?.state ?? "",
             postalCode: userData.information?.address?.postalCode ?? "",
-            country: userData.information?.address?.country ?? "Malaysia",
+            country: userData.information?.address?.country ?? "",
         },
         validationSuite: updateUserSuite,
     });
@@ -62,19 +63,12 @@
         change(event);
     };
 
-    const handleFileChange = async (event: Event) => {
+    const handleFileChange: FormEventHandler<HTMLInputElement> = async (event) => {
         let input = event.target as HTMLInputElement;
 
         const [file] = input.files ?? [];
 
-        if (file)
-            change({
-                ...event,
-                detail: {
-                    name: input.name,
-                    value: file,
-                },
-            });
+        if (file) setValue(input.name, file);
     };
 
     const handlerOptions: EnhanceHandlerOptions = {
@@ -152,22 +146,19 @@
 
                         {#if showRoleInput}
                             <div class="w-2/3 lg:w-1/3">
-                                <SelectInput
+                                <ListboxInput
                                     id="role"
                                     label="Role"
                                     name="role"
+                                    options={Object.values(Role).map((role) => ({
+                                        label: startCase(role),
+                                        value: role,
+                                    }))}
                                     value={$form.data.role}
-                                    autocomplete="role"
                                     required
                                     errors={$errors["role"]}
                                     on:input={change}
-                                >
-                                    <svelte:fragment>
-                                        {#each Object.values(Role) as role}
-                                            <option value={role}>{startCase(role)}</option>
-                                        {/each}
-                                    </svelte:fragment>
-                                </SelectInput>
+                                />
                             </div>
                         {/if}
                     </div>
@@ -303,19 +294,18 @@
                 </div>
 
                 <div class="col-span-6 sm:col-span-3">
-                    <SelectInput
+                    <ListboxInput
                         id="country"
                         label="Country"
                         name="country"
+                        options={$countries.map((country) => ({
+                            label: country.name,
+                            value: country.name,
+                        }))}
                         value={$form.data.country}
-                        autocomplete="country-name"
                         errors={$errors["country"]}
                         on:input={handleChangeCountry}
-                    >
-                        {#each $countries as country}
-                            <option value={country.name}>{country.name}</option>
-                        {/each}
-                    </SelectInput>
+                    />
                 </div>
 
                 <div class="col-span-6">
@@ -343,22 +333,19 @@
                 </div>
 
                 <div class="col-span-6 sm:col-span-3 lg:col-span-2">
-                    <SelectInput
+                    <ListboxInput
                         id="state"
                         label="State / Province"
                         name="state"
+                        options={$states.map((state) => ({
+                            label: state.name,
+                            value: state.name,
+                        }))}
                         value={$form.data.state}
-                        autocomplete="address-level1"
                         errors={$errors["state"]}
-                        on:input={change}
+                        on:input={handleChangeCountry}
                         disabled={$states.length === 0}
-                    >
-                        {#each $states as state}
-                            <option value={state.name} selected={$form.data.state === state.name}>
-                                {state.name}
-                            </option>
-                        {/each}
-                    </SelectInput>
+                    />
                 </div>
 
                 <div class="col-span-6 sm:col-span-3 lg:col-span-2">

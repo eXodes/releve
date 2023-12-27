@@ -17,8 +17,8 @@
     import ActionableCard from "$client/components/shared/actionable-card.svelte";
     import Button from "$client/components/shared/button.svelte";
     import CheckboxInput from "$client/components/shared/checkbox-input.svelte";
-    import SelectInput from "$client/components/shared/select-input.svelte";
     import TextInput from "$client/components/shared/text-input.svelte";
+    import ListboxInput from "$client/components/shared/listbox-input.svelte";
     import UrlInput from "$client/components/shared/url-input.svelte";
     import Tooltip from "$client/components/shared/tooltip.svelte";
 
@@ -43,23 +43,24 @@
         [ActionType.UPDATE_PRIVATE]: `/my/shops/${shopData?.uid}?/update`,
     };
 
-    const { form, change, errors, setValue, reset, enhanceHandler } = createForm<ShopPayload>({
-        initialValues: {
-            name: shopData?.name ?? "",
-            link: shopData?.link ?? "",
-            categories: shopData?.categories ?? [],
-            deliveryProviders: shopData?.deliveryProviders ?? [],
-            streetAddress: shopData?.address.street ?? "",
-            city: shopData?.address.city ?? "",
-            state: shopData?.address.state ?? "",
-            postalCode: shopData?.address.postalCode ?? "",
-            country: shopData?.address.country ?? "Malaysia",
-            status: shopData?.status,
-            private: isPrivate ?? "false",
-            role: $page.data.session.user?.customClaims.isAdmin ? Role.ADMIN : Role.USER,
-        },
-        validationSuite: shopSuite,
-    });
+    const { form, change, errors, setValue, validate, reset, enhanceHandler } =
+        createForm<ShopPayload>({
+            initialValues: {
+                name: shopData?.name ?? "",
+                link: shopData?.link ?? "",
+                categories: shopData?.categories ?? [],
+                deliveryProviders: shopData?.deliveryProviders ?? [],
+                streetAddress: shopData?.address.street ?? "",
+                city: shopData?.address.city ?? "",
+                state: shopData?.address.state ?? "",
+                postalCode: shopData?.address.postalCode ?? "",
+                country: shopData?.address.country ?? "Malaysia",
+                status: shopData?.status,
+                private: isPrivate ?? "false",
+                role: $page.data.session.user?.customClaims.isAdmin ? Role.ADMIN : Role.USER,
+            },
+            validationSuite: shopSuite,
+        });
 
     const dispatch = createEventDispatcher<{
         success: void;
@@ -104,16 +105,37 @@
         },
     };
 
+    onMount(() => {
+        reset();
+
+        if (shopData) {
+            const formData = {
+                name: shopData?.name,
+                link: shopData?.link,
+                categories: shopData?.categories,
+                deliveryProviders: shopData?.deliveryProviders,
+                streetAddress: shopData?.address.street,
+                city: shopData?.address.city,
+                state: shopData?.address.state,
+                postalCode: shopData?.address.postalCode,
+                country: shopData?.address.country,
+                status: shopData?.status,
+                private: isPrivate,
+                role: $page.data.session.user?.customClaims.isAdmin ? Role.ADMIN : Role.USER,
+            };
+
+            validate({
+                formData,
+            });
+        }
+
+        states.loadStates($form.data.country);
+    });
+
     $: showStatusInput =
         $page.data?.session.user?.customClaims.isAdmin && $form.data.private !== "true";
 
     $: disabled = !$form.isValid || $form.isSuccess;
-
-    onMount(() => {
-        reset();
-
-        states.loadStates($form.data.country);
-    });
 </script>
 
 <form
@@ -144,20 +166,19 @@
 
             <div class="col-span-6 sm:col-span-3">
                 {#if showStatusInput}
-                    <SelectInput
+                    <ListboxInput
                         id="status"
                         label="Status"
                         name="status"
+                        options={Object.values(ShopStatus).map((status) => ({
+                            label: startCase(status),
+                            value: status,
+                        }))}
                         value={$form.data.status}
-                        autocomplete="status"
                         required
                         errors={$errors["status"]}
                         on:input={change}
-                    >
-                        {#each Object.values(ShopStatus) as status}
-                            <option value={status}>{startCase(status)}</option>
-                        {/each}
-                    </SelectInput>
+                    />
                 {/if}
             </div>
 
@@ -176,56 +197,53 @@
             </div>
 
             <div class="col-span-6 sm:col-span-3">
-                <SelectInput
+                <ListboxInput
                     id="categories"
                     label="Categories"
                     name="categories[]"
-                    values={$form.data.categories}
-                    autocomplete="categories"
+                    options={$categories.map((category) => ({
+                        label: category.name,
+                        value: category.name,
+                    }))}
+                    value={$form.data.categories?.join(",")}
                     required
                     multiple
                     errors={$errors["categories"]}
                     on:input={change}
-                >
-                    {#each $categories as category}
-                        <option value={category.name}>{category.name}</option>
-                    {/each}
-                </SelectInput>
+                />
             </div>
 
             <div class="col-span-6 sm:col-span-3">
-                <SelectInput
+                <ListboxInput
                     id="delivery-providers"
                     label="Delivery Services"
                     name="delivery-providers[]"
-                    values={$form.data.deliveryProviders}
-                    autocomplete="delivery-providers"
+                    options={$deliveryServices.map((deliveryService) => ({
+                        label: deliveryService.name,
+                        value: deliveryService.name,
+                    }))}
+                    value={$form.data.deliveryProviders?.join(",")}
                     required
                     multiple
                     errors={$errors["delivery-providers"]}
                     on:input={change}
-                >
-                    {#each $deliveryServices as deliveryService}
-                        <option value={deliveryService.name}>{deliveryService.name}</option>
-                    {/each}
-                </SelectInput>
+                />
             </div>
 
             <div class="col-span-6 sm:col-span-3">
-                <SelectInput
+                <ListboxInput
                     id="country"
                     label="Country"
                     name="country"
+                    options={$countries.map((country) => ({
+                        label: country.name,
+                        value: country.name,
+                    }))}
                     value={$form.data.country}
-                    autocomplete="country-name"
                     required
                     errors={$errors["country"]}
                     on:input={handleChangeCountry}
-                >
-                    {#each $countries as country}
-                        <option value={country.name}>{country.name}</option>
-                    {/each}
-                </SelectInput>
+                />
             </div>
 
             <div class="col-span-6">
@@ -255,25 +273,20 @@
             </div>
 
             <div class="col-span-6 sm:col-span-3 lg:col-span-2">
-                <SelectInput
+                <ListboxInput
                     id="state"
                     label="State / Province"
                     name="state"
+                    options={$states.map((state) => ({
+                        label: state.name,
+                        value: state.name,
+                    }))}
                     value={$form.data.state}
-                    autocomplete="address-level1"
                     required
                     errors={$errors["state"]}
                     on:input={change}
                     disabled={$states.length === 0}
-                >
-                    {#if $states}
-                        {#each $states as state}
-                            <option value={state.name} selected={$form.data.state === state.name}>
-                                {state.name}
-                            </option>
-                        {/each}
-                    {/if}
-                </SelectInput>
+                />
             </div>
 
             <div class="col-span-6 sm:col-span-3 lg:col-span-2">
