@@ -220,7 +220,7 @@
             <div class="col-span-6 sm:col-span-3">
                 <ListboxInput
                     id="delivery-providers"
-                    label="Delivery Services"
+                    label="Delivery services"
                     name="delivery-providers[]"
                     options={$deliveryServices.map((deliveryService) => ({
                         label: deliveryService.name,
