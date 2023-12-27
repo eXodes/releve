@@ -36,6 +36,10 @@ const createStateStore = () => {
         _states.set(states);
     };
 
+    const clearStates = () => {
+        _states.set([]);
+    };
+
     const states: Readable<StateData[]> = derived<Writable<StateData[]>, StateData[]>(
         _states,
         ($_states, set) => {
@@ -49,6 +53,7 @@ const createStateStore = () => {
     return {
         subscribe,
         loadStates,
+        clearStates,
     };
 };
 

@@ -37,12 +37,16 @@
     };
 </script>
 
-<Modal open={showDetail} on:close={() => (showDetail = false)}>
+<Modal title="Shop Details Modal" open={showDetail} on:close={() => (showDetail = false)}>
     <ShopDetail shop={shop} />
 </Modal>
 
 {#if isPrivate}
-    <Modal open={showPrivateShopForm} on:close={() => (showPrivateShopForm = false)}>
+    <Modal
+        title="Update Shop Form Modal"
+        open={showPrivateShopForm}
+        on:close={() => (showPrivateShopForm = false)}
+    >
         <ShopForm
             shopData={shop}
             actionType="update-private"

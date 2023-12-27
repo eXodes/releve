@@ -11,7 +11,13 @@
     };
 </script>
 
-<Modal open={showShopForm} padding={false} on:close={() => (showShopForm = false)} static>
+<Modal
+    title="New Shop Form Modal"
+    open={showShopForm}
+    padding={false}
+    on:close={() => (showShopForm = false)}
+    static
+>
     <ShopForm actionType="create" on:success={handleShopSubmit} />
 </Modal>
 

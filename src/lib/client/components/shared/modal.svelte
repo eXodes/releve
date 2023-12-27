@@ -7,11 +7,13 @@
     import { Icon, XMark } from "svelte-hero-icons";
 
     interface $$Props {
+        title: string;
         open?: boolean;
         padding?: boolean;
         static?: boolean;
     }
 
+    export let title: string;
     export let open = false;
     export let padding = false;
 
@@ -21,15 +23,15 @@
         close: false;
     }>();
 
-    const dialog = createDialog();
+    const dialog = createDialog({ label: title });
 
     const handleClose = () => {
         dialog.close();
-
-        dispatch("close", (open = false));
     };
 
-    $: open && dialog.open();
+    $: open ? dialog.open() : dialog.close();
+
+    $: !$dialog.expanded && dispatch("close", (open = false));
 </script>
 
 {#if $dialog.expanded}
@@ -63,9 +65,10 @@
 
             <div
                 class={classNames(
-                    "relative mt-20 inline-block w-full transform overflow-hidden rounded-t-lg bg-white text-left align-middle shadow-xl transition-all sm:max-h-[80vh] sm:w-full sm:max-w-3xl md:mt-auto md:rounded-lg xl:max-w-5xl",
+                    "relative mt-20 inline-block w-full transform overflow-y-auto rounded-t-lg bg-white text-left align-middle shadow-xl transition-all sm:max-h-[80vh] sm:w-full sm:max-w-3xl md:mt-auto md:rounded-lg xl:max-w-5xl",
                     padding && "px-4 pb-4 pt-5 sm:p-6"
                 )}
+                use:dialog.modal
                 in:transition={{
                     duration: 300,
                     base: "ease-out duration-300",
@@ -78,7 +81,6 @@
                     from: "opacity-100 translate-y-0 sm:scale-100",
                     to: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
                 }}
-                use:dialog.modal
             >
                 <div class="absolute right-0 top-0 block pr-4 pt-4">
                     <button

@@ -139,4 +139,22 @@ export class SignInPage {
         await this.invalidActionCodeMessageEl.waitFor();
         await expect(this.invalidActionCodeMessageEl).toBeVisible();
     }
+
+    async signInAsAdmin() {
+        await this.fillForm({
+            email: "admin-user@test.io",
+            password: "t3st-Password",
+        });
+
+        await this.submitSuccess();
+    }
+
+    async signInAsUser() {
+        await this.fillForm({
+            email: "normal-user@test.io",
+            password: "t3st-Password",
+        });
+
+        await this.submitSuccess();
+    }
 }

@@ -12,12 +12,12 @@
 
     const menu = createMenu({ label: "Open user menu" });
 
-    const userNavigation = [{ name: "Settings", href: "/settings" }, { name: "Sign Out" }];
+    const userNavigation = [{ label: "Settings", href: "/settings" }, { label: "Sign Out" }];
 
     const handleSelect = (e: Event) => {
         const detail = (e as CustomEvent<{ selected: string }>).detail;
 
-        const href = userNavigation.find((item) => item.name === detail.selected)?.href;
+        const href = userNavigation.find((item) => item.label === detail.selected)?.href;
 
         if (href) {
             goto(href);
@@ -28,8 +28,8 @@
 <div class="relative">
     <button
         class="group relative flex max-w-xs items-center rounded-full bg-white text-sm shadow-md focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
-        on:select={handleSelect}
         use:menu.button
+        on:select={handleSelect}
     >
         <Image
             src={$page.data.session.user?.photoURL}
@@ -45,6 +45,7 @@
     {#if $menu.expanded}
         <ul
             class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white p-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            use:menu.items
             in:transition={{
                 duration: 200,
                 base: "transition ease-out duration-200",
@@ -57,12 +58,11 @@
                 from: "transform opacity-100 scale-100",
                 to: "transform opacity-0 scale-95",
             }}
-            use:menu.items
         >
-            {#each userNavigation as item (item.name)}
-                {@const active = $menu.active === item.name}
+            {#each userNavigation as item (item.label)}
+                {@const active = $menu.active === item.label}
                 <li>
-                    {#if item.name === "Sign Out"}
+                    {#if item.label === "Sign Out"}
                         <SignOutButton
                             class={classNames(
                                 active ? "bg-rose-100 text-rose-700" : "text-gray-700",
@@ -78,7 +78,7 @@
                             )}
                             use:menu.item
                         >
-                            {item.name}
+                            {item.label}
                         </button>
                     {/if}
                 </li>

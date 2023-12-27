@@ -56,7 +56,7 @@
         const target = e.target as HTMLInputElement;
         selectedShops = target.checked
             ? [...selectedShops, shop]
-            : selectedShops.filter((p) => p !== shop);
+            : selectedShops.filter((selectedShop) => selectedShop !== shop);
     };
 
     const handleUpdate = () => {
@@ -144,7 +144,12 @@
     </p>
 </ActionableModal>
 
-<Modal open={showUpdateShop} padding={false} on:close={handleCancelUpdate}>
+<Modal
+    title="Update Shop Form Modal"
+    open={showUpdateShop}
+    padding={false}
+    on:close={handleCancelUpdate}
+>
     <ShopForm
         shopData={selectedShop}
         actionType="update-public"

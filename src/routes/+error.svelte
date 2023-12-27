@@ -28,9 +28,9 @@
 
             {#if dev && $page.error?.stack}
                 <pre
-                    class="mt-10 whitespace-pre-line rounded-md bg-gray-600 p-2 text-sm text-gray-100 text-gray-500">
-			{$page.error.stack}
-            </pre>
+                    class="mt-10 whitespace-pre-line rounded-md bg-gray-600 p-2 text-sm text-gray-500">
+					{$page.error.stack}
+				</pre>
             {/if}
         </div>
     </Container>

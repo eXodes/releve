@@ -18,7 +18,7 @@
 
     interface NavigationItem {
         href: string;
-        name: string;
+        label: string;
         show: boolean;
         active: boolean;
     }
@@ -38,25 +38,25 @@
     $: navigation = [
         {
             href: "/",
-            name: "Home",
+            label: "Home",
             show: true,
             active: $page.url.pathname === "/",
         },
         {
             href: "/my/shops",
-            name: "My Shops",
+            label: "My Shops",
             show: $page.data.session.authenticated,
             active: $page.url.pathname === "/my/shops",
         },
         {
             href: "/shops",
-            name: "Shop Management",
+            label: "Shop Management",
             show: $page.data.session.user?.customClaims?.isAdmin,
             active: $page.url.pathname === "/shops",
         },
         {
             href: "/users",
-            name: "User Management",
+            label: "User Management",
             show: $page.data.session.user?.customClaims?.isAdmin,
             active: $page.url.pathname === "/users",
         },
@@ -82,7 +82,7 @@
                     <!-- Menus -->
                     <div class="inset-x-0 bottom-0 px-4">
                         <div class="flex h-full justify-center gap-8">
-                            {#each navigation as item (item.name)}
+                            {#each navigation as item (item.label)}
                                 {#if item.show}
                                     <a
                                         href={item.href}
@@ -93,7 +93,7 @@
                                                 : "border-transparent"
                                         )}
                                     >
-                                        {item.name}
+                                        {item.label}
                                     </a>
                                 {/if}
                             {/each}
@@ -254,7 +254,7 @@
 
                 <!-- Navbar (lg-) -->
                 <div class="space-y-6 px-4 py-6">
-                    {#each navigation as item (item.name)}
+                    {#each navigation as item (item.label)}
                         {#if item.show}
                             <div class="flow-root">
                                 <button
@@ -264,7 +264,7 @@
                                         item.active ? "text-rose-600" : "text-gray-900"
                                     )}
                                 >
-                                    {item.name}
+                                    {item.label}
                                 </button>
                             </div>
                         {/if}
