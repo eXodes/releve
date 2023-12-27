@@ -22,7 +22,7 @@
     import UrlInput from "$client/components/shared/url-input.svelte";
     import Tooltip from "$client/components/shared/tooltip.svelte";
 
-    import { createEventDispatcher, onMount } from "svelte";
+    import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import { startCase } from "lodash-es";
     import { Icon, QuestionMarkCircle } from "svelte-hero-icons";
 
@@ -130,6 +130,10 @@
         }
 
         states.loadStates($form.data.country);
+    });
+
+    onDestroy(() => {
+        states.clearStates();
     });
 
     $: showStatusInput =

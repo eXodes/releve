@@ -20,7 +20,7 @@
     import TextareaInput from "$client/components/shared/textarea-input.svelte";
     import ListboxInput from "$client/components/shared/listbox-input.svelte";
 
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import { CheckCircle, Icon } from "svelte-hero-icons";
     import type { FormEventHandler } from "svelte/elements";
     import { fade } from "svelte/transition";
@@ -82,6 +82,10 @@
 
     onMount(() => {
         states.loadStates($form.data.country);
+    });
+
+    onDestroy(() => {
+        states.clearStates();
     });
 
     $: showRoleInput = actionType === "users" && $page.data.session.user?.customClaims?.isAdmin;
