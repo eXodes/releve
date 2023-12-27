@@ -1,6 +1,6 @@
 import { test } from "$tests/utils";
 
-test.describe("Sign Up Page", () => {
+test.describe("Navigation", () => {
     test("should be able to view the page", async ({ signUpPage }) => {
         await signUpPage.isSignUpPage();
     });
@@ -12,7 +12,9 @@ test.describe("Sign Up Page", () => {
     test("should be able to go to forgot password page", async ({ signUpPage }) => {
         await signUpPage.clickForgotPassword();
     });
+});
 
+test.describe("Validation", () => {
     test("should show existing email error", async ({ signUpPage }) => {
         await signUpPage.fillForm({
             name: "Test Normal User",
@@ -22,7 +24,9 @@ test.describe("Sign Up Page", () => {
 
         await signUpPage.showExistingEmailError();
     });
+});
 
+test.describe("User Flow", () => {
     test("should be able to sign up", async ({ signUpPage }) => {
         await signUpPage.fillForm({
             name: "Test New User",

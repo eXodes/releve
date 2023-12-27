@@ -48,12 +48,11 @@ test.describe("Validation", () => {
 });
 
 test.describe("User Flow", () => {
-    test("should be able to sign in", async ({ signInPage }) => {
-        await signInPage.fillForm({
-            email: "normal-user@test.io",
-            password: "t3st-Password",
-        });
+    test("should be able to sign in as admin", async ({ signInPage }) => {
+        await signInPage.signInAsAdmin();
+    });
 
-        await signInPage.submitSuccess();
+    test("should be able to sign in as user", async ({ signInPage }) => {
+        await signInPage.signInAsUser();
     });
 });
