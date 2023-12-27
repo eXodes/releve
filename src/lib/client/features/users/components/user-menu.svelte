@@ -12,7 +12,7 @@
 
     const menu = createMenu({ label: "Open user menu" });
 
-    const userNavigation = [{ label: "Settings", href: "/settings" }, { name: "Sign Out" }];
+    const userNavigation = [{ label: "Settings", href: "/settings" }, { label: "Sign Out" }];
 
     const handleSelect = (e: Event) => {
         const detail = (e as CustomEvent<{ selected: string }>).detail;
