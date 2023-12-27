@@ -2,20 +2,12 @@ import type { ValidationError } from "$client/types/error";
 import type { MessageResponse } from "$client/types/response";
 
 import type { MaybePromise, SubmitFunction } from "@sveltejs/kit";
-import {
-    derived,
-    type Invalidator,
-    type Readable,
-    type Subscriber,
-    type Unsubscriber,
-    type Writable,
-    writable,
-} from "svelte/store";
+import { derived, type Readable, type Writable, writable } from "svelte/store";
 import type { Suite, SuiteResult } from "vest";
 import { camelCase } from "lodash-es";
 
 interface FormStoreOptions<ValueType extends Record<string, unknown>> {
-    initialValues?: ValueType;
+    initialValues?: Partial<ValueType>;
     validationSuite?: Suite<string, string, (data: ValueType, field?: string) => void>;
 }
 
@@ -24,7 +16,7 @@ interface FormInternalState {
     message?: string;
 }
 
-interface FormState<T extends Record<string, unknown>> {
+interface FormState<T extends Record<string, unknown> = Record<string, unknown>> {
     data: T;
     message?: string;
     isValid: boolean;
@@ -55,22 +47,16 @@ export interface EnhanceHandlerOptions {
     onError?: ErrorHandler;
 }
 
-interface FormStore<ValueType extends Record<string, unknown>> {
-    form: {
-        subscribe: (
-            this: void,
-            run: Subscriber<FormState<ValueType>>,
-            invalidate?: Invalidator<FormState<ValueType>>
-        ) => Unsubscriber;
-        set: (data: FormState<ValueType>) => void;
-    };
-    change: (event: {
-        detail: { name: string; value: string | string[] | boolean | File };
-    }) => void;
-    setValue: (name: string, value: string | string[] | boolean) => void;
-    setValues: (values: ValueType) => void;
+interface FormStore<DataType extends Record<string, unknown>> {
+    form: Readable<FormState<DataType>>;
+    validate: (data: { formData: DataType; field?: string }) => void;
+    change: (
+        event: CustomEvent<{ name: string; value: string | string[] | boolean | File }>
+    ) => void;
+    setValue: (name: string, value: string | string[] | boolean | File) => void;
+    setValues: (values: DataType) => void;
     setValidationErrors: (errors: Record<string, string[]>) => void;
-    submit: (submitFn?: (data: ValueType) => void) => void;
+    submit: (submitFn?: (data: DataType) => void) => void;
     submitSuccess: (result?: { message?: string }) => void;
     submitError: (result?: { message?: string }) => void;
     reset: () => void;
@@ -90,61 +76,73 @@ export const createForm = <DataType extends Record<string, unknown>>(
         message: undefined,
     });
 
-    const _result = writable<SuiteResult<string, string> | undefined>();
-
     const _data = writable<DataType>(initialValues as DataType);
 
-    const setFormState = (state: FormState<DataType>) => {
-        _data.set(state.data);
+    const _result = writable<SuiteResult<string, string> | undefined>();
+
+    const resetFormStateHandler = () => {
+        _state.update((state) => {
+            return {
+                ...state,
+                status: "idle",
+                message: undefined,
+            };
+        });
     };
 
-    const change = ({
+    const validateHandler = ({ formData, field }: { formData: DataType; field?: string }) => {
+        if (validationSuite) {
+            const validationResult = validationSuite(formData, field);
+
+            validationResult.done((result) => {
+                _result.set(result);
+            });
+        }
+    };
+
+    const changeHandler = ({
         detail,
-    }: {
-        detail: { name: string; value: string | string[] | boolean | File };
-    }) => {
+    }: CustomEvent<{ name: string; value: string | string[] | boolean | File }>) => {
         _data.update((data) => {
-            const newData = {
+            const newFormData = {
                 ...data,
                 [camelCase(detail.name)]: detail.value,
             };
 
-            if (validationSuite) {
-                const validationResult = validationSuite(newData, detail.name);
+            validateHandler({
+                formData: newFormData,
+                field: detail.name,
+            });
 
-                validationResult.done((result) => {
-                    _result.set(result);
-                });
-            }
-
-            return newData;
+            return newFormData;
         });
     };
 
-    const setValue = (name: string, value: string | string[] | boolean) => {
+    const setValueHandler = (name: string, value: string | string[] | boolean | File) => {
         _data.update((data) => {
-            const newData = {
+            const newFormData = {
                 ...data,
                 [camelCase(name)]: value,
             };
 
-            if (validationSuite) {
-                const validationResult = validationSuite(newData, name);
+            validateHandler({
+                formData: newFormData,
+                field: name,
+            });
 
-                validationResult.done((result) => {
-                    _result.set(result);
-                });
-            }
-
-            return newData;
+            return newFormData;
         });
     };
 
-    const setValues = (values: DataType) => {
-        _data.set(values);
+    const setValuesHandler = (formData: DataType) => {
+        _data.set(formData);
+
+        validateHandler({
+            formData,
+        });
     };
 
-    const submit = (submitFn?: (data: DataType) => MaybePromise<void>) => {
+    const submitHandler = (submitFn?: (data: DataType) => MaybePromise<void>) => {
         _state.update((state) => {
             return {
                 ...state,
@@ -170,7 +168,7 @@ export const createForm = <DataType extends Record<string, unknown>>(
         unsubscribe();
     };
 
-    const setValidationErrors = (errors: Record<string, string[]>) => {
+    const setValidationErrorsHandler = (errors: Record<string, string[]>) => {
         _state.update((state) => {
             return {
                 ...state,
@@ -180,7 +178,7 @@ export const createForm = <DataType extends Record<string, unknown>>(
         });
     };
 
-    const submitSuccess = (result?: { message?: string }) => {
+    const submitSuccessHandler = (result?: { message?: string }) => {
         _state.update((state) => {
             return {
                 ...state,
@@ -190,22 +188,12 @@ export const createForm = <DataType extends Record<string, unknown>>(
         });
     };
 
-    const submitError = (result?: { message?: string }) => {
+    const submitErrorHandler = (result?: { message?: string }) => {
         _state.update((state) => {
             return {
                 ...state,
                 status: "error",
                 message: result?.message,
-            };
-        });
-    };
-
-    const reset = () => {
-        _state.update((state) => {
-            return {
-                ...state,
-                status: "idle",
-                message: undefined,
             };
         });
     };
@@ -233,17 +221,15 @@ export const createForm = <DataType extends Record<string, unknown>>(
         } satisfies FormState<DataType>;
     });
 
-    const { subscribe } = formState;
-
     const enhanceHandler: FormStore<DataType>["enhanceHandler"] = (options) => {
         return async ({ formData }) => {
-            submit();
+            submitHandler();
             options?.onPending?.({ formData });
 
             return async ({ result, update }) => {
                 if (result.type === "failure") {
                     if (result.data?.code === "ValidationError" && result.data?.errors) {
-                        setValidationErrors(result.data.errors);
+                        setValidationErrorsHandler(result.data.errors);
 
                         options?.onError?.({
                             formData,
@@ -254,7 +240,7 @@ export const createForm = <DataType extends Record<string, unknown>>(
                 }
 
                 if (result.type === "error") {
-                    submitError({ message: result.error.message });
+                    submitErrorHandler({ message: result.error.message });
 
                     options?.onError?.({
                         formData,
@@ -263,7 +249,7 @@ export const createForm = <DataType extends Record<string, unknown>>(
                 }
 
                 if (result.type === "success") {
-                    submitSuccess({ message: result.data?.message });
+                    submitSuccessHandler({ message: result.data?.message });
 
                     options?.onSuccess?.({
                         formData,
@@ -276,16 +262,17 @@ export const createForm = <DataType extends Record<string, unknown>>(
     };
 
     return {
-        form: { subscribe, set: setFormState },
+        form: { subscribe: formState.subscribe },
         errors,
-        change,
-        setValue,
-        setValues,
-        submit,
-        setValidationErrors,
-        submitSuccess,
-        submitError,
-        reset,
+        validate: validateHandler,
+        change: changeHandler,
+        setValue: setValueHandler,
+        setValues: setValuesHandler,
+        submit: submitHandler,
+        setValidationErrors: setValidationErrorsHandler,
+        submitSuccess: submitSuccessHandler,
+        submitError: submitErrorHandler,
+        reset: resetFormStateHandler,
         enhanceHandler,
     };
 };
