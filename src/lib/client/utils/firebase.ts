@@ -3,6 +3,7 @@ import { browser, dev } from "$app/environment";
 import { firebaseConfig, firebaseEmulator } from "$client/config/firebase";
 import { env } from "$env/dynamic/public";
 import { type AppCheck } from "firebase/app-check";
+import { getPerformance } from "firebase/performance";
 
 import { initializeApp } from "firebase/app";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
@@ -26,6 +27,8 @@ if (browser && env.PUBLIC_RECAPTCHA_SITE_KEY) {
         isTokenAutoRefreshEnabled: true,
     });
 }
+
+getPerformance(app);
 
 if (dev || firebaseEmulator) connectAuthEmulator(auth, "http://localhost:9099");
 
