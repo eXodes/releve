@@ -7,6 +7,7 @@
     import { AuthService } from "$features/authentication/services";
     import signInSuite, { type SignInPayload } from "$features/authentication/validations/sign-in";
     import { createForm } from "$client/stores/form";
+    import { analytics } from "$client/utils/firebase";
     import { Color } from "$client/enums/theme";
     import type { MessageResponse } from "$client/types/response";
 
@@ -16,10 +17,12 @@
     import PasswordInput from "$client/components/shared/password-input.svelte";
     import TextInput from "$client/components/shared/text-input.svelte";
     import Tooltip from "$client/components/shared/tooltip.svelte";
+    import * as Sentry from "@sentry/sveltekit";
 
     import type { SubmitFunction } from "@sveltejs/kit";
     import { FirebaseError } from "firebase/app";
     import { AuthErrorCodes } from "firebase/auth";
+    import { setUserProperties } from "firebase/analytics";
 
     import { createEventDispatcher, onMount } from "svelte";
     import { Icon, QuestionMarkCircle } from "svelte-hero-icons";
@@ -56,6 +59,10 @@
                 submitSuccess({ message: data.message });
 
                 invalidateSession();
+                Sentry.setUser({ id: data.user.uid });
+                setUserProperties(analytics, {
+                    uid: data.user.uid,
+                });
 
                 dispatch("success");
             } catch (error) {
