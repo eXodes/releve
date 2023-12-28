@@ -20,8 +20,6 @@
 
     onMount(async () => {
         if (browser && pwaInfo) {
-            await import("$client/utils/firebase");
-
             const { registerSW } = await import("virtual:pwa-register");
             registerSW({
                 immediate: true,
