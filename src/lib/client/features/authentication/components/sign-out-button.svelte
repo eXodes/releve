@@ -30,9 +30,11 @@
 
             await invalidate("session");
             Sentry.setUser(null);
-            setUserProperties(analytics, {
-                uid: null,
-            });
+            if (analytics) {
+                setUserProperties(analytics, {
+                    uid: null,
+                });
+            }
 
             await goto("/");
 

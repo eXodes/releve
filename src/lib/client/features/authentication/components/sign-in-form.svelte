@@ -60,9 +60,11 @@
 
                 invalidateSession();
                 Sentry.setUser({ id: data.user.uid });
-                setUserProperties(analytics, {
-                    uid: data.user.uid,
-                });
+                if (analytics) {
+                    setUserProperties(analytics, {
+                        uid: data.user.uid,
+                    });
+                }
 
                 dispatch("success");
             } catch (error) {
