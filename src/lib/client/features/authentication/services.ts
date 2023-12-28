@@ -2,9 +2,8 @@ import type { SignUpCheckPayload } from "$features/authentication/validations/mi
 import type { MessageResponse } from "$client/types/response";
 import { endpoint, formEndpoint } from "$client/utils/endpoint";
 import { auth } from "$client/utils/firebase";
-import * as Sentry from "@sentry/sveltekit";
-import type { SubmitFunction } from "@sveltejs/kit";
 
+import type { SubmitFunction } from "@sveltejs/kit";
 import { FirebaseError } from "firebase/app";
 
 import {
