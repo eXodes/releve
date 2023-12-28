@@ -1,6 +1,5 @@
 <script lang="ts">
     import "../app.css";
-    import "$client/utils/firebase";
     import { browser } from "$app/environment";
     import { navigating } from "$app/stores";
 
@@ -21,6 +20,8 @@
 
     onMount(async () => {
         if (browser && pwaInfo) {
+            await import("$client/utils/firebase");
+
             const { registerSW } = await import("virtual:pwa-register");
             registerSW({
                 immediate: true,
