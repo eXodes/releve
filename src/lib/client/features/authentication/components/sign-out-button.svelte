@@ -2,13 +2,14 @@
     import { enhance } from "$app/forms";
     import { goto, invalidate } from "$app/navigation";
 
+    import { AuthService } from "$features/authentication/services";
     import { notification } from "$client/stores/notification";
-    import type { MessageResponse } from "$client/types/response";
-    import * as Sentry from "@sentry/sveltekit";
+    import { analytics } from "$client/utils/firebase";
 
-    import type { SubmitFunction } from "@sveltejs/kit";
     import { createEventDispatcher } from "svelte";
     import type { Action } from "svelte/action";
+    import { setUserProperties } from "firebase/analytics";
+    import * as Sentry from "@sentry/sveltekit";
 
     export { classes as class };
     export let action: Action = () => void {};
@@ -19,36 +20,36 @@
         success: void;
     }>();
 
-    const handleSubmit: SubmitFunction<MessageResponse> = () => {
-        return async ({ result, update }) => {
-            if (result.type === "error") {
+    const handleSignOut = AuthService.signOutForm({
+        onSuccess: async (data) => {
+            if (data)
                 notification.send({
-                    type: "error",
-                    title: "Unable to sign out",
-                    message: result.error.message,
+                    title: "Sign out",
+                    message: data.message,
+                });
+
+            await invalidate("session");
+            Sentry.setUser(null);
+            if (analytics) {
+                setUserProperties(analytics, {
+                    uid: null,
                 });
             }
 
-            if (result.type === "success") {
-                if (result.data)
-                    notification.send({
-                        title: "Sign out",
-                        message: result.data.message,
-                    });
+            await goto("/");
 
-                await update();
-
-                await invalidate("session");
-                Sentry.setUser(null);
-
-                await goto("/");
-
-                dispatch("success");
-            }
-        };
-    };
+            dispatch("success");
+        },
+        onError: (error) => {
+            notification.send({
+                type: "error",
+                title: "Unable to sign out",
+                message: error.message,
+            });
+        },
+    });
 </script>
 
-<form action="/sign-out" method="post" use:enhance={handleSubmit}>
+<form action="/sign-out" method="post" use:enhance={handleSignOut}>
     <button type="submit" class={classes} use:action>Sign Out</button>
 </form>
