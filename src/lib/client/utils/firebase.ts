@@ -1,16 +1,16 @@
 import { browser, dev } from "$app/environment";
+import { env } from "$env/dynamic/public";
+import { PUBLIC_APP_ENV } from "$env/static/public";
 
 import { firebaseConfig, firebaseEmulator } from "$client/config/firebase";
-import { env } from "$env/dynamic/public";
-import { type AppCheck } from "firebase/app-check";
-import { initializePerformance, type FirebasePerformance } from "firebase/performance";
 
 import { initializeApp } from "firebase/app";
-import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 import { connectAuthEmulator, getAuth, inMemoryPersistence, setPersistence } from "firebase/auth";
+import { initializeAppCheck, ReCaptchaV3Provider, type AppCheck } from "firebase/app-check";
+import { initializePerformance, type FirebasePerformance } from "firebase/performance";
 import { initializeAnalytics, type Analytics } from "firebase/analytics";
 
-const isDeployment = ["preview", "production"].includes(env.PUBLIC_APP_ENV);
+const isDeployment = ["preview", "production"].includes(PUBLIC_APP_ENV);
 
 const app = initializeApp(firebaseConfig);
 
@@ -26,7 +26,6 @@ let appCheck: AppCheck | undefined;
 let performance: FirebasePerformance | undefined;
 let analytics: Analytics | undefined;
 
-console.info({ environment: env.PUBLIC_APP_ENV, isDeployment });
 if (isDeployment && browser) {
     if (env.PUBLIC_RECAPTCHA_SITE_KEY)
         appCheck = initializeAppCheck(app, {

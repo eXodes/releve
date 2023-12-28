@@ -19,6 +19,8 @@
     $: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : "";
 
     onMount(async () => {
+        await import("$client/utils/firebase");
+
         if (browser && pwaInfo) {
             const { registerSW } = await import("virtual:pwa-register");
             registerSW({
