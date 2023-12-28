@@ -26,6 +26,7 @@ let appCheck: AppCheck | undefined;
 let performance: FirebasePerformance | undefined;
 let analytics: Analytics | undefined;
 
+console.info({ environment: env.PUBLIC_APP_ENV, isDeployment });
 if (isDeployment && browser) {
     if (env.PUBLIC_RECAPTCHA_SITE_KEY)
         appCheck = initializeAppCheck(app, {
