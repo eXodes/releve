@@ -22,9 +22,9 @@ const setAuthPersistence = async () => {
 
 setAuthPersistence();
 
-let appCheck: AppCheck;
-let performance: FirebasePerformance;
-let analytics: Analytics;
+let appCheck: AppCheck | undefined;
+let performance: FirebasePerformance | undefined;
+let analytics: Analytics | undefined;
 
 if (isDeployment && browser) {
     if (env.PUBLIC_RECAPTCHA_SITE_KEY)
