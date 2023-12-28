@@ -21,14 +21,15 @@ setAuthPersistence();
 
 let appCheck: AppCheck;
 
-if (browser && env.PUBLIC_RECAPTCHA_SITE_KEY) {
-    appCheck = initializeAppCheck(app, {
-        provider: new ReCaptchaV3Provider(env.PUBLIC_RECAPTCHA_SITE_KEY),
-        isTokenAutoRefreshEnabled: true,
-    });
-}
+if (browser) {
+    if (env.PUBLIC_RECAPTCHA_SITE_KEY)
+        appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider(env.PUBLIC_RECAPTCHA_SITE_KEY),
+            isTokenAutoRefreshEnabled: true,
+        });
 
-getPerformance(app);
+    getPerformance(app);
+}
 
 if (dev || firebaseEmulator) connectAuthEmulator(auth, "http://localhost:9099");
 
