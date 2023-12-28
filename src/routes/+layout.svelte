@@ -1,5 +1,6 @@
 <script lang="ts">
     import "../app.css";
+    import "$client/utils/firebase";
     import { browser } from "$app/environment";
     import { navigating } from "$app/stores";
 
