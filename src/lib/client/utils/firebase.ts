@@ -3,6 +3,7 @@ import { browser, dev } from "$app/environment";
 import { firebaseConfig, firebaseEmulator } from "$client/config/firebase";
 import { env } from "$env/dynamic/public";
 import { type AppCheck } from "firebase/app-check";
+import { initializePerformance } from "firebase/performance";
 
 import { initializeApp } from "firebase/app";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
@@ -20,11 +21,14 @@ setAuthPersistence();
 
 let appCheck: AppCheck;
 
-if (browser && env.PUBLIC_RECAPTCHA_SITE_KEY) {
-    appCheck = initializeAppCheck(app, {
-        provider: new ReCaptchaV3Provider(env.PUBLIC_RECAPTCHA_SITE_KEY),
-        isTokenAutoRefreshEnabled: true,
-    });
+if (browser) {
+    if (env.PUBLIC_RECAPTCHA_SITE_KEY)
+        appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider(env.PUBLIC_RECAPTCHA_SITE_KEY),
+            isTokenAutoRefreshEnabled: true,
+        });
+
+    initializePerformance(app);
 }
 
 if (dev || firebaseEmulator) connectAuthEmulator(auth, "http://localhost:9099");

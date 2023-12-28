@@ -17,8 +17,10 @@ import { ProfilingIntegration } from "@sentry/profiling-node";
 Sentry.init({
     environment: PUBLIC_APP_ENV,
     dsn: env.PUBLIC_SENTRY_DSN,
-    tracesSampleRate: Number(env.PUBLIC_SENTRY_SAMPLE_RATE),
-    profilesSampleRate: Number(env.PUBLIC_SENTRY_SAMPLE_RATE),
+    tracesSampleRate: Number(env.PUBLIC_SENTRY_SAMPLE_RATE) / 3,
+    profilesSampleRate: Number(env.PUBLIC_SENTRY_SAMPLE_RATE) / 2,
+    replaysSessionSampleRate: Number(env.PUBLIC_SENTRY_SAMPLE_RATE) / 10,
+    replaysOnErrorSampleRate: Number(env.PUBLIC_SENTRY_SAMPLE_RATE) / 5,
     integrations: [new ProfilingIntegration()],
 });
 
