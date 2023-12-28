@@ -1,6 +1,6 @@
 <script lang="ts">
     import "../app.css";
-
+    import { browser } from "$app/environment";
     import { navigating } from "$app/stores";
 
     import { onMount } from "svelte";
@@ -19,7 +19,7 @@
     $: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : "";
 
     onMount(async () => {
-        if (pwaInfo) {
+        if (browser && pwaInfo) {
             const { registerSW } = await import("virtual:pwa-register");
             registerSW({
                 immediate: true,
