@@ -33,6 +33,9 @@ jobs:
       - name: Run build
         run: npm run build
 
+      - name: Check Github
+        run: echo ${{ github }}
+
       - name: Setup Firebase
         uses: w9jds/setup-firebase@main
         with:
@@ -95,9 +98,6 @@ jobs:
 
       - name: Run Sveltekit sync
         run: npm run sync
-
-      - name: Check ref
-        run: echo ${{ vars.GITHUB_HEAD_REF }}
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
