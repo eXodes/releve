@@ -9,6 +9,7 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v3
 
+
       - name: Setup node
         uses: actions/setup-node@v3
         with:
@@ -38,6 +39,14 @@ jobs:
         with:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
+      - name: Cache emulators
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/firebase/emulators
+          key: ${{ runner.os }}-firebase-emulators-${{ hashFiles('~/.cache/firebase/emulators/**') }}
+          restore-keys: |
+            ${{ runner.os }}-firebase-emulators-
+
       - name: Setup Firebase Extensions
         run: firebase ext:export --force
 
@@ -57,12 +66,6 @@ jobs:
 
       - name: Add SMTP Password for Extensions
         run: echo SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }} >> ./extensions/firestore-send-email.secret.local
-
-      - name: Cache emulators
-        uses: actions/cache@v3
-        with:
-          key: firebase-emulators
-          path: /github/home/.cache/firebase/emulators
 
       - name: Run test
         run: firebase emulators:exec --only=auth,firestore,storage,extensions runner/test.sh
