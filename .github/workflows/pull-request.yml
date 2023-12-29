@@ -14,7 +14,7 @@ jobs:
         with:
           route: GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls
           owner: ${{ github.repository_owner }}
-          repo: ${{ github.repository }}
+          repo: ${{ github.event.repository.name }}
           commit_sha: ${{ github.sha }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
