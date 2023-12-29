@@ -9,6 +9,19 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v3
 
+      - uses: octokit/request-action@v2.x
+        id: github
+        with:
+          route: GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.repository }}
+          commit_sha: a585eb248cd1cfc519437fa481621d7a2c49a5e0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: "echo pr: '${{ fromJson(steps.github.outputs.data).number }}'"
+
+
       - name: Setup node
         uses: actions/setup-node@v3
         with:
