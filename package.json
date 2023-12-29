@@ -76,7 +76,7 @@
         "nprogress": "^0.2.0",
         "qs": "^6.11.2",
         "svelte": "^4.2.8",
-        "svelte-headlessui": "^0.0.32",
+        "svelte-headlessui": "^0.0.33",
         "svelte-hero-icons": "^5.0.0",
         "svelte-transition-classes": "^0.1.1",
         "validator": "^13.11.0",

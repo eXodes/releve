@@ -48,7 +48,7 @@ export interface EnhanceHandlerOptions {
 }
 
 interface FormStore<DataType extends Record<string, unknown>> {
-    form: Readable<FormState<DataType>>;
+    form: Readable<FormState<DataType>> & { set: (data: FormState<DataType>) => void };
     validate: (data: { formData: DataType; field?: string }) => void;
     change: (
         event: CustomEvent<{ name: string; value: string | string[] | boolean | File }>
@@ -79,6 +79,10 @@ export const createForm = <DataType extends Record<string, unknown>>(
     const _data = writable<DataType>(initialValues as DataType);
 
     const _result = writable<SuiteResult<string, string> | undefined>();
+
+    const setFormStateData = (state: FormState<DataType>) => {
+        _data.set(state.data);
+    };
 
     const resetFormStateHandler = () => {
         _state.update((state) => {
@@ -262,7 +266,7 @@ export const createForm = <DataType extends Record<string, unknown>>(
     };
 
     return {
-        form: { subscribe: formState.subscribe },
+        form: { subscribe: formState.subscribe, set: setFormStateData },
         errors,
         validate: validateHandler,
         change: changeHandler,

@@ -1,3 +1,7 @@
+/// <reference types="vite-plugin-pwa/svelte" />
+/// <reference types="vite-plugin-pwa/info" />
+/// <reference types="vite-plugin-pwa/client" />
+
 declare namespace App {
     interface Locals {
         session?: import("$module/auth/auth.model").Auth;

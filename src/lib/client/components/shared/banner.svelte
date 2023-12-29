@@ -27,7 +27,9 @@
 </script>
 
 {#if open}
-    <div class="fixed inset-x-0 bottom-0 z-50 pb-2 sm:pb-5">
+    <div
+        class="fixed inset-x-0 bottom-0 z-50 pb-2 supports-[display-mode:standalone]:bottom-4 sm:pb-5"
+    >
         <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
             <div class="rounded-lg bg-rose-600 p-2 shadow-lg sm:p-3">
                 <div class="flex flex-wrap items-center justify-between">

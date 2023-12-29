@@ -1,6 +1,6 @@
-import { env } from "$env/dynamic/public";
+import { PUBLIC_FIREBASE_EMULATOR } from "$env/static/public";
 
-export const firebaseEmulator = env.PUBLIC_FIREBASE_EMULATOR === "true";
+export const firebaseEmulator = PUBLIC_FIREBASE_EMULATOR === "true";
 
 export const firebaseConfig = {
     apiKey: "AIzaSyA3NgA6IkjdZvWucvPW4Kf9HWmQLx0yye8",
