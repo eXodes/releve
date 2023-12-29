@@ -1,16 +1,21 @@
 import { sentrySvelteKit } from "@sentry/sveltekit";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { SvelteKitPWA } from "@vite-pwa/sveltekit";
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig, loadEnv, type UserConfig } from "vite";
 import colors from "tailwindcss/colors";
 
 const config = defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd(), "");
 
     return {
+        build: {
+            sourcemap: "hidden",
+        },
         plugins: [
             sentrySvelteKit({
                 sourceMapsUploadOptions: {
+                    cleanArtifacts: true,
+                    rewrite: false,
                     telemetry: false,
                     deploy: {
                         env: env.PUBLIC_APP_ENV,
@@ -70,7 +75,7 @@ const config = defineConfig(({ mode }) => {
                 },
             }),
         ],
-    };
+    } satisfies UserConfig;
 });
 
 export default config;
