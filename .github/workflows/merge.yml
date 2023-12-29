@@ -65,20 +65,6 @@ jobs:
       - name: Run Sveltekit sync
         run: npm run sync
 
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
-          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-
-      - name: Make .env file for dynamic env
-        uses: SpicyPizza/create-envfile@v2.0
-        with:
-          envkey_PUBLIC_RECAPTCHA_SITE_KEY: ${{ vars.RECAPTCHA_SITE_KEY }}
-          envkey_PUBLIC_SENTRY_DSN: ${{ vars.SENTRY_DSN }}
-          envkey_PUBLIC_SENTRY_SAMPLE_RATE: ${{ vars.SENTRY_SAMPLE_RATE }}
-          file_name: .env
-
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         env:
@@ -86,11 +72,16 @@ jobs:
           ORIGIN: ${{ vars.ORIGIN }}
           PUBLIC_APP_ENV: production
           PUBLIC_APP_NAME: ${{ vars.PUBLIC_APP_NAME }}
+          PUBLIC_RECAPTCHA_SITE_KEY: ${{ vars.RECAPTCHA_SITE_KEY }}
+          PUBLIC_SENTRY_DSN: ${{ vars.SENTRY_DSN }}
+          PUBLIC_SENTRY_SAMPLE_RATE: ${{ vars.SENTRY_SAMPLE_RATE }}
+          PUBLIC_SENTRY_RELEASE: ${{ vars.GITHUB_SHA }}
           STORAGE_API: ${{ secrets.STORAGE_API }}
-          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+          STORAGE_BUCKET: ${{ vars.STORAGE_BUCKET }}
+          MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
+          MAIL_FROM_ADDRESS: ${{ vars.MAIL_FROM_ADDRESS }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           SENTRY_RELEASE: ${{ vars.GITHUB_SHA }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           FIREBASE_CLI_EXPERIMENTS: webframeworks,pintags
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
