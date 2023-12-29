@@ -107,6 +107,7 @@ jobs:
           PUBLIC_SENTRY_DSN: ${{ vars.SENTRY_DSN }}
           PUBLIC_SENTRY_SAMPLE_RATE: ${{ vars.SENTRY_SAMPLE_RATE }}
           PUBLIC_SENTRY_RELEASE: ${{ vars.GITHUB_REF_NAME }}
+          PUBLIC_FIREBASE_EMULATOR: false
           STORAGE_API: ${{ vars.STORAGE_API }}
           STORAGE_BUCKET: ${{ vars.STORAGE_BUCKET }}
           MAIL_FROM_NAME: ${{ vars.MAIL_FROM_NAME }}
