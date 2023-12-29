@@ -220,10 +220,15 @@
                 to: "opacity-0",
             }}
         >
-            <div class="fixed inset-0 bg-black bg-opacity-25" />
+            <button
+                class="fixed inset-0 cursor-default bg-black bg-opacity-25"
+                on:click={dialog.close}
+            />
         </div>
 
         <div
+            class="relative flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white pb-12 shadow-xl"
+            use:dialog.modal
             in:transition={{
                 duration: 300,
                 base: "transition ease-in-out duration-300 transform",
@@ -237,50 +242,45 @@
                 to: "-translate-x-full",
             }}
         >
-            <div
-                class="relative flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white pb-12 shadow-xl"
-                use:dialog.modal
-            >
-                <div class="flex px-4 pb-2 pt-5">
-                    <button
-                        type="button"
-                        class="-m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
-                        on:click={dialog.close}
-                    >
-                        <span class="sr-only">Close menu</span>
-                        <Icon src={XMark} class="h-6 w-6" aria-hidden="true" />
-                    </button>
-                </div>
-
-                <!-- Navbar (lg-) -->
-                <div class="space-y-6 px-4 py-6">
-                    {#each navigation as item (item.label)}
-                        {#if item.show}
-                            <div class="flow-root">
-                                <button
-                                    on:click={() => handleNavigate(item.href)}
-                                    class={classNames(
-                                        "-m-2 block w-full rounded-md p-2 text-left font-medium focus:outline-none focus:ring-2 focus:ring-rose-500",
-                                        item.active ? "text-rose-600" : "text-gray-900"
-                                    )}
-                                >
-                                    {item.label}
-                                </button>
-                            </div>
-                        {/if}
-                    {/each}
-                </div>
-
-                {#if !$page.data.session.authenticated}
-                    <div class="space-y-6 border-t border-gray-200 px-4 py-6">
-                        <div class="flow-root">
-                            <a href="/sign-up" class="-m-2 block p-2 font-medium text-gray-900">
-                                Create an account
-                            </a>
-                        </div>
-                    </div>
-                {/if}
+            <div class="flex px-4 pb-2 pt-5">
+                <button
+                    type="button"
+                    class="-m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    on:click={dialog.close}
+                >
+                    <span class="sr-only">Close menu</span>
+                    <Icon src={XMark} class="h-6 w-6" aria-hidden="true" />
+                </button>
             </div>
+
+            <!-- Navbar (lg-) -->
+            <div class="space-y-6 px-4 py-6">
+                {#each navigation as item (item.label)}
+                    {#if item.show}
+                        <div class="flow-root">
+                            <button
+                                on:click={() => handleNavigate(item.href)}
+                                class={classNames(
+                                    "-m-2 block w-full rounded-md p-2 text-left font-medium focus:outline-none focus:ring-2 focus:ring-rose-500",
+                                    item.active ? "text-rose-600" : "text-gray-900"
+                                )}
+                            >
+                                {item.label}
+                            </button>
+                        </div>
+                    {/if}
+                {/each}
+            </div>
+
+            {#if !$page.data.session.authenticated}
+                <div class="space-y-6 border-t border-gray-200 px-4 py-6">
+                    <div class="flow-root">
+                        <a href="/sign-up" class="-m-2 block p-2 font-medium text-gray-900">
+                            Create an account
+                        </a>
+                    </div>
+                </div>
+            {/if}
         </div>
     </div>
 {/if}
