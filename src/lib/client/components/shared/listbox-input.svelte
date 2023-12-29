@@ -6,6 +6,7 @@
     import { createEventDispatcher } from "svelte";
 
     import { createListbox } from "svelte-headlessui";
+    import { createPopperActions } from "svelte-popperjs";
     import transition from "svelte-transition-classes";
     import { Check, ChevronUpDown, ExclamationCircle, Icon } from "svelte-hero-icons";
 
@@ -59,6 +60,23 @@
               }),
     });
 
+    const [popperRef, popperContent] = createPopperActions({
+        placement: "bottom",
+        modifiers: [
+            {
+                name: "offset",
+                options: {
+                    offset: [0, 4],
+                },
+            },
+            {
+                name: "preventOverflow",
+                options: {
+                    padding: 8,
+                },
+            },
+        ],
+    });
     const handleInput = (event: Event) => {
         const { selected } = (event as CustomEvent).detail satisfies { selected: ListboxOption };
 
@@ -97,7 +115,7 @@
     {label}
 </label>
 
-<div class={classNames("relative mt-1", classes)}>
+<div class={classNames("relative mt-1", classes)} use:popperRef>
     <button
         id={id}
         class={classNames(
@@ -155,52 +173,54 @@
     {/if}
 
     {#if $listbox.expanded}
-        <ul
-            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-sm shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-            use:listbox.items
-            in:transition={{
-                duration: 100,
-                base: "transition ease-out duration-100",
-                from: "opacity-0",
-                to: "opacity-100",
-            }}
-            out:transition={{
-                duration: 100,
-                base: "transition ease-in duration-100",
-                from: "opacity-100",
-                to: "opacity-0",
-            }}
-        >
-            {#each options as option (option.value)}
-                {@const active = $listbox.active?.value === option.value}
-                {@const selected = isSelected(option.value)}
-                <li
-                    class={classNames(
-                        "relative cursor-default select-none py-2 pl-10 pr-4",
-                        active ? "bg-gray-100 text-gray-900" : "text-gray-700"
-                    )}
-                    use:listbox.item={{ value: option }}
-                >
-                    <span
+        <div class="absolute z-10 max-h-60 w-full" use:popperContent>
+            <ul
+                class="max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none lg:text-sm"
+                use:listbox.items
+                in:transition={{
+                    duration: 100,
+                    base: "transition ease-out duration-100",
+                    from: "opacity-0",
+                    to: "opacity-100",
+                }}
+                out:transition={{
+                    duration: 100,
+                    base: "transition ease-in duration-100",
+                    from: "opacity-100",
+                    to: "opacity-0",
+                }}
+            >
+                {#each options as option (option.value)}
+                    {@const active = $listbox.active?.value === option.value}
+                    {@const selected = isSelected(option.value)}
+                    <li
                         class={classNames(
-                            "block truncate",
-                            selected ? "font-medium" : "font-normal"
+                            "relative cursor-default select-none py-2 pl-10 pr-4",
+                            active ? "bg-gray-100 text-gray-900" : "text-gray-700"
                         )}
+                        use:listbox.item={{ value: option }}
                     >
-                        {option.label}
-                    </span>
-
-                    {#if selected}
                         <span
-                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-rose-600"
-                            aria-hidden="true"
+                            class={classNames(
+                                "block truncate",
+                                selected ? "font-medium" : "font-normal"
+                            )}
                         >
-                            <Icon src={Check} class="h-5 w-5" />
+                            {option.label}
                         </span>
-                    {/if}
-                </li>
-            {/each}
-        </ul>
+
+                        {#if selected}
+                            <span
+                                class="absolute inset-y-0 left-0 flex items-center pl-3 text-rose-600"
+                                aria-hidden="true"
+                            >
+                                <Icon src={Check} class="h-5 w-5" />
+                            </span>
+                        {/if}
+                    </li>
+                {/each}
+            </ul>
+        </div>
     {/if}
 </div>
 
