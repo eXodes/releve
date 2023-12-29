@@ -61,6 +61,8 @@
             active: $page.url.pathname === "/users",
         },
     ] satisfies NavigationItem[];
+
+    $: showAddShop = $page.data.session.authenticated && $page.url.pathname !== "/settings";
 </script>
 
 <header class="relative">
@@ -181,7 +183,7 @@
                 </div>
 
                 <!-- Add shop (lg-) -->
-                {#if $page.data.session.authenticated}
+                {#if showAddShop}
                     <div class="fixed bottom-4 right-4 z-[1] lg:hidden">
                         <Button
                             color={Color.PRIMARY}
