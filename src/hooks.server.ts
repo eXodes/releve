@@ -1,8 +1,12 @@
 import "dotenv/config";
 import { firebaseEmulator } from "$client/config/firebase";
 
-import { env } from "$env/dynamic/public";
-import { PUBLIC_APP_ENV } from "$env/static/public";
+import {
+    PUBLIC_APP_ENV,
+    PUBLIC_SENTRY_DSN,
+    PUBLIC_SENTRY_RELEASE,
+    PUBLIC_SENTRY_SAMPLE_RATE,
+} from "$env/static/public";
 
 import app from "$server/services/firebase-admin";
 import { getCookieValue, SESSION_COOKIE } from "$server/utils/cookie";
@@ -16,11 +20,11 @@ import { ProfilingIntegration } from "@sentry/profiling-node";
 
 Sentry.init({
     environment: PUBLIC_APP_ENV,
-    dsn: env.PUBLIC_SENTRY_DSN,
-    tracesSampleRate: Number(env.PUBLIC_SENTRY_SAMPLE_RATE) / 3,
-    profilesSampleRate: Number(env.PUBLIC_SENTRY_SAMPLE_RATE) / 2,
-    replaysSessionSampleRate: Number(env.PUBLIC_SENTRY_SAMPLE_RATE) / 10,
-    replaysOnErrorSampleRate: Number(env.PUBLIC_SENTRY_SAMPLE_RATE) / 5,
+    dsn: PUBLIC_SENTRY_DSN,
+    tracesSampleRate: Number(PUBLIC_SENTRY_SAMPLE_RATE) / 3,
+    profilesSampleRate: Number(PUBLIC_SENTRY_SAMPLE_RATE) / 2,
+    replaysSessionSampleRate: Number(PUBLIC_SENTRY_SAMPLE_RATE) / 10,
+    replaysOnErrorSampleRate: Number(PUBLIC_SENTRY_SAMPLE_RATE) / 5,
     integrations: [new ProfilingIntegration()],
 });
 

@@ -1,6 +1,5 @@
 import { browser, dev } from "$app/environment";
-import { env } from "$env/dynamic/public";
-import { PUBLIC_APP_ENV } from "$env/static/public";
+import { PUBLIC_APP_ENV, PUBLIC_RECAPTCHA_SITE_KEY } from "$env/static/public";
 
 import { firebaseConfig, firebaseEmulator } from "$client/config/firebase";
 
@@ -27,11 +26,10 @@ let performance: FirebasePerformance | undefined;
 let analytics: Analytics | undefined;
 
 if (isDeployment && browser) {
-    if (env.PUBLIC_RECAPTCHA_SITE_KEY)
-        appCheck = initializeAppCheck(app, {
-            provider: new ReCaptchaV3Provider(env.PUBLIC_RECAPTCHA_SITE_KEY),
-            isTokenAutoRefreshEnabled: true,
-        });
+    appCheck = initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider(PUBLIC_RECAPTCHA_SITE_KEY),
+        isTokenAutoRefreshEnabled: true,
+    });
 
     performance = initializePerformance(app);
 
