@@ -182,7 +182,7 @@
 
                 <!-- Add shop (lg-) -->
                 {#if $page.data.session.authenticated}
-                    <div class="fixed bottom-4 right-4 z-10 lg:hidden">
+                    <div class="fixed bottom-4 right-4 z-[1] lg:hidden">
                         <Button
                             color={Color.PRIMARY}
                             size={Size.SMALL}
