@@ -26,6 +26,7 @@ Sentry.init({
     replaysSessionSampleRate: Number(PUBLIC_SENTRY_SAMPLE_RATE) / 10,
     replaysOnErrorSampleRate: Number(PUBLIC_SENTRY_SAMPLE_RATE) / 5,
     integrations: [new ProfilingIntegration()],
+    release: PUBLIC_SENTRY_RELEASE,
 });
 
 const verifyAppCheck = async (event: RequestEvent) => {
