@@ -19,7 +19,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: "echo pr: '${{ fromJson(steps.github.outputs.data)[0] }}'"
+      - run: "echo pr: '${{ fromJson(steps.github.outputs.data)[0].number }}'"
 
       - name: Setup node
         uses: actions/setup-node@v3
