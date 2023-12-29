@@ -10,7 +10,6 @@ const config = defineConfig(({ mode }) => {
     return {
         build: {
             sourcemap: "hidden",
-            target: "modules",
         },
         plugins: [
             sentrySvelteKit({
