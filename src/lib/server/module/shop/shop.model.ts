@@ -1,9 +1,11 @@
-import type { HasData } from "$module/common/contract/data";
+import type { CanSendEmail } from "$module/auth/auth.contract";
 import type { ShopEntity } from "$module/shop/shop.entity";
+import type { HasData } from "$module/common/contract/data";
+import type { EmailService } from "$module/common/contract/email";
 
 import type { ShopData } from "$features/shops/types";
 
-export class Shop implements HasData<ShopData> {
+export class Shop implements HasData<ShopData>, CanSendEmail {
     protected shopData: ShopData;
 
     constructor(uid: string, data: ShopEntity) {
@@ -31,5 +33,9 @@ export class Shop implements HasData<ShopData> {
 
     get data() {
         return this.shopData;
+    }
+
+    async sendEmail(service: EmailService) {
+        await service.send();
     }
 }
