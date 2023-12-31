@@ -10,6 +10,10 @@ test.describe("Admin", () => {
             await adminLayoutPage.navigateToMyShops();
         });
 
+        test("should not be able to navigate to Shops Status", async ({ adminLayoutPage }) => {
+            await adminLayoutPage.navigateToShopsStatus();
+        });
+
         test("should be able to navigate to Shops Management", async ({ adminLayoutPage }) => {
             await adminLayoutPage.navigateToShopsManagement();
         });
@@ -65,6 +69,18 @@ test.describe("User", () => {
         test("should be able to navigate to My Shops", async ({ userLayoutPage }) => {
             await userLayoutPage.navigateToMyShops();
         });
+
+        test("should be able to navigate to Shops Status", async ({ userLayoutPage }) => {
+            await userLayoutPage.navigateToShopsStatus();
+        });
+
+        test("should not be able to navigate to Shops Management", async ({ userLayoutPage }) => {
+            await userLayoutPage.navigateToShopsManagement();
+        });
+
+        test("should not be able to navigate to Users Management", async ({ userLayoutPage }) => {
+            await userLayoutPage.navigateToUsersManagement();
+        });
     });
 
     test.describe("Actions", () => {
@@ -99,6 +115,34 @@ test.describe("User", () => {
 
         test("should be able to sign out", async ({ userLayoutPage }) => {
             await userLayoutPage.signOut();
+        });
+    });
+});
+
+test.describe("Guest", () => {
+    test.describe("Navigation", () => {
+        test("should be able to navigate to Homepage", async ({ guestLayoutPage }) => {
+            await guestLayoutPage.navigateToHome();
+        });
+
+        test("should not be able to navigate to My Shops", async ({ guestLayoutPage }) => {
+            await guestLayoutPage.navigateToMyShops();
+        });
+
+        test("should not be able to navigate to Shops Status", async ({ guestLayoutPage }) => {
+            await guestLayoutPage.navigateToShopsStatus();
+        });
+
+        test("should not be able to navigate to Shops Management", async ({ guestLayoutPage }) => {
+            await guestLayoutPage.navigateToShopsManagement();
+        });
+
+        test("should not be able to navigate to Users Management", async ({ guestLayoutPage }) => {
+            await guestLayoutPage.navigateToUsersManagement();
+        });
+
+        test("should be able to navigate to Sign In", async ({ guestLayoutPage }) => {
+            await guestLayoutPage.navigateToSignIn();
         });
     });
 });
