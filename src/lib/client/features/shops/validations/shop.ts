@@ -25,7 +25,7 @@ enforce.extend({
     isAlphanumeric: isAlphanumeric,
 });
 
-const shopSuite = create(
+export const shopSuite = create(
     (
         {
             name,
@@ -91,5 +91,3 @@ const shopSuite = create(
         });
     }
 );
-
-export default shopSuite;

@@ -3,17 +3,24 @@ import type { Locator, Page } from "$tests/utils";
 import { expect } from "@playwright/test";
 
 export class AdminLayoutPage extends BaseLayoutPage {
-    private readonly navShopsEl: Locator;
-    private readonly navUsersEl: Locator;
-
     private readonly toastAddShopSuccessEl: Locator;
 
     constructor(public readonly page: Page) {
         super(page);
-        this.navShopsEl = page.getByRole("link", { name: /Shop Management/ });
-        this.navUsersEl = page.getByRole("link", { name: /User Management/ });
 
         this.toastAddShopSuccessEl = page.getByText(/Shop added successfully./);
+    }
+
+    async navigateToMyShops() {
+        await this.navMyShopsEl.waitFor();
+        await this.navMyShopsEl.click();
+
+        await this.page.waitForURL("/my/shops");
+    }
+
+    async navigateToShopsStatus() {
+        await this.navShopsStatusEl.waitFor({ state: "detached" });
+        await expect(this.navShopsStatusEl).not.toBeVisible();
     }
 
     async navigateToShopsManagement() {

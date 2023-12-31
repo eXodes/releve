@@ -28,9 +28,9 @@ export const actions: Actions = {
         }
 
         try {
-            const user = await AuthService.whereEmail(payload.email);
+            const auth = await AuthService.whereEmail(payload.email);
 
-            await user.sendEmail(new PasswordResetLinkEmail(user));
+            await auth.sendEmail(new PasswordResetLinkEmail(auth));
 
             return {
                 message: "Successfully sent password reset link.",

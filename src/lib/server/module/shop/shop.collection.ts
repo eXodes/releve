@@ -12,7 +12,7 @@ import { CounterCollection } from "$module/counter/counter.collection";
 import type { HasCounter } from "$module/counter/counter.contract";
 
 import { ShopStatus } from "$features/shops/enum";
-import type { PaginationMeta, PaginationQuery, SearchQuery } from "$client/types/meta";
+import type { PaginationMeta, PaginationQuery, SearchQuery, UserQuery } from "$client/types/meta";
 
 import { Timestamp } from "firebase-admin/firestore";
 
@@ -63,6 +63,7 @@ export class ShopCollection
         offset,
         search,
         status,
+        uid,
     }: PaginationQuery): Promise<PaginatedShops> {
         let queryCollection = this.ref.orderBy(orderBy);
 
@@ -72,6 +73,10 @@ export class ShopCollection
 
         if (status) {
             queryCollection = queryCollection.where("status", "==", status);
+        }
+
+        if (uid) {
+            queryCollection = queryCollection.where("createdBy.uid", "==", uid);
         }
 
         queryCollection = offset
@@ -189,7 +194,7 @@ export class ShopCollection
         orderBy,
         offset,
         search,
-    }: PaginationQuery & SearchQuery): Promise<PaginatedShops> {
+    }: PaginationQuery & SearchQuery & Partial<UserQuery>): Promise<PaginatedShops> {
         const shopCollection = new ShopCollection();
 
         const { shops, meta } = await shopCollection.getPaginated({
@@ -216,6 +221,26 @@ export class ShopCollection
             offset,
             search,
             status: ShopStatus.APPROVED,
+        });
+
+        return { shops, meta };
+    }
+
+    static async getShopsByUser({
+        limit,
+        orderBy,
+        offset,
+        search,
+        uid,
+    }: PaginationQuery & SearchQuery): Promise<PaginatedShops> {
+        const shopCollection = new ShopCollection();
+
+        const { shops, meta } = await shopCollection.getPaginated({
+            limit,
+            orderBy,
+            offset,
+            search,
+            uid,
         });
 
         return { shops, meta };

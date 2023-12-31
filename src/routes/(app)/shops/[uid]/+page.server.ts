@@ -1,8 +1,10 @@
+import { UserCollection } from "$module/user/user.collection";
 import { handleApiError } from "$server/utils/error";
 import { validate } from "$server/utils/validation";
-import { AuthError } from "$module/common/errors/auth";
 import { ShopCollection } from "$module/shop/shop.collection";
+import { NewShopEmail } from "$module/shop/actions/email";
 import { shopSchema } from "$module/shop/validation/shop.schema";
+import { AuthError } from "$module/common/errors/auth";
 
 import type { ShopPayload } from "$features/shops/validations/shop";
 import { getFormData } from "$client/utils/data";
@@ -33,7 +35,7 @@ export const actions: Actions = {
         }
 
         try {
-            await ShopCollection.update({
+            const shop = await ShopCollection.update({
                 uid: params.uid,
                 name: payload.name,
                 link: payload.link,
@@ -48,6 +50,10 @@ export const actions: Actions = {
                 },
                 status: payload.status,
             });
+
+            const user = await UserCollection.getUserByUid(shop.data.createdBy.uid);
+
+            if (user) await shop.sendEmail(new NewShopEmail(shop, user));
 
             return {
                 message: payload.name + " shop has been saved.",

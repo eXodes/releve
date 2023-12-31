@@ -1,0 +1,44 @@
+{{#> layout }}
+<td class="email-body" style="width: 100%">
+    <table align="center" class="email-body_inner sm-w-full" style="margin-left: auto; margin-right: auto; width: 570px; background-color: #fff" cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+            <td style="padding: 45px">
+                <div style="font-size: 16px">
+                    <h1 style="margin-top: 0; text-align: left; font-size: 24px; font-weight: 700; color: #333333">
+                        Hi
+                        {{name}},
+                    </h1>
+                    <p style="margin-top: 6px; margin-bottom: 5px; font-size: 16px; line-height: 24px; color: #51545E">
+						{{#if isPending}}
+                        You have successfully created a new shop: <strong>{{shop.name}}</strong>
+						{{/if}}
+						{{#if isApproved}}
+                        You have successfully added a new shop: <strong>{{shop.name}}</strong>
+						{{/if}}
+						{{#if isRejected}}
+                        You have failed to add a new shop: <strong>{{shop.name}}</strong>
+						{{/if}}
+                    </p>
+                    <p style="margin-top: 8px; margin-bottom: 15px; font-size: 14px; line-height: 24px; color: #51545E">
+						{{#if isPending}}
+                    	This shop is currently in <strong style="color: #854d0e; background-color: #fef9c3; border-radius: 4px; padding: 2px 6px; text-transform: uppercase; font-size: 12px">{{shop.status}}</strong> status. You will be notified when it is approved.
+						{{/if}}
+						{{#if isApproved}}
+						This shop has been <strong style="color: #166534; background-color: #dcfce7; border-radius: 4px; padding: 2px 6px; text-transform: uppercase; font-size: 12px">approved</strong>. It is now visible to the public.
+						{{/if}}
+						{{#if isRejected}}
+						This shop has been <strong style="color: #991b1b; background-color: #fee2e2; border-radius: 4px; padding: 2px 6px; text-transform: uppercase; font-size: 12px">rejected</strong> because it does not meet our requirements. Please contact us for more information.
+						{{/if}}
+                    </p>
+                    <p style="margin-top: 6px; margin-bottom: 5px; font-size: 16px; line-height: 24px; color: #51545E">
+                        Thank you,
+                        <br />
+                        {{product.name}}
+                        Team
+                    </p>
+                </div>
+            </td>
+        </tr>
+    </table>
+</td>
+{{/layout}}

@@ -3,8 +3,11 @@ import type { Locator, Page } from "$tests/utils";
 import { expect } from "@playwright/test";
 
 export class BaseLayoutPage {
-    private readonly navHomeEl: Locator;
-    private readonly navMyShopsEl: Locator;
+    public readonly navHomeEl: Locator;
+    public readonly navMyShopsEl: Locator;
+    public readonly navShopsStatusEl: Locator;
+    public readonly navShopsEl: Locator;
+    public readonly navUsersEl: Locator;
 
     private readonly buttonUserMenuEl: Locator;
     private readonly menuSettingsEl: Locator;
@@ -32,6 +35,9 @@ export class BaseLayoutPage {
     constructor(public readonly page: Page) {
         this.navHomeEl = page.getByRole("link", { name: /Home/ });
         this.navMyShopsEl = page.getByRole("link", { name: /My Shops/ });
+        this.navShopsStatusEl = page.getByRole("link", { name: /Shops Status/ });
+        this.navShopsEl = page.getByRole("link", { name: /Shop Management/ });
+        this.navUsersEl = page.getByRole("link", { name: /User Management/ });
 
         this.buttonUserMenuEl = page.getByRole("button", { name: /Open user menu/ });
         this.menuSettingsEl = page.getByRole("menuitem", { name: /Settings/ });
@@ -80,18 +86,15 @@ export class BaseLayoutPage {
         this.modalAddShopButtonSaveEl = this.modalAddShopEl.getByRole("button", { name: /Save/ });
     }
 
+    async goto() {
+        await this.page.goto("/");
+    }
+
     async navigateToHome() {
         await this.navHomeEl.waitFor();
         await this.navHomeEl.click();
 
         await this.page.waitForURL("/");
-    }
-
-    async navigateToMyShops() {
-        await this.navMyShopsEl.waitFor();
-        await this.navMyShopsEl.click();
-
-        await this.page.waitForURL("/my/shops");
     }
 
     async viewUserSettings() {

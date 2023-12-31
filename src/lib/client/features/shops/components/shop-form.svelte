@@ -6,7 +6,7 @@
 
     import { ShopStatus } from "$features/shops/enum";
     import type { ShopData } from "$features/shops/types";
-    import shopSuite, { type ShopPayload } from "$features/shops/validations/shop";
+    import { shopSuite, type ShopPayload } from "$features/shops/validations/shop";
     import { categories } from "$features/categories/store";
     import { Role } from "$features/users/enum";
     import { countries, states } from "$features/countries/store";
@@ -99,6 +99,10 @@
 
             if ($form.data.status === ShopStatus.APPROVED) {
                 await invalidate("shops:approved");
+            }
+
+            if ($form.data.status === ShopStatus.PENDING) {
+                await invalidate("shops:pending");
             }
 
             dispatch("success");

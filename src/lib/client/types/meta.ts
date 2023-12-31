@@ -12,6 +12,10 @@ export interface SearchQuery extends MetaQuery {
     search?: string;
 }
 
+export interface UserQuery extends MetaQuery {
+    uid: string;
+}
+
 export interface PaginationMeta {
     total: number;
     previous: PaginationQuery | null;

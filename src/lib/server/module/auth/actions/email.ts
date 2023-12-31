@@ -1,18 +1,24 @@
-import type { EmailData, EmailService } from "$module/common/contract/email";
+import type { AuthData, EmailService } from "$module/common/contract/email";
 import { EmailTriggerService } from "$module/common/services/email.service";
 import type { Auth } from "$module/auth/auth.model";
 
 export class VerificationEmail implements EmailService {
     private service: EmailTriggerService;
 
-    constructor(private user: Auth) {
-        this.service = new EmailTriggerService(user, "email-verification");
+    constructor(private auth: Auth) {
+        this.service = new EmailTriggerService(
+            {
+                name: this.auth.data.displayName,
+                email: this.auth.data.email,
+            },
+            "email-verification"
+        );
     }
 
     async send() {
-        await this.service.sendEmail<EmailData>({
-            name: this.user.data.displayName,
-            action_url: await this.user.getEmailVerificationLink(),
+        await this.service.sendEmail<AuthData>({
+            name: this.auth.data.displayName,
+            action_url: await this.auth.getEmailVerificationLink(),
         });
     }
 }
@@ -20,14 +26,20 @@ export class VerificationEmail implements EmailService {
 export class PasswordResetLinkEmail implements EmailService {
     private service: EmailTriggerService;
 
-    constructor(private user: Auth) {
-        this.service = new EmailTriggerService(user, "password-reset");
+    constructor(private auth: Auth) {
+        this.service = new EmailTriggerService(
+            {
+                name: this.auth.data.displayName,
+                email: this.auth.data.email,
+            },
+            "password-reset"
+        );
     }
 
     async send() {
-        await this.service.sendEmail<EmailData>({
-            name: this.user.data.displayName,
-            action_url: await this.user.getPasswordResetLink(),
+        await this.service.sendEmail<AuthData>({
+            name: this.auth.data.displayName,
+            action_url: await this.auth.getPasswordResetLink(),
         });
     }
 }

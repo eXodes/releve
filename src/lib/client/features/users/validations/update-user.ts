@@ -81,7 +81,7 @@ export const updateUserSuite = create(
 
         omitWhen(!streetAddress, () => {
             test("street-address", "Street address is not valid.", () => {
-                enforce(streetAddress).isAlphanumeric("en-US", { ignore: " -," });
+                enforce(streetAddress).isAlphanumeric("en-US", { ignore: " -,/." });
             });
         });
 

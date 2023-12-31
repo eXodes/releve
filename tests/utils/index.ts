@@ -1,7 +1,7 @@
 import { test as base } from "@playwright/test";
 import { Mailtrap } from "$tests/fixtures/external";
 import { SignInPage, SignUpPage } from "$tests/fixtures/auth";
-import { AdminLayoutPage, UserLayoutPage } from "$tests/fixtures/layout";
+import { AdminLayoutPage, GuestLayoutPage, UserLayoutPage } from "$tests/fixtures/layout";
 
 type PageFixtures = {
     mailtrap: Mailtrap;
@@ -9,6 +9,7 @@ type PageFixtures = {
     signUpPage: SignUpPage;
     adminLayoutPage: AdminLayoutPage;
     userLayoutPage: UserLayoutPage;
+    guestLayoutPage: GuestLayoutPage;
 };
 
 const test = base.extend<PageFixtures>({
@@ -43,6 +44,8 @@ const test = base.extend<PageFixtures>({
 
         const adminLayoutPage = new AdminLayoutPage(page);
 
+        await adminLayoutPage.goto();
+
         await use(adminLayoutPage);
     },
     userLayoutPage: async ({ page }, use) => {
@@ -54,7 +57,16 @@ const test = base.extend<PageFixtures>({
 
         const userLayoutPage = new UserLayoutPage(page);
 
+        await userLayoutPage.goto();
+
         await use(userLayoutPage);
+    },
+    guestLayoutPage: async ({ page }, use) => {
+        const guestLayoutPage = new GuestLayoutPage(page);
+
+        await guestLayoutPage.goto();
+
+        await use(guestLayoutPage);
     },
 });
 

@@ -2,13 +2,19 @@ import { PUBLIC_APP_NAME } from "$env/static/public";
 import { ORIGIN } from "$env/static/private";
 
 import app from "$server/services/firebase-admin";
-import type { Auth } from "$module/auth/auth.model";
 
 import type { App } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
+interface RecipientData {
+    name: string;
+    email: string;
+}
+
+type Template = "email-verification" | "password-reset" | "new-shop";
+
 abstract class SendEmail {
-    protected name = PUBLIC_APP_NAME;
+    protected appName = PUBLIC_APP_NAME;
     protected baseUrl = ORIGIN;
     protected logo = this.baseUrl + "/workflow-mark.png";
 
@@ -20,20 +26,20 @@ export class EmailTriggerService extends SendEmail {
     protected collection = getFirestore(app as App).collection(this.PROCESSED_COLLECTION);
 
     constructor(
-        private user: Auth,
-        private template: string
+        private recipient: RecipientData,
+        private template: Template
     ) {
         super();
     }
 
     async sendEmail<T>(data: T) {
         await this.collection.add({
-            to: `${this.user.data.displayName} <${this.user.data.email}>`,
+            to: `${this.recipient.name} <${this.recipient.email}>`,
             template: {
                 name: this.template,
                 data: {
                     product: {
-                        name: this.name,
+                        name: this.appName,
                         url: this.baseUrl,
                         logo: this.logo,
                     },

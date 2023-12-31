@@ -22,9 +22,9 @@ export const actions: Actions = {
             return handleApiError(errors);
         }
 
-        const user = await AuthService.create(payload);
+        const auth = await AuthService.create(payload);
 
-        await user.sendEmail(new VerificationEmail(user));
+        await auth.sendEmail(new VerificationEmail(auth));
 
         return {
             message: "Sign up successful.",

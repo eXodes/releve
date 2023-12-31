@@ -86,7 +86,7 @@
                                 <ul class="mt-2 leading-8">
                                     {#each shop.categories as category (category)}
                                         <li class="inline">
-                                            <Badge color={Color.WARNING}>
+                                            <Badge color={Color.INFO}>
                                                 {category}
                                             </Badge>
                                         </li>
@@ -108,7 +108,7 @@
                                                     class="absolute flex flex-shrink-0 items-center justify-center"
                                                 >
                                                     <span
-                                                        class="h-1.5 w-1.5 rounded-full bg-purple-500"
+                                                        class="h-1.5 w-1.5 rounded-full bg-rose-600"
                                                         aria-hidden="true"
                                                     />
                                                 </div>
@@ -179,7 +179,7 @@
                         <ul class="mt-2 leading-8">
                             {#each shop.categories as category (category)}
                                 <li class="inline">
-                                    <Badge color={Color.WARNING}>
+                                    <Badge color={Color.INFO}>
                                         {category}
                                     </Badge>
                                 </li>
@@ -201,7 +201,7 @@
                                             class="absolute flex flex-shrink-0 items-center justify-center"
                                         >
                                             <span
-                                                class="h-1.5 w-1.5 rounded-full bg-purple-500"
+                                                class="h-1.5 w-1.5 rounded-full bg-rose-600"
                                                 aria-hidden="true"
                                             />
                                         </div>
