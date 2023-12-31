@@ -18,9 +18,9 @@ export const actions: Actions = {
             throw handleApiError(new Error("User ID is required."));
         }
 
-        const user = await AuthService.whereUid(uid);
+        const auth = await AuthService.whereUid(uid);
 
-        await user.sendEmail(new VerificationEmail(user));
+        await auth.sendEmail(new VerificationEmail(auth));
 
         return {
             message: "Email verification resent.",
