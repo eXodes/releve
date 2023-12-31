@@ -1,5 +1,6 @@
 <script lang="ts">
     import { goto, invalidate } from "$app/navigation";
+    import { page } from "$app/stores";
 
     import { ShopStatus } from "$features/shops/enum";
     import type { ShopData } from "$features/shops/types";
@@ -16,6 +17,7 @@
     import Pagination from "$client/components/shared/pagination.svelte";
     import SearchInput from "$client/components/shared/search-input.svelte";
     import ShopForm from "$features/shops/components/shop-form.svelte";
+    import ShopDetail from "$features/shops/components/shop-detail.svelte";
 
     import { debounce, startCase } from "lodash-es";
 
@@ -31,6 +33,7 @@
     let showDeleteShops = false;
     let showDeleteShop = false;
     let showUpdateShop = false;
+    let showDetail = false;
 
     const handleSearch = debounce(async ({ detail }: CustomEvent<{ value: string }>) => {
         if (detail.value) {
@@ -67,6 +70,18 @@
 
     const handleCancelUpdate = () => {
         showUpdateShop = false;
+
+        selectedShop = undefined;
+    };
+
+    const handleView = (shop: ShopData) => {
+        showDetail = true;
+
+        selectedShop = shop;
+    };
+
+    const handleCloseView = () => {
+        showDetail = false;
 
         selectedShop = undefined;
     };
@@ -112,6 +127,8 @@
         checked = selectedShops.length === shops.length;
         checkbox && (checkbox.indeterminate = indeterminate);
     }
+
+    $: isAdmin = $page.data.session.user?.customClaims?.isAdmin;
 </script>
 
 <ActionableModal
@@ -158,6 +175,10 @@
     />
 </Modal>
 
+<Modal title="Shop Details Modal" open={showDetail} on:close={handleCloseView}>
+    <ShopDetail shop={selectedShop} />
+</Modal>
+
 <div class="flex flex-col">
     <div class="-mx-3 -my-3 sm:-mx-6 lg:-mx-8">
         <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
@@ -165,21 +186,26 @@
                 <table class="min-w-full table-fixed divide-y divide-gray-300">
                     <thead class="bg-gray-50">
                         <tr>
+                            {#if isAdmin}
+                                <th
+                                    scope="col"
+                                    class="relative hidden w-12 px-6 sm:w-16 sm:px-8 md:table-cell"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        class="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-rose-600 focus:ring-rose-500 sm:left-6"
+                                        bind:this={checkbox}
+                                        bind:checked={checked}
+                                        on:input={handleToggleAll}
+                                    />
+                                </th>
+                            {/if}
                             <th
                                 scope="col"
-                                class="relative hidden w-12 px-6 sm:w-16 sm:px-8 md:table-cell"
-                            >
-                                <input
-                                    type="checkbox"
-                                    class="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-rose-600 focus:ring-rose-500 sm:left-6"
-                                    bind:this={checkbox}
-                                    bind:checked={checked}
-                                    on:input={handleToggleAll}
-                                />
-                            </th>
-                            <th
-                                scope="col"
-                                class="relative min-w-[12rem] py-3.5 pl-3 pr-3 text-left text-sm font-semibold text-gray-500 md:pl-0"
+                                class={classNames(
+                                    "relative min-w-[12rem] py-3.5 pl-3 pr-3 text-left text-sm font-semibold text-gray-500",
+                                    isAdmin ? "md:pl-0" : "md:pl-6"
+                                )}
                             >
                                 {#if selectedShops.length > 0}
                                     <div
@@ -227,22 +253,29 @@
                     <tbody class="divide-y divide-gray-200">
                         {#each shops as shop, shopIdx (shop.uid)}
                             <tr class={selectedShops.includes(shop) ? "bg-gray-50" : undefined}>
-                                <td class="relative hidden w-12 px-6 sm:w-16 sm:px-8 md:table-cell">
-                                    {#if selectedShops.includes(shop)}
-                                        <div class="absolute inset-y-0 left-0 w-0.5 bg-rose-600" />
-                                    {/if}
-                                    <input
-                                        type="checkbox"
-                                        class="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-rose-600 focus:ring-rose-500 disabled:bg-gray-100 sm:left-6"
-                                        name="uids"
-                                        value={shop.uid}
-                                        checked={selectedShops.includes(shop)}
-                                        on:input={(e) => handleToggle(e, shop)}
-                                    />
-                                </td>
+                                {#if isAdmin}
+                                    <td
+                                        class="relative hidden w-12 px-6 sm:w-16 sm:px-8 md:table-cell"
+                                    >
+                                        {#if selectedShops.includes(shop)}
+                                            <div
+                                                class="absolute inset-y-0 left-0 w-0.5 bg-rose-600"
+                                            />
+                                        {/if}
+                                        <input
+                                            type="checkbox"
+                                            class="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-rose-600 focus:ring-rose-500 disabled:bg-gray-100 sm:left-6"
+                                            name="uids"
+                                            value={shop.uid}
+                                            checked={selectedShops.includes(shop)}
+                                            on:input={(e) => handleToggle(e, shop)}
+                                        />
+                                    </td>
+                                {/if}
                                 <td
                                     class={classNames(
-                                        "whitespace-nowrap py-4 pl-3 pr-3 text-sm font-medium md:pl-0",
+                                        "whitespace-nowrap py-4 pl-3 pr-3 text-sm font-medium",
+                                        isAdmin ? "md:pl-0" : "md:pl-6",
                                         selectedShops.includes(shop)
                                             ? "text-rose-600"
                                             : "text-gray-900"
@@ -282,10 +315,20 @@
                                         </Badge>
                                     {/if}
                                 </td>
+
                                 <td
                                     class="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
                                 >
-                                    <DropdownButton buttons={getButtonsProps(shopIdx)} />
+                                    {#if isAdmin}
+                                        <DropdownButton buttons={getButtonsProps(shopIdx)} />
+                                    {:else}
+                                        <Button
+                                            color={Color.LIGHT}
+                                            on:click={() => handleView(shop)}
+                                        >
+                                            View
+                                        </Button>
+                                    {/if}
                                 </td>
                             </tr>
                         {/each}
