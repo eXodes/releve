@@ -49,6 +49,13 @@
             active: $page.url.pathname === "/my/shops",
         },
         {
+            href: "/my/status",
+            label: "Shops Status",
+            show:
+                $page.data.session.authenticated && !$page.data.session.user?.customClaims?.isAdmin,
+            active: $page.url.pathname === "/my/status",
+        },
+        {
             href: "/shops",
             label: "Shop Management",
             show: $page.data.session.user?.customClaims?.isAdmin,
