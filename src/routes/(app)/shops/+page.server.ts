@@ -1,9 +1,10 @@
 import { handleApiError } from "$server/utils/error";
 import { validate } from "$server/utils/validation";
-import { AuthError } from "$module/common/errors/auth";
 import { ShopCollection } from "$module/shop/shop.collection";
+import { NewShopEmail } from "$module/shop/actions/email";
 import { shopSchema } from "$module/shop/validation/shop.schema";
 import { UserShopsCollection } from "$module/user/user-shops.collection";
+import { AuthError } from "$module/common/errors/auth";
 
 import { ShopStatus } from "$features/shops/enum";
 import type { ShopData } from "$features/shops/types";
@@ -114,7 +115,7 @@ export const actions: Actions = {
                     },
                 });
             } else {
-                await ShopCollection.create({
+                const shop = await ShopCollection.create({
                     name: payload.name,
                     link: payload.link,
                     categories: payload.categories,
@@ -132,6 +133,10 @@ export const actions: Actions = {
                         name: session.data.displayName,
                     },
                 });
+
+                const user = await session.getUser();
+
+                if (user) await shop.sendEmail(new NewShopEmail(shop, user));
             }
 
             const message =
