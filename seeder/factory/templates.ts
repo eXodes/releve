@@ -35,7 +35,7 @@ export default runSeeder(async ({ firestore }) => {
     }
 
     const emailVerification: Template = {
-        subject: "Thank you for signing up for the Releve!",
+        subject: "[Releve] Thank you for signing up for the Releve!",
         html: getFileContent(resolve("./seeder/templates/email-verification.hbs")),
         text: "Hi {{name}}, thank you for registering with us. Please visit the link to verify your email address: {{action_url}}. Thank you.",
     };
@@ -52,7 +52,7 @@ export default runSeeder(async ({ firestore }) => {
     }
 
     const resetPassword: Template = {
-        subject: "Reset your password",
+        subject: "[Releve] Reset your password",
         html: getFileContent(resolve("./seeder/templates/password-reset.hbs")),
         text: "Hi {{name}}, you have requested to reset your password. Please visit the link to reset your password.: {{action_url}}. Thank you.",
     };
@@ -66,6 +66,24 @@ export default runSeeder(async ({ firestore }) => {
         console.info("Seeding templates: password-reset");
 
         await resetPasswordRef.set(resetPassword);
+    }
+
+    const newShop: Template = {
+        subject:
+            "[Releve] {{shop.name}} shop {{#if isPending}}submitted{{/if}}{{#if isApproved}}approved{{/if}}{{#if isRejected}}rejected{{/if}}",
+        html: getFileContent(resolve("./seeder/templates/new-shop.hbs")),
+        text: "Hi {{name}}, thank for adding your shop. Your shop will be reviewed by our team and will be approved soon. Thank you.",
+    };
+
+    const newShopRef = collection.doc("new-shop");
+    const newShopData = await newShopRef.get();
+
+    const newShopHtml = newShopData.data()?.html as string;
+
+    if (newShopHtml !== newShop.html) {
+        console.info("Seeding templates: new-shop");
+
+        await newShopRef.set(newShop);
     }
 }).catch((err) => {
     console.error(err);
