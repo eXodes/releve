@@ -99,7 +99,7 @@
 
                     <div class="inline-flex gap-2 text-center">
                         {#each shop.categories as category (category)}
-                            <Badge color={Color.WARNING} class="self-center">
+                            <Badge color={Color.INFO} class="self-center">
                                 {category}
                             </Badge>
                         {/each}
