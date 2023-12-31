@@ -4,7 +4,7 @@ import app from "$server/services/firebase-admin";
 import type { HasData } from "$module/common/contract/data";
 import type { EmailService } from "$module/common/contract/email";
 import type { CanSendEmail, HasAdmin } from "$module/auth/auth.contract";
-
+import { UserCollection } from "$module/user/user.collection";
 import type { UserSession } from "$features/authentication/types";
 
 import { type ActionCodeSettings, getAuth } from "firebase-admin/auth";
@@ -62,6 +62,10 @@ export class Auth implements HasData<UserSession>, HasAdmin, CanSendEmail {
         });
 
         return `${this.resetPasswordUrl}?${urlParams.toString()}`;
+    }
+
+    async getUser() {
+        return await UserCollection.getUserByUid(this.user.uid);
     }
 
     async sendEmail(service: EmailService) {
