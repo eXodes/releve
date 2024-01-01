@@ -46,8 +46,9 @@ export const shopSuite = create(
         const skipStatus = isPrivate === "true" || role === Role.USER;
 
         optional({
-            private: () => true,
-            status: () => skipStatus,
+            "street-address": () => true,
+            "private": () => true,
+            "status": () => skipStatus,
         });
 
         test("name", "Display name is required.", () => {
