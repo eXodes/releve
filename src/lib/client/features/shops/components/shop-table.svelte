@@ -36,13 +36,15 @@
     let showDetail = false;
 
     const handleSearch = debounce(async ({ detail }: CustomEvent<{ value: string }>) => {
+        const pathname = $page.url.pathname;
+
         if (detail.value) {
-            await goto(`/shops?search=${detail.value}`, {
+            await goto(`${pathname}?search=${detail.value}`, {
                 noScroll: true,
                 keepFocus: true,
             });
         } else {
-            await goto("/shops", {
+            await goto(pathname, {
                 noScroll: true,
                 keepFocus: true,
             });
@@ -245,6 +247,7 @@
                                 <SearchInput
                                     label="Search shop by name"
                                     placeholder="Search shop name"
+                                    value={$page.url.searchParams.get("search")}
                                     on:input={(e) => handleSearch(e)}
                                 />
                             </th>

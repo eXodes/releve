@@ -6,7 +6,7 @@
 
     export let label = "Search";
     export let name = "search";
-    export let value: string | undefined = undefined;
+    export let value: string | null | undefined = undefined;
     export let placeholder = "Search";
 
     const dispatch = createEventDispatcher<{
