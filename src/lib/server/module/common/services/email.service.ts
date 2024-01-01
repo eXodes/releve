@@ -11,12 +11,12 @@ interface RecipientData {
     email: string;
 }
 
-type Template = "email-verification" | "password-reset" | "new-shop";
+type Template = "email-verification" | "password-reset" | "shop-status" | "shop-submission";
 
 abstract class SendEmail {
+    public baseUrl = ORIGIN;
     protected appName = PUBLIC_APP_NAME;
-    protected baseUrl = ORIGIN;
-    protected logo = this.baseUrl + "/workflow-mark.png";
+    protected appLogo = this.baseUrl + "/workflow-mark.png";
 
     abstract sendEmail<T>(data: T): Promise<void>;
 }
@@ -38,10 +38,10 @@ export class EmailTriggerService extends SendEmail {
             template: {
                 name: this.template,
                 data: {
-                    product: {
-                        name: this.appName,
+                    app: {
                         url: this.baseUrl,
-                        logo: this.logo,
+                        name: this.appName,
+                        logo: this.appLogo,
                     },
                     ...data,
                 },
