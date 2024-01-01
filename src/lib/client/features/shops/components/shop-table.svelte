@@ -247,7 +247,7 @@
                                 <SearchInput
                                     label="Search shop by name"
                                     placeholder="Search shop name"
-                                    value={$page.url.searchParams.get("search")}
+                                    value={$page.url.searchParams.get("search") ?? undefined}
                                     on:input={(e) => handleSearch(e)}
                                 />
                             </th>
