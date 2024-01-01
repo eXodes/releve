@@ -2,7 +2,7 @@ import { Role } from "$features/users/enum";
 import type { UserData } from "$features/users/types";
 
 import validator from "validator";
-import { create, enforce, include, omitWhen, only, test } from "vest";
+import { create, enforce, include, only, optional, test } from "vest";
 
 export type UpdateUserPayload = {
     displayName: string;
@@ -47,54 +47,51 @@ export const updateUserSuite = create(
         only(field);
         include("confirm-password").when("password");
 
+        optional({
+            "role": () => !role,
+            "user-photo": () => true,
+            "first-name": () => true,
+            "last-name": () => true,
+            "street-address": () => true,
+            "city": () => true,
+            "postal-code": () => true,
+            "private": () => true,
+        });
+
         test("display-name", "Display name is required.", () => {
             enforce(displayName).isNotBlank();
         });
 
-        omitWhen(!role, () => {
-            test("role", "Role is not valid.", () => {
-                enforce(role).inside([Role.ADMIN, Role.USER]);
-            });
+        test("role", "Role is not valid.", () => {
+            enforce(role).inside([Role.ADMIN, Role.USER]);
         });
 
         test("about", "About cannot exceed 200 characters.", () => {
             enforce(about.length).lessThanOrEquals(250);
         });
 
-        omitWhen(!userPhoto?.type, () => {
-            test("user-photo", "Photo must be image.", () => {
-                enforce(userPhoto?.type).isNotValueOf(["image/png", "image/jpeg"]);
-            });
+        test("user-photo", "Photo must be image.", () => {
+            enforce(userPhoto?.type).isNotValueOf(["image/png", "image/jpeg"]);
         });
 
-        omitWhen(!firstName, () => {
-            test("first-name", "First name must be valid name.", () => {
-                enforce(firstName).isAlpha("en-US", { ignore: " -" });
-            });
+        test("first-name", "First name must be valid name.", () => {
+            enforce(firstName).isAlpha("en-US", { ignore: " -" });
         });
 
-        omitWhen(!lastName, () => {
-            test("last-name", "Last name must be valid name.", () => {
-                enforce(lastName).isAlpha("en-US", { ignore: " -" });
-            });
+        test("last-name", "Last name must be valid name.", () => {
+            enforce(lastName).isAlpha("en-US", { ignore: " -" });
         });
 
-        omitWhen(!streetAddress, () => {
-            test("street-address", "Street address is not valid.", () => {
-                enforce(streetAddress).isAlphanumeric("en-US", { ignore: " -,/." });
-            });
+        test("street-address", "Street address is not valid.", () => {
+            enforce(streetAddress).isAlphanumeric("en-US", { ignore: " -,/." });
         });
 
-        omitWhen(!city, () => {
-            test("city", "City is not valid.", () => {
-                enforce(city).isAlphanumeric("en-US", { ignore: " -," });
-            });
+        test("city", "City is not valid.", () => {
+            enforce(city).isAlphanumeric("en-US", { ignore: " -," });
         });
 
-        omitWhen(!postalCode, () => {
-            test("postal-code", "Postal code is not valid.", () => {
-                enforce(postalCode).matches(/^([A-Z|\d]+[-\s])*[A-Z|\d]*$/);
-            });
+        test("postal-code", "Postal code is not valid.", () => {
+            enforce(postalCode).matches(/^([A-Z|\d]+[-\s])*[A-Z|\d]*$/);
         });
     }
 );
