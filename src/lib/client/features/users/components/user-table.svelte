@@ -196,7 +196,7 @@
                                 <SearchInput
                                     label="Search user by email"
                                     placeholder="Search user email"
-                                    value={$page.url.searchParams.get("search") ?? undefined}
+                                    value={$page.url.searchParams.get("search") ?? ""}
                                     on:input={(e) => handleSearch(e)}
                                 />
                             </th>
