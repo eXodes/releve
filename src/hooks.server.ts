@@ -9,7 +9,7 @@ import {
 } from "$env/static/public";
 
 import app from "$server/services/firebase-admin";
-import { getCookieValue, SESSION_COOKIE } from "$server/utils/cookie";
+import { SESSION_COOKIE } from "$server/utils/cookie";
 import { AuthService } from "$module/auth/auth.service";
 
 import type { Handle, HandleServerError, RequestEvent } from "@sveltejs/kit";
@@ -65,11 +65,11 @@ export const handle = sequence(Sentry.sentryHandle(), async ({ event, resolve })
         }
     }
 
+    const sessionCookie = event.cookies.get(SESSION_COOKIE) ?? "";
+
     try {
-        event.locals.session = await AuthService.verifySession(
-            getCookieValue(event.request.headers, SESSION_COOKIE)
-        );
-    } catch {
+        event.locals.session = await AuthService.verifySession(sessionCookie);
+    } catch (err) {
         event.locals.session = undefined;
     }
 
