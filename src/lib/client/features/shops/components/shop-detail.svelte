@@ -59,9 +59,11 @@
                             {#if shop.address}
                                 <h3 class="text-sm font-medium text-gray-500">Address</h3>
                                 <p class="mt-2 text-sm text-gray-900">
-                                    <span class="block">
-                                        {shop.address.street}
-                                    </span>
+                                    {#if shop.address.street}
+                                        <span class="block">
+                                            {shop.address.street}
+                                        </span>
+                                    {/if}
                                     <span class="block">
                                         {shop.address.city}
                                     </span>

@@ -1,17 +1,16 @@
-import { handleApiError } from "$server/utils/error";
-import type { FirestoreQueryDocSnapshot } from "$server/type/firestore";
+import type { PaginationMeta, PaginationQuery, SearchQuery } from "$client/types/meta";
+import { AuthService } from "$module/auth/auth.service";
 import type { HasPagination, Paginated } from "$module/common/contract/pagination";
 import { Collection } from "$module/common/services/collection.service";
-import { AuthService } from "$module/auth/auth.service";
-import type { UserEntity } from "$module/user/user.entity";
-import type { User } from "$module/user/user.model";
-import { userConverter } from "$module/user/user.converter";
-import type { CreateUserDto } from "$module/user/dto/create-user.dto";
-import type { UpdateUserDto } from "$module/user/dto/update-user.dto";
 import { CounterCollection } from "$module/counter/counter.collection";
 import type { HasCounter } from "$module/counter/counter.contract";
-
-import type { PaginationMeta, PaginationQuery, SearchQuery } from "$client/types/meta";
+import type { CreateUserDto } from "$module/user/dto/create-user.dto";
+import type { UpdateUserDto } from "$module/user/dto/update-user.dto";
+import { userConverter } from "$module/user/user.converter";
+import type { UserEntity } from "$module/user/user.entity";
+import type { User } from "$module/user/user.model";
+import type { FirestoreQueryDocSnapshot } from "$server/type/firestore";
+import { handleApiError } from "$server/utils/error";
 
 import { Timestamp } from "firebase-admin/firestore";
 
@@ -77,6 +76,18 @@ export class UserCollection
         const meta = await this.getPaginationMeta(last, { limit, orderBy, offset });
 
         return { users, meta };
+    }
+
+    async getAllAdmins(): Promise<{ users: ReadonlyArray<User> }> {
+        const collection = this.ref.where("customClaims.isAdmin", "==", true);
+
+        const snapshot = await collection.withConverter(this.converter).get();
+
+        if (snapshot.empty) return { users: [] };
+
+        const users = snapshot.docs.map((snapshot) => snapshot.data());
+
+        return { users };
     }
 
     async getCount(): Promise<number> {
@@ -164,6 +175,12 @@ export class UserCollection
             offset,
             search,
         });
+    }
+
+    static async getAdmins(): Promise<{ users: ReadonlyArray<User> }> {
+        const userCollection = new UserCollection();
+
+        return await userCollection.getAllAdmins();
     }
 
     static async getUserByUid(uid: string): Promise<User | undefined> {

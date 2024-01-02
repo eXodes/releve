@@ -33,13 +33,15 @@
     let showDeleteUser = false;
 
     const handleSearch = debounce(async ({ detail }: CustomEvent<{ value: string }>) => {
+        const pathname = $page.url.pathname;
+
         if (detail.value) {
-            await goto(`/users?search=${detail.value}`, {
+            await goto(`${pathname}?search=${detail.value}`, {
                 noScroll: true,
                 keepFocus: true,
             });
         } else {
-            await goto("/users", {
+            await goto(pathname, {
                 noScroll: true,
                 keepFocus: true,
             });
@@ -194,6 +196,7 @@
                                 <SearchInput
                                     label="Search user by email"
                                     placeholder="Search user email"
+                                    value={$page.url.searchParams.get("search") ?? ""}
                                     on:input={(e) => handleSearch(e)}
                                 />
                             </th>

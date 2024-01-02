@@ -261,7 +261,6 @@
                     name="street-address"
                     value={$form.data.streetAddress}
                     autocomplete="street-address"
-                    required
                     errors={$errors["street-address"]}
                     on:input={change}
                 />

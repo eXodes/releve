@@ -43,7 +43,7 @@ export const shopSchema = Joi.object({
             "any.required": "Deliveries is required.",
             "array.base": "Deliveries must be an array.",
         }),
-    streetAddress: Joi.string().required().messages({
+    streetAddress: Joi.string().messages({
         "any.required": "Street address is required.",
         "string.base": "Street address must be a string.",
     }),

@@ -2,7 +2,7 @@ import { UserCollection } from "$module/user/user.collection";
 import { handleApiError } from "$server/utils/error";
 import { validate } from "$server/utils/validation";
 import { ShopCollection } from "$module/shop/shop.collection";
-import { NewShopEmail } from "$module/shop/actions/email";
+import { ShopStatusEmail } from "$module/shop/actions/email";
 import { shopSchema } from "$module/shop/validation/shop.schema";
 import { AuthError } from "$module/common/errors/auth";
 
@@ -53,7 +53,7 @@ export const actions: Actions = {
 
             const user = await UserCollection.getUserByUid(shop.data.createdBy.uid);
 
-            if (user) await shop.sendEmail(new NewShopEmail(shop, user));
+            if (user) await shop.sendEmail(new ShopStatusEmail(shop, user));
 
             return {
                 message: payload.name + " shop has been saved.",
